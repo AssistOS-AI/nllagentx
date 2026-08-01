@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["date","date"],["country","country"],["city","city"],["school","school"],["hospital","hospital"],["map","map"],["artifact","artifact"],["calendar","calendar"]]));

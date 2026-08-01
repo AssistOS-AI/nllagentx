@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Testing and Evaluation</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Testing and Evaluation</nav>
+      <p class="kicker">Deterministic checks and isolated benchmarks</p>
+      <h1>Testing and Evaluation</h1>
+      
+<p class="lead">Testing verifies existing code without a coding agent. Evaluation measures isolated end-to-end behavior and may include explicit Codex authoring.</p>
+<h2>Test commands</h2>
+<pre><code>node nllAgent.mjs test framework --level fast
+node nllAgent.mjs test packs --level standard
+node nllAgent.mjs test packs --pack chemistry-basic --level fast
+node nllAgent.mjs test agent --agent-dir examples/validation-agent
+node nllAgent.mjs test task --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs test all --level exhaustive</code></pre>
+<p>The framework suite covers logic, collections, ontology validation, transactional atomicity, indexed queries, constraint kernels, temporal closure, fixed points, automata, exploration, decision DAGs, rewriting, slicing, factor inference, planning, CNL, source anchors, and a temporary external agent/task CLI workflow. Pack and example tests execute real modules.</p>
+<h2>Evaluation commands</h2>
+<pre><code>node nllAgent.mjs evaluate --suite school-smoke
+node nllAgent.mjs evaluate --suite school-smoke --invoke-agent
+node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODEL</code></pre>
+<p>The infrastructure-only school smoke run creates one isolated random-ID task per declared profile, completes deterministic execution and replay, compares the profile ablation, and writes aggregate anchor validity, replay equivalence, and elapsed-time metrics. With <code>--invoke-agent</code>, the runner uses the suite modes to start intent, longtext, or circuit authoring phases before replay.</p>
+<pre class="mermaid">sequenceDiagram
+  participant Suite
+  participant Agent as Isolated agent
+  participant Codex
+  participant Runtime
+  Suite->>Agent: create random-ID task and copy source
+  opt --invoke-agent
+    Agent->>Codex: intent/longtext/circuit contexts
+    Codex-->>Agent: executable semantic modules and tests
+  end
+  Agent->>Runtime: deterministic execution and assurance
+  Runtime-->>Suite: findings, CNL, trace, metrics
+  Suite->>Suite: Markdown and executable .mjs reports</pre>
+<h2>Retained reports</h2><p>Evaluation reports distinguish completed and failed cases and keep failure stacks under <code>reports/failures/</code>. Gold expectations may be executable <code>.gold.mjs</code> modules. Precision, recall, F1, anchor validity, runtime, and assurance artifacts remain tied to task IDs.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

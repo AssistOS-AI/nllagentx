@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Ontology and Circuit Packs</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Ontology and Circuit Packs</nav>
+      <p class="kicker">Default knowledge without hidden facts</p>
+      <h1>Ontology and Circuit Packs</h1>
+      
+<p class="lead">Fourteen executable packs are registered: the mandatory core-language vocabulary plus thirteen knowledge packs corresponding to the preserved domain specifications.</p>
+<h2>Pack inventory</h2>
+<p><code>core-language</code>, <code>core-commonsense</code>, <code>world-basic</code>, <code>math-basic</code>, <code>physics-basic</code>, <code>chemistry-basic</code>, <code>biology-basic</code>, <code>psychology-basic</code>, <code>anthropology-basic</code>, <code>sociology-basic</code>, <code>logic-basic</code>, <code>reasoning-errors</code>, <code>law-basic</code>, and <code>social-interaction</code> are exported by <code>framework/packs/index.mjs</code>.</p>
+<h2>Pack contract</h2><p>Each domain pack seals ontology modules, consistency or analysis circuits, a generation circuit, lexical and semantic intent signals, capability declarations, tier, knowledge level, and tests. Domain ontology modules reuse the core-language role constructors, preventing cross-pack role identity drift. Pack facts remain distinguishable from task claims through their source class.</p>
+<p>Every concept and event frame is assigned explicitly in <code>tools/domain-module-allocations.mjs</code>. Generation fails on a missing or unknown module, missing or unknown symbol, or duplicate assignment; positional distribution is prohibited because module ownership is part of the pack-qualified identity. See <a href="specsLoader.html?spec=DS038-domain-pack-generation-and-module-ownership.md">DS038</a>.</p>
+<pre class="mermaid">flowchart LR
+  Descriptor[DomainPack] --> Ontologies[OntologyJS modules]
+  Descriptor --> Circuits[CircuitJS modules]
+  Descriptor --> Signals[Lexical and semantic signals]
+  Descriptor --> Capabilities[Provided capabilities]
+  Ontologies --> Constructors[Pack-qualified constructors]
+  Constructors --> LongText[Task LongTextJS]
+  Circuits --> Planner[Capability registry]</pre>
+<h2>Profiles and local extension</h2><p>Profiles select a stable pack set or every compatible pack. Agent-local modules extend reusable knowledge; task-local modules override only task ownership. <code>ontology build</code> writes a task/agent-local facade with qualified exports and unqualified names only when collision-free.</p>
+<h2>Validation</h2><p>Pack tests check sealed distinct ontologies, real execution through <code>SemanticStore</code>, deterministic intent signals, and canonical CNL round trips. Cross-pack ontology checks detect duplicate identities, subtype cycles, disjoint parents, and invalid inverse references.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

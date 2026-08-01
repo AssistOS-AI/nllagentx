@@ -1,0 +1,21 @@
+import { loadProfile, usePack, concreteFirst, abstractPreflightForSelectedCircuits, symbolicWhereSupported, allCompatibleWithinLoadedPacks } from "../framework/sdk/intent/profiles.mjs";
+
+export default loadProfile("general-school")
+  .use(usePack("core-language"))
+  .use(usePack("core-commonsense"))
+  .use(usePack("world-basic"))
+  .use(usePack("math-basic"))
+  .use(usePack("physics-basic"))
+  .use(usePack("chemistry-basic"))
+  .use(usePack("biology-basic"))
+  .use(usePack("psychology-basic"))
+  .use(usePack("anthropology-basic"))
+  .use(usePack("sociology-basic"))
+  .use(usePack("logic-basic"))
+  .use(usePack("reasoning-errors"))
+  .use(usePack("law-basic"))
+  .use(usePack("social-interaction"))
+  .prefer(concreteFirst())
+  .assure(abstractPreflightForSelectedCircuits(), symbolicWhereSupported())
+  .fallback(allCompatibleWithinLoadedPacks())
+  .seal();

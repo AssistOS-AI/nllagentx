@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["therefore","therefore"],["because","because"],["proves","proves"],["always","always"],["only","only"],["everyone","everyone"],["obviously","obviously"],["fallacy","fallacy"]]));

@@ -1,0 +1,1 @@
+The school alarm sounded at 08:57. Ana opened the north gate at 09:00. Determine whether the stated order is internally consistent and preserve uncertainty when a needed relation is not stated.

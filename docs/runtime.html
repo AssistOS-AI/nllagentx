@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Runtime and Analysis Methods</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Runtime and Analysis Methods</nav>
+      <p class="kicker">Deterministic semantic execution</p>
+      <h1>Runtime and Analysis Methods</h1>
+      
+<p class="lead">The runtime combines an indexed transactional store with small analysis kernels. Methods are selected by circuit contracts and remain inspectable; unsupported fragments retain explicit diagnostics or symbolic forms.</p>
+<h2>Store, query, and schedule</h2><p><code>SemanticStore</code> indexes concepts, roles, reverse roles, claims, groundings, provenance, relations, coverage, capabilities, and subtype links. A transaction validates all staged claims before a commit changes any index. Query execution uses typed patterns and returns bindings plus evidence, interpretation, and scope. The scheduler discovers semantic dependencies, orders ready nodes deterministically, and keys cached outputs by content identity.</p>
+<h2>Implemented method families</h2>
+<table><thead><tr><th>Family</th><th>Implementation</th><th>Declared boundary</th></tr></thead><tbody>
+<tr><td>Constraints</td><td>exact rationals, finite domains, difference constraints, DPLL, union-find</td><td>exact for supported finite/theory fragments</td></tr>
+<tr><td>Temporal</td><td>Allen classification, inverse, composition, path consistency</td><td>path-consistent network</td></tr>
+<tr><td>Relations</td><td>semi-naive finite fixed point and transitive closure</td><td>least fixed point within round bound</td></tr>
+<tr><td>Program analysis</td><td>abstract worklist, symbolic paths, BFS, cycle detection</td><td>conservative or bounded as reported</td></tr>
+<tr><td>Optimization</td><td>decision DAG, rewriting/e-graph, slicing, specialization</td><td>registered-rule and supplied-runner equivalence</td></tr>
+<tr><td>Probabilistic</td><td>finite exact factor enumeration and explicit approximate fallback</td><td>guarantee recorded in result</td></tr>
+</tbody></table>
+<h2>Planner closure</h2>
+<pre class="mermaid">sequenceDiagram
+  participant I as Intent/Profile
+  participant P as Capability planner
+  participant S as SemanticStore
+  participant R as Circuit registry
+  I->>P: requested concerns and outputs
+  P->>S: available concepts and capabilities
+  P->>R: ranked providers
+  P->>P: recursively satisfy requirements
+  P-->>I: selected, rejected, blocked, explanation</pre>
+<p>The all-compatible pass continues until no newly compatible circuit remains. Provider order is stable by cost and semantic identity. A missing provider produces <code>PLAN_NO_PROVIDER</code>; cycles produce <code>PLAN_CAPABILITY_CYCLE</code>.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

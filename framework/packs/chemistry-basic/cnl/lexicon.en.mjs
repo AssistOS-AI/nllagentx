@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["reaction","reaction"],["compound","compound"],["mixture","mixture"],["atom","atom"],["molecule","molecule"],["pH","pH"],["solution","solution"],["laboratory","laboratory"]]));

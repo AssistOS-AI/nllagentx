@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — article-build Skill</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>article-build Skill</nav>
+      <p class="kicker">Self-contained research-article regeneration</p>
+      <h1>article-build Skill</h1>
+      
+<p class="lead">This repository-local skill incrementally rebuilds a research article from article-owned plans, chapters, bibliography evidence, and SVG assets. It is cataloged here because the repository owns it, while remaining independent of nllAgent semantic execution.</p>
+<h2>Article-owned pipeline</h2>
+<pre class="mermaid">flowchart TD
+  Plan[plan.md and plan_chN.md] --> Chapters[Generated chapter Markdown]
+  Bibliography[bibliography source and evidence cache] --> Validate[Citation support validation]
+  Assets[assets declaration and source SVG] --> SVG[Copy and geometry validation]
+  Chapters --> HTML[index.html]
+  Validate --> HTML
+  SVG --> HTML
+  HTML --> Review[Agent structural and visual review]
+  Review -->|substantive gap| Plan
+  Review --> Manifest[Incremental build manifest]</pre>
+<h2>Ownership boundary</h2><p>The skill reads an explicit article root and only its own self-contained modules. It does not import the nllAgent runtime or install itself into nllAgent task coding runs. Chapter Markdown and final HTML are generated from article plans; bibliography checks retain supporting snippets and spans; figures remain separate SVG assets; a second unchanged build verifies incremental stability.</p>
+<h2>Manifest distinction</h2><p>Article asset and build manifests describe document-build mechanics. They are not semantic nllAgent artifacts and do not weaken the prohibition on JSON OntologyJS, LongTextJS, IntentJS, CircuitJS, task, profile, evaluation, or test-oracle representations.</p>
+<p>See <a href="specsLoader.html?spec=DS040-article-build.md">DS040</a> for the complete preserved local skill contract.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

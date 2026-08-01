@@ -1,0 +1,47 @@
+# Conceptual References
+
+The design specifications use the following reference keys. They are included to guide implementation choices, not to claim formal equivalence between natural-language analysis and compiler verification.
+
+- **[ACA05]** Umut A. Acar. *Self-Adjusting Computation*. PhD thesis, Carnegie Mellon University, 2005.
+- **[AHV95]** Serge Abiteboul, Richard Hull, and Victor Vianu. *Foundations of Databases*. Addison-Wesley, 1995.
+- **[ALL83]** James F. Allen. “Maintaining Knowledge about Temporal Intervals.” *Communications of the ACM*, 1983.
+- **[BEL77]** Nuel D. Belnap Jr. “A Useful Four-Valued Logic.” 1977.
+- **[BIE99]** Armin Biere et al. “Symbolic Model Checking without BDDs.” TACAS, 1999.
+- **[BN98]** Franz Baader and Tobias Nipkow. *Term Rewriting and All That*. Cambridge University Press, 1998.
+- **[BRY86]** Randal E. Bryant. “Graph-Based Algorithms for Boolean Function Manipulation.” 1986.
+- **[CAR09]** Jacques Carette, Oleg Kiselyov, and Chung-chieh Shan. “Finally Tagless, Partially Evaluated.” 2009.
+- **[CEGAR00]** Edmund Clarke et al. “Counterexample-Guided Abstraction Refinement.” CAV, 2000.
+- **[CLA86]** Edmund Clarke, E. Allen Emerson, and A. Prasad Sistla. “Automatic Verification of Finite-State Concurrent Systems Using Temporal Logic Specifications.” 1986.
+- **[COU77]** Patrick Cousot and Radhia Cousot. “Abstract Interpretation: A Unified Lattice Model for Static Analysis.” POPL, 1977.
+- **[CYC91]** Ron Cytron et al. “Efficiently Computing Static Single Assignment Form and the Control Dependence Graph.” 1991.
+- **[DAR02]** Adnan Darwiche and Pierre Marquis. “A Knowledge Compilation Map.” JAIR, 2002.
+- **[DAV67]** Donald Davidson. “The Logical Form of Action Sentences.” 1967.
+- **[DEK86]** Johan de Kleer. “An Assumption-Based TMS.” 1986.
+- **[EGG21]** Max Willsey et al. “egg: Fast and Extensible Equality Saturation.” POPL, 2021.
+- **[FIL82]** Charles J. Fillmore. “Frame Semantics.” 1982.
+- **[FOR82]** Charles L. Forgy. “Rete: A Fast Algorithm for the Many Pattern/Many Object Pattern Match Problem.” 1982.
+- **[FRE91]** Tim Freeman and Frank Pfenning. “Refinement Types for ML.” PLDI, 1991.
+- **[GOO99]** Joshua Goodman. “Semiring Parsing.” *Computational Linguistics*, 1999.
+- **[GRU93]** Thomas R. Gruber. “A Translation Approach to Portable Ontology Specifications.” *Knowledge Acquisition*, 1993.
+- **[HAM14]** Matthew A. Hammer et al. “Adapton: Composable, Demand-Driven Incremental Computation.” PLDI, 2014.
+- **[HAV02]** Klaus Havelund and Grigore Roşu. “Synthesizing Monitors for Safety Properties.” TACAS, 2002.
+- **[JON93]** Neil D. Jones, Carsten K. Gomard, and Peter Sestoft. *Partial Evaluation and Automatic Program Generation*. 1993.
+- **[KAMP11]** Hans Kamp, Josef van Genabith, and Uwe Reyle. “Discourse Representation Theory.” 2011.
+- **[KIN76]** James C. King. “Symbolic Execution and Program Testing.” CACM, 1976.
+- **[KLEE08]** Cristian Cadar, Daniel Dunbar, and Dawson Engler. “KLEE.” OSDI, 2008.
+- **[KNU68]** Donald E. Knuth. “Semantics of Context-Free Languages.” 1968.
+- **[KUH14]** Tobias Kuhn. “A Survey and Classification of Controlled Natural Languages.” 2014.
+- **[KSC01]** Frank Kschischang, Brendan Frey, and Hans-Andrea Loeliger. “Factor Graphs and the Sum-Product Algorithm.” 2001.
+- **[LEU09]** Martin Leucker and Christian Schallhart. “A Brief Account of Runtime Verification.” 2009.
+- **[LUC88]** John Lucassen and David Gifford. “Polymorphic Effect Systems.” POPL, 1988.
+- **[MAC07]** Bill MacCartney and Christopher Manning. “Natural Logic for Textual Inference.” 2007.
+- **[MOK18]** Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones. “Build Systems à la Carte.” 2018.
+- **[MOH09]** Mehryar Mohri. “Weighted Automata Algorithms.” 2009.
+- **[NOT06]** Robert Nieuwenhuis, Albert Oliveras, and Cesare Tinelli. “Solving SAT and SAT Modulo Theories.” JACM, 2006.
+- **[OLI12]** Bruno C. d. S. Oliveira and William R. Cook. “Extensibility for the Masses: Practical Extensibility with Object Algebras.” ECOOP, 2012.
+- **[REP95]** Thomas Reps, Susan Horwitz, and Mooly Sagiv. “Precise Interprocedural Dataflow Analysis via Graph Reachability.” POPL, 1995.
+- **[RON08]** Patrick Rondon, Ming Kawaguchi, and Ranjit Jhala. “Liquid Types.” PLDI, 2008.
+- **[ROS13]** Emina Torlak and Rastislav Bodík. “Growing Solver-Aided Languages with Rosette.” 2013.
+- **[SOU16]** Herbert Jordan, Bernhard Scholz, and Pavle Subotić. “Soufflé: On Synthesis of Program Analyzers.” CAV, 2016.
+- **[WEI84]** Mark Weiser. “Program Slicing.” IEEE TSE, 1984.
+- **[Z3-08]** Leonardo de Moura and Nikolaj Bjørner. “Z3: An Efficient SMT Solver.” TACAS, 2008.

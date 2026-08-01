@@ -1,0 +1,111 @@
+FRAME GenerationPlan anthropology-basic.EthnographicExplanationPlan
+CAPABILITY: EthnographicExplanationPlan
+DOMAIN: anthropology-basic
+EVIDENCE-COUNT: 0
+SECTIONS: context -> practice -> participant meaning -> evidence -> variation -> limitation
+END FRAME
+
+FRAME GenerationPlan biology-basic.BiologyExplanationPlan
+CAPABILITY: BiologyExplanationPlan
+DOMAIN: biology-basic
+EVIDENCE-COUNT: 0
+SECTIONS: organization level -> process -> evidence -> variation -> limitation
+END FRAME
+
+FRAME GenerationPlan chemistry-basic.ChemistryExplanationPlan
+CAPABILITY: ChemistryExplanationPlan
+DOMAIN: chemistry-basic
+EVIDENCE-COUNT: 0
+SECTIONS: substances -> process -> observation -> equation -> interpretation -> limitation
+END FRAME
+
+FRAME Clarification core-commonsense.ClarificationDemand
+CAPABILITY: ClarificationDemand
+DOMAIN: core-commonsense
+EVIDENCE-COUNT: 0
+SECTIONS: goal -> prerequisite -> action -> outcome -> open question
+END FRAME
+
+FRAME GenerationPlan core-commonsense.EverydayPlanCircuit
+CAPABILITY: EverydayPlanCircuit
+DOMAIN: core-commonsense
+EVIDENCE-COUNT: 0
+SECTIONS: goal -> prerequisite -> action -> outcome -> open question
+END FRAME
+
+FRAME Repair law-basic.NormativeCNLRepair
+CAPABILITY: NormativeCNLRepair
+DOMAIN: law-basic
+EVIDENCE-COUNT: 0
+SECTIONS: definitions -> scope -> roles -> rules -> procedure -> evidence -> remedy
+END FRAME
+
+FRAME GenerationPlan law-basic.PolicySpecificationPlan
+CAPABILITY: PolicySpecificationPlan
+DOMAIN: law-basic
+EVIDENCE-COUNT: 0
+SECTIONS: definitions -> scope -> roles -> rules -> procedure -> evidence -> remedy
+END FRAME
+
+FRAME GenerationPlan logic-basic.LogicExplanationPlan
+CAPABILITY: LogicExplanationPlan
+DOMAIN: logic-basic
+EVIDENCE-COUNT: 0
+SECTIONS: premises -> rule -> conclusion -> assumptions -> counterexample
+END FRAME
+
+FRAME GenerationPlan math-basic.MathExplanationPlan
+CAPABILITY: MathExplanationPlan
+DOMAIN: math-basic
+EVIDENCE-COUNT: 0
+SECTIONS: givens -> unknown -> formula -> substitution -> result -> check
+END FRAME
+
+FRAME GenerationPlan physics-basic.PhysicsExplanationPlan
+CAPABILITY: PhysicsExplanationPlan
+DOMAIN: physics-basic
+EVIDENCE-COUNT: 0
+SECTIONS: system boundary -> givens -> law -> calculation -> result -> assumptions
+END FRAME
+
+FRAME GenerationPlan psychology-basic.CharacterArcPlan
+CAPABILITY: CharacterArcPlan
+DOMAIN: psychology-basic
+EVIDENCE-COUNT: 0
+SECTIONS: initial state -> goal -> obstacle -> choice -> consequence -> change
+END FRAME
+
+FRAME Repair reasoning-errors.ArgumentRepairPlan
+CAPABILITY: ArgumentRepairPlan
+DOMAIN: reasoning-errors
+EVIDENCE-COUNT: 0
+SECTIONS: claim -> premise -> missing support -> qualifier -> objection -> repair
+END FRAME
+
+FRAME GenerationPlan social-interaction.DialogueAndInteractionPlan
+CAPABILITY: DialogueAndInteractionPlan
+DOMAIN: social-interaction
+EVIDENCE-COUNT: 0
+SECTIONS: goal -> speech act -> boundary -> commitment -> repair -> confirmation
+END FRAME
+
+FRAME GenerationPlan sociology-basic.SocialExplanationPlan
+CAPABILITY: SocialExplanationPlan
+DOMAIN: sociology-basic
+EVIDENCE-COUNT: 0
+SECTIONS: actor level -> structure -> mechanism -> evidence -> alternative -> limitation
+END FRAME
+
+FRAME GenerationPlan world-basic.BasicExpositionPlan
+CAPABILITY: BasicExpositionPlan
+DOMAIN: world-basic
+EVIDENCE-COUNT: 0
+SECTIONS: definition -> category -> function -> example -> limitation
+END FRAME
+
+FRAME Clarification world-basic.FactClarificationDemand
+CAPABILITY: FactClarificationDemand
+DOMAIN: world-basic
+EVIDENCE-COUNT: 0
+SECTIONS: definition -> category -> function -> example -> limitation
+END FRAME

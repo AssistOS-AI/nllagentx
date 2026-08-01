@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — CLI Reference</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>CLI Reference</nav>
+      <p class="kicker">Commands and parameters</p>
+      <h1>CLI Reference</h1>
+      
+<p class="lead">All command families are implemented by <code>framework/cli/main.mjs</code> and use Node.js built-ins. Run <code>node nllAgent.mjs help</code> for the compact grammar.</p>
+<h2>Workspace and coding commands</h2>
+<pre><code>node nllAgent.mjs agent create --agent reviewer --profile general-broad
+node nllAgent.mjs task create --agent reviewer --source notes.md --title "Policy review"
+node nllAgent.mjs code intent --agent reviewer --task task-ID
+node nllAgent.mjs code longtext --agent reviewer --task task-ID --model MODEL
+node nllAgent.mjs code review --agent reviewer --task task-ID --diagnostics failures.md
+node nllAgent.mjs code circuit --agent-dir path/to/agent --task-dir path/to/task --prepare-only</code></pre>
+<p><code>--prepare-only</code> builds the exact context and skill dependency chain without invoking Codex. Coding runs retain instructions, context catalogs, installed skills, executable run metadata, process logs, and the final coding-agent response.</p>
+<h2>Execution and selection</h2>
+<pre><code>node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
+node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs plan --agent reviewer --task task-ID --explain-plan
+node nllAgent.mjs generate --agent reviewer --task task-ID --output PolicySpecificationPlan
+node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/open-events.mjs</code></pre>
+<p>Selection controls include repeatable <code>--domain</code> and <code>--check</code>, <code>--exclude-domain</code>, <code>--exclude-check</code>, <code>--only</code>, <code>--all-compatible</code>, <code>--profile</code>, <code>--intent</code>, and <code>--assurance abstract|symbolic|all</code>.</p>
+<h2>Inspection tools</h2>
+<p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> are the agent-facing discovery commands declared by the installed skill workflows.</p>
+<h2>Exit status</h2><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td>0</td><td>Tool completed and requested outputs were written.</td></tr><tr><td>2</td><td>CLI usage error.</td></tr><tr><td>3</td><td>Import, validation, execution, or I/O failure.</td></tr><tr><td>4</td><td>Explicit coding-agent process failed.</td></tr></tbody></table>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Source Ingestion and Provenance</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Source Ingestion and Provenance</nav>
+      <p class="kicker">Deterministic bytes-to-spans pipeline</p>
+      <h1>Source Ingestion and Provenance</h1>
+      
+<p class="lead">Source ingestion turns retained files into deterministic decoded text before LongTextJS can claim exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON.</p>
+<h2>Run and inspect ingestion</h2>
+<pre><code>node nllAgent.mjs source ingest   --agent-dir examples/validation-agent   --task task-symbolic-validation
+
+node nllAgent.mjs source outline   --agent-dir examples/validation-agent   --task task-symbolic-validation
+
+node nllAgent.mjs source search   --agent-dir examples/validation-agent   --task task-symbolic-validation   --text "alarm"
+
+node nllAgent.mjs source verify-anchors   --agent-dir examples/validation-agent   --task task-symbolic-validation</code></pre>
+<h2>Extraction dispatch</h2>
+<pre class="mermaid">flowchart TD
+  Bytes[Retained source bytes] --> Custom{Task extractor exists?}
+  Custom -->|yes| Adapter[source/extractors/ext.extractor.mjs]
+  Custom -->|no| Format{Known built-in?}
+  Format -->|UTF-8 text| UTF8[Deterministic UTF-8 decode]
+  Format -->|PDF| PDF[Header, encryption, stream/filter, text-operator decode]
+  Format -->|unsupported| Diagnostic[Typed source diagnostic]
+  Adapter --> Validate[Validate text and metadata]
+  UTF8 --> Validate
+  PDF --> Validate
+  Validate --> Segment[Stable SourceUnits]
+  Segment --> Hash[Decoded-text digest]
+  Hash --> Map[Executable source-map.mjs]</pre>
+<h2>Task-local extractor contract</h2>
+<p>Create <code>source/extractors/bin.extractor.mjs</code> when a task owns <code>.bin</code> material. The adapter receives the bytes and returns decoded text plus replay metadata:</p>
+<pre><code>export function extractSource({ bytes }) {
+  const text = decodeKnownCorpusFormat(bytes);
+  return Object.freeze({
+    text,
+    metadata: Object.freeze({ format: "known-corpus-v1" })
+  });
+}</code></pre>
+<p>The generated registry records extractor metadata, a SHA-256 digest of decoded text, and absolute decoded offsets. A LongTextJS anchor is valid only when the source, unit, bounds, digest, and selected text hash all match. Encrypted, scanned, or custom-font PDFs require a retained task adapter; the built-in never invents OCR text.</p>
+<h2>Observed output</h2>
+<p>The validation task produces one source unit, and its two facility-event claims verify against exact source spans. <code>results/source-diagnostics.md</code> states <code>No source extraction diagnostics.</code> after a clean ingestion, avoiding stale errors from earlier source revisions.</p>
+<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for the normative extraction and decoded-offset contract.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

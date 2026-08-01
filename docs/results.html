@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Artifacts and Retained Results</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Artifacts and Retained Results</nav>
+      <p class="kicker">Inspectable outputs rather than opaque responses</p>
+      <h1>Artifacts and Retained Results</h1>
+      
+<p class="lead">Every important intermediate and final result is a file owned by an agent run, task result, or evaluation suite.</p>
+<h2>Task results</h2>
+<table><thead><tr><th>Artifact</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>execution-plan.md</code></td><td>profile, loaded packs, selected/rejected circuits, and blocked capabilities</td></tr>
+<tr><td><code>findings.mjs</code></td><td>executable finding structures reconstructed through the SDK</td></tr>
+<tr><td><code>findings.cnl</code></td><td>canonical evidence-bearing finding frames</td></tr>
+<tr><td><code>observations.cnl</code></td><td>findings and generated CNL frames</td></tr>
+<tr><td><code>generation-plan.cnl</code></td><td>semantic plan frames usable by a later expansion circuit or coding agent</td></tr>
+<tr><td><code>coverage.md</code></td><td>coverage witnesses and executed pack summary</td></tr>
+<tr><td><code>diagnostics.md</code></td><td>typed planning and execution failures</td></tr>
+<tr><td><code>trace.bin</code></td><td>Node V8 binary serialization of semantic trace projections</td></tr>
+<tr><td><code>assurance.mjs</code></td><td>executable abstract/symbolic auxiliary results</td></tr>
+<tr><td><code>report.md</code></td><td>task-level outcome index</td></tr>
+</tbody></table>
+<h2>Coding-run context</h2><p>A run directory contains <code>INSTRUCTIONS.md</code>, executable <code>run.mjs</code>, installed skill folders, context catalogs, checks, scratch space, and process logs. Exact design-specification paths and the project CLI invocation are resolved for the selected working directory.</p>
+<h2>Source artifacts</h2><p><code>source/source-map.mjs</code> registers decoded text, extractor metadata, and stable units. Its generated import path points to the selected project's SDK even for an explicit agent directory. UTF-8 formats and ordinary unencrypted PDF text streams have built-in extraction. A task can add or override a decoder with <code>source/extractors/&lt;extension&gt;.extractor.mjs</code>; unsupported filters, scans, encryption, or formats retain typed diagnostics rather than fabricated text. DS037 defines decoded-offset provenance.</p>
+<h2>No semantic JSON</h2><p>Findings, gold expectations, source maps, run declarations, suite declarations, and catalogs use executable modules or human-readable Markdown/CNL. The repository retains existing JSON only where Codex/plugin integration requires a manifest; those files do not encode semantic programs.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

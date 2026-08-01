@@ -1,0 +1,623 @@
+FRAME Finding ContextLossFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ContextLossFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CulturalChangeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CulturalChangeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CulturalOvergeneralizationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CulturalOvergeneralizationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EmicEticConfusionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EmicEticConfusionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EvidencePerspectiveFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EvidencePerspectiveFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding KinshipProjectionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: KinshipProjectionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding NormPracticeConfusionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: NormPracticeConfusionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding BiologicalLevelFinding.not-applicable
+EVIDENCE: none
+MESSAGE: BiologicalLevelFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EcologyRelationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EcologyRelationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EvidenceGeneralizationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EvidenceGeneralizationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EvolutionReasoningFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EvolutionReasoningFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding InheritanceFinding.not-applicable
+EVIDENCE: none
+MESSAGE: InheritanceFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding LifecycleFinding.not-applicable
+EVIDENCE: none
+MESSAGE: LifecycleFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding StructureFunctionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: StructureFunctionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AcidBaseFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AcidBaseFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ChemicalCategoryFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ChemicalCategoryFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding FormulaCompositionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: FormulaCompositionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding LaboratorySequenceFinding.not-applicable
+EVIDENCE: none
+MESSAGE: LaboratorySequenceFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PhysicalChemicalChangeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PhysicalChemicalChangeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ReactionBalanceFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ReactionBalanceFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SolutionRelationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: SolutionRelationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ActionPreconditionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ActionPreconditionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CausalGapFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CausalGapFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ImpossibleCoexistenceFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ImpossibleCoexistenceFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding KnowledgeContinuityFinding.not-applicable
+EVIDENCE: none
+MESSAGE: KnowledgeContinuityFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding MissingTransitionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: MissingTransitionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ObjectContinuityFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ObjectContinuityFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PossessionConflictFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PossessionConflictFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CoreGroundingFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CoreGroundingFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AuthorityJurisdictionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AuthorityJurisdictionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CrossReferenceFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CrossReferenceFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DeadlineFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DeadlineFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DefinitionConsistencyFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DefinitionConsistencyFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ExceptionCoverageFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ExceptionCoverageFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding LegalBasisFinding.not-applicable
+EVIDENCE: none
+MESSAGE: LegalBasisFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding NormConflictFinding.not-applicable
+EVIDENCE: none
+MESSAGE: NormConflictFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding NormFrameCompletenessFinding.not-applicable
+EVIDENCE: none
+MESSAGE: NormFrameCompletenessFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ProcedureOrderFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ProcedureOrderFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ConsistencySetCircuit.not-applicable
+EVIDENCE: none
+MESSAGE: ConsistencySetCircuit.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DirectContradictionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DirectContradictionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EqualitySubstitutionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EqualitySubstitutionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding LocalEntailmentFinding.not-applicable
+EVIDENCE: none
+MESSAGE: LocalEntailmentFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ModalConfusionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ModalConfusionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ProofStepCircuit.not-applicable
+EVIDENCE: none
+MESSAGE: ProofStepCircuit.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding QuantifierScopeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: QuantifierScopeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ArithmeticConsistencyFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ArithmeticConsistencyFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DerivationStepFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DerivationStepFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EquationSatisfactionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EquationSatisfactionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding GeometryFormulaFinding.not-applicable
+EVIDENCE: none
+MESSAGE: GeometryFormulaFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PercentageRatioFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PercentageRatioFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ProbabilityBoundFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ProbabilityBoundFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding StatisticsExampleFinding.not-applicable
+EVIDENCE: none
+MESSAGE: StatisticsExampleFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding UnitDimensionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: UnitDimensionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DimensionAndUnitFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DimensionAndUnitFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EnergyAccountingFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EnergyAccountingFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ForceBalanceFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ForceBalanceFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding KinematicsFinding.not-applicable
+EVIDENCE: none
+MESSAGE: KinematicsFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ModelAssumptionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ModelAssumptionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SimpleCircuitFinding.not-applicable
+EVIDENCE: none
+MESSAGE: SimpleCircuitFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ThermalDirectionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ThermalDirectionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding WaveRelationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: WaveRelationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding BeliefActionConsistencyFinding.not-applicable
+EVIDENCE: none
+MESSAGE: BeliefActionConsistencyFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EmotionTransitionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EmotionTransitionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding GoalConflictCircuit.not-applicable
+EVIDENCE: none
+MESSAGE: GoalConflictCircuit.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding KnowledgeAccessFinding.not-applicable
+EVIDENCE: none
+MESSAGE: KnowledgeAccessFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding MindReadingWarning.not-applicable
+EVIDENCE: none
+MESSAGE: MindReadingWarning.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding MotivationContinuityFinding.not-applicable
+EVIDENCE: none
+MESSAGE: MotivationContinuityFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PerspectiveAttributionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PerspectiveAttributionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AdHominemFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AdHominemFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AffirmingConsequentFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AffirmingConsequentFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AppealToAuthorityFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AppealToAuthorityFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding BaseRateAndSelectionWarning.not-applicable
+EVIDENCE: none
+MESSAGE: BaseRateAndSelectionWarning.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CircularReasoningFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CircularReasoningFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CompositionDivisionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CompositionDivisionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ContradictionClassifier.not-applicable
+EVIDENCE: none
+MESSAGE: ContradictionClassifier.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CorrelationCausationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CorrelationCausationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DenyingAntecedentFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DenyingAntecedentFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EquivocationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EquivocationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding FalseDilemmaFinding.not-applicable
+EVIDENCE: none
+MESSAGE: FalseDilemmaFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding HastyGeneralizationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: HastyGeneralizationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SlipperySlopeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: SlipperySlopeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding StrawManFinding.not-applicable
+EVIDENCE: none
+MESSAGE: StrawManFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding BoundaryConflictFinding.not-applicable
+EVIDENCE: none
+MESSAGE: BoundaryConflictFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ConflictEscalationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ConflictEscalationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ConsentStructureFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ConsentStructureFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CooperationContributionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CooperationContributionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding FairnessReasoningFinding.not-applicable
+EVIDENCE: none
+MESSAGE: FairnessReasoningFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PrivacyDisclosureFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PrivacyDisclosureFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PromiseClosureFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PromiseClosureFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SocialAttributionWarning.not-applicable
+EVIDENCE: none
+MESSAGE: SocialAttributionWarning.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SpeechActClassificationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: SpeechActClassificationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CorrelationCausationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CorrelationCausationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EcologicalFallacyFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EcologicalFallacyFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding IndividualisticFallacyFinding.not-applicable
+EVIDENCE: none
+MESSAGE: IndividualisticFallacyFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding LevelOfAnalysisFinding.not-applicable
+EVIDENCE: none
+MESSAGE: LevelOfAnalysisFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding NetworkPathFinding.not-applicable
+EVIDENCE: none
+MESSAGE: NetworkPathFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PopulationScopeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: PopulationScopeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding RoleInstitutionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: RoleInstitutionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding BasicFactConflictFinding.not-applicable
+EVIDENCE: none
+MESSAGE: BasicFactConflictFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CategoryMistakeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CategoryMistakeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding TemporalCalendarFinding.not-applicable
+EVIDENCE: none
+MESSAGE: TemporalCalendarFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding TypicalityWarning.not-applicable
+EVIDENCE: none
+MESSAGE: TypicalityWarning.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding UnitConventionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: UnitConventionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding WorldContextEnrichment.not-applicable
+EVIDENCE: none
+MESSAGE: WorldContextEnrichment.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME

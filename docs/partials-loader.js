@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded", async () => { for (const node of document.querySelectorAll("[data-include]")) { const response = await fetch(node.dataset.include); if (!response.ok) { node.textContent = `Unable to load ${node.dataset.include}`; continue; } node.innerHTML = await response.text(); } });

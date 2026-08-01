@@ -1,0 +1,13 @@
+FRAME GenerationPlan logic-basic.LogicExplanationPlan
+CAPABILITY: LogicExplanationPlan
+DOMAIN: logic-basic
+EVIDENCE-COUNT: 0
+SECTIONS: premises -> rule -> conclusion -> assumptions -> counterexample
+END FRAME
+
+FRAME Repair reasoning-errors.ArgumentRepairPlan
+CAPABILITY: ArgumentRepairPlan
+DOMAIN: reasoning-errors
+EVIDENCE-COUNT: 0
+SECTIONS: claim -> premise -> missing support -> qualifier -> objection -> repair
+END FRAME

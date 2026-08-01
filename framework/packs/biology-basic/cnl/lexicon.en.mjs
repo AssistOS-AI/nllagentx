@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["cell","cell"],["organ","organ"],["organism","organism"],["species","species"],["ecosystem","ecosystem"],["gene","gene"],["trait","trait"],["evolution","evolution"]]));

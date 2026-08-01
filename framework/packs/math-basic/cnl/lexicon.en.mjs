@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["percent","percent"],["%","%"],["equation","equation"],["ratio","ratio"],["area","area"],["mean","mean"],["probability","probability"],["calculate","calculate"]]));

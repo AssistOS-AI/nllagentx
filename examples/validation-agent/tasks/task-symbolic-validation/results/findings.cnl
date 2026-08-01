@@ -1,0 +1,137 @@
+FRAME Finding CoreGroundingFinding.grounded
+EVIDENCE: nll.source-span:0ede93fe3687dec222be0f5697622cca06f6884e941fce795010463b9ab26929, nll.source-span:92fa1dd1ea075d9b6145755e2682754d641be0f1f9deafd358d4041ba6eec6a2
+MESSAGE: CoreGroundingFinding.grounded
+STATUS: SATISFIED
+END FRAME
+
+FRAME Finding ORDER_OK
+EVIDENCE: nll.source-span:0ede93fe3687dec222be0f5697622cca06f6884e941fce795010463b9ab26929, nll.source-span:92fa1dd1ea075d9b6145755e2682754d641be0f1f9deafd358d4041ba6eec6a2
+MESSAGE: ORDER_OK
+STATUS: SATISFIED
+END FRAME
+
+FRAME Finding ConsistencySetCircuit.not-applicable
+EVIDENCE: none
+MESSAGE: ConsistencySetCircuit.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DirectContradictionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DirectContradictionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EqualitySubstitutionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EqualitySubstitutionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding LocalEntailmentFinding.not-applicable
+EVIDENCE: none
+MESSAGE: LocalEntailmentFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ModalConfusionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: ModalConfusionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ProofStepCircuit.not-applicable
+EVIDENCE: none
+MESSAGE: ProofStepCircuit.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding QuantifierScopeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: QuantifierScopeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AdHominemFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AdHominemFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AffirmingConsequentFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AffirmingConsequentFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding AppealToAuthorityFinding.not-applicable
+EVIDENCE: none
+MESSAGE: AppealToAuthorityFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding BaseRateAndSelectionWarning.not-applicable
+EVIDENCE: none
+MESSAGE: BaseRateAndSelectionWarning.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CircularReasoningFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CircularReasoningFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CompositionDivisionFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CompositionDivisionFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding ContradictionClassifier.not-applicable
+EVIDENCE: none
+MESSAGE: ContradictionClassifier.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding CorrelationCausationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CorrelationCausationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding DenyingAntecedentFinding.not-applicable
+EVIDENCE: none
+MESSAGE: DenyingAntecedentFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EquivocationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: EquivocationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding FalseDilemmaFinding.not-applicable
+EVIDENCE: none
+MESSAGE: FalseDilemmaFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding HastyGeneralizationFinding.not-applicable
+EVIDENCE: none
+MESSAGE: HastyGeneralizationFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SlipperySlopeFinding.not-applicable
+EVIDENCE: none
+MESSAGE: SlipperySlopeFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding StrawManFinding.not-applicable
+EVIDENCE: none
+MESSAGE: StrawManFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME

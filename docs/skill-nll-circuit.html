@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — nll-circuit Skill</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>nll-circuit Skill</nav>
+      <p class="kicker">Coding workflow contract</p>
+      <h1>nll-circuit Skill</h1>
+      
+<p class="lead">Use when creating or repairing a reusable rule, analysis, generation, refinement or assurance circuit.</p>
+<h2>Executable workflow</h2><p>The workflow references <code>DS-003</code>, <code>DS-000</code>, <code>DS-007-DS-019</code>, <code>DS005</code>. Dependency order: <code>nll-runtime</code> → <code>nll-ontology</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
+<pre class="mermaid">flowchart LR
+  P1[discover] --> P2[author] --> P3[validate] --> P4[handoff]
+  Context[Resolved SDK, ontology, circuit, profile, source catalogs] --> P1</pre>
+<h2>Required tools</h2><ul><li><code>nllAgent catalog circuit</code></li><li><code>nllAgent catalog ontology</code></li><li><code>nllAgent sdk usage</code></li><li><code>nllAgent longtext query</code></li><li><code>nllAgent circuit check</code></li><li><code>nllAgent circuit plan</code></li><li><code>nllAgent circuit run</code></li><li><code>nllAgent circuit abstract</code></li><li><code>nllAgent circuit symbolic</code></li><li><code>nllAgent trace slice</code></li><li><code>nllAgent cnl roundtrip</code></li><li><code>nllAgent test task</code></li></ul>
+<h2>Canonical edit roots</h2><ul><li><code>framework/packs</code></li><li><code>agent/circuits</code></li><li><code>task/circuits</code></li></ul>
+<h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
+<p>The authoritative skill contract is <a href="specsLoader.html?spec=DS029-nll-circuit.md">its DS entry</a>, synchronized with <code>nll-skills/nll-circuit/SKILL.md</code> and <code>workflow.mjs</code>.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Tutorial: Agent, Task, and Concrete Run</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Tutorial: Agent, Task, and Concrete Run</nav>
+      <p class="kicker">Reproducible folder workflow</p>
+      <h1>Tutorial: Agent, Task, and Concrete Run</h1>
+      
+<p class="lead">This tutorial uses the committed validation agent so every command can be rerun without network access or a coding agent.</p>
+<h2>1. Inspect resolved knowledge</h2>
+<pre><code>node nllAgent.mjs agent check \
+  --agent-dir examples/validation-agent --profile minimal-core
+node nllAgent.mjs profile resolve \
+  --agent-dir examples/validation-agent \
+  --task task-symbolic-validation</code></pre>
+<p>The resolver loads <code>core-language</code>, <code>logic-basic</code>, <code>reasoning-errors</code>, plus the validation agent's facility ontology and circuit.</p>
+<h2>2. Ingest and verify sources</h2>
+<pre><code>node nllAgent.mjs source ingest \
+  --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs source verify-anchors \
+  --agent-dir examples/validation-agent --task task-symbolic-validation</code></pre>
+<p>The recorded run registered one source with SHA-256 digest <code>4dae9611…c3354</code>. Both LongTextJS spans returned <code>SOURCE_SPAN_VALID</code>.</p>
+<h2>3. Plan and run</h2>
+<pre><code>node nllAgent.mjs plan \
+  --agent-dir examples/validation-agent --task task-symbolic-validation --explain
+node nllAgent.mjs run \
+  --agent-dir examples/validation-agent --task task-symbolic-validation</code></pre>
+<p>The concrete facility circuit returned <code>ORDER_OK</code> with status <code>SATISFIED</code> and two exact source-span identities. Broad fallback circuits whose required task terms were absent returned <code>NOT_APPLICABLE</code>; no blocking diagnostic was produced.</p>
+<h2>4. Inspect results</h2>
+<pre><code>node nllAgent.mjs trace explain \
+  --trace examples/validation-agent/tasks/task-symbolic-validation/results/trace.bin
+node nllAgent.mjs cnl parse \
+  --file examples/validation-agent/tasks/task-symbolic-validation/results/findings.cnl</code></pre>
+<p>For multiple CNL frames, inspect <code>observations.cnl</code> or import <code>findings.mjs</code>; the single-frame parser intentionally accepts one canonical frame at a time.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

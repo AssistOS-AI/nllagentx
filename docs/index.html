@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — System Guide</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>System Guide</nav>
+      <p class="kicker">Executable semantic programs</p>
+      <h1>System Guide</h1>
+      
+<p class="lead">nllAgent is a dependency-free Node.js workbench for authoring source-grounded semantic programs, selecting reusable semantic circuits, and retaining evidence-bearing findings and controlled-language artifacts. Its semantic languages are executable <code>.mjs</code> modules rather than serialized data formats.</p>
+<div class="callout"><strong>Specification authority.</strong> The contiguous DS set is authoritative. Start with <a href="specsLoader.html?spec=DS000-vision.md">DS000</a> and the <a href="specsLoader.html?spec=DS001-coding-style.md">coding-style contract</a>; use the <a href="specsLoader.html?spec=matrix.md">specification matrix</a> for the complete set.</div>
+<h2>How the system fits together</h2>
+<pre class="mermaid">flowchart LR
+  Source[Source files] --> SourceMap[Source registry and units]
+  Intent[IntentJS and profile] --> Resolver[Runtime resolver]
+  Packs[Default and local packs] --> Resolver
+  SourceMap --> LongText[LongTextJS]
+  LongText --> Store[SemanticStore]
+  Resolver --> Planner[Capability planner]
+  Store --> Planner
+  Planner --> Runner[Circuit runner]
+  Runner --> Results[Findings, CNL, trace, assurance]
+  Skills[Coding skills] --> Context[Run-local context]
+  Context --> Codex[Explicit coding-agent adapter]
+  Codex --> Intent
+  Codex --> LongText</pre>
+<h2>Repository structure and ownership</h2>
+<p>The SDK defines semantic values and fluent builders. The runtime materializes one logical store, closes circuit dependencies, schedules stages, and executes concrete or declared auxiliary methods. Framework packs provide default ontology and circuit modules. Agent folders own reusable extensions; task folders own source interpretation, intent, task-local code, tests, coding runs, and retained results.</p>
+<div class="tree" role="group" aria-label="Repository layout">
+  <div><strong>framework/sdk/</strong><span>OntologyJS, LongTextJS, IntentJS, CircuitJS, CNL, agents, evaluation</span></div>
+  <div><strong>framework/runtime/</strong><span>store, planner, scheduler, algorithms, cache, trace</span></div>
+  <div><strong>framework/packs/</strong><span>core language and thirteen default knowledge packs</span></div>
+  <div><strong>framework/tools/ + framework/cli/</strong><span>workspace, context, execution, tests, evaluation, CLI</span></div>
+  <div><strong>nll-skills/</strong><span>ten executable coding workflows</span></div>
+  <div><strong>docs/specs/</strong><span>official gap-free contract set</span></div>
+</div>
+<h2>Runtime defaults</h2>
+<p>Commands use <code>node nllAgent.mjs</code>. Semantic configuration always names an agent through <code>--agent</code> or <code>--agent-dir</code>; task operations also use <code>--task</code> or <code>--task-dir</code>. The mandatory <code>core-language</code> pack supplies shared vocabulary. Profiles and explicit CLI controls select additional packs. When intent remains open, the planner executes every compatible circuit in the resolved pack set and records the selection.</p>
+<h2>Tests and documentation maintenance</h2>
+<p>Tests use <code>node:test</code>, executable fixtures, semantic assertions, deterministic generators, and mutation helpers. They never invoke a coding agent. Evaluation is separate and may invoke Codex only when requested. Code changes that alter a contract must update both the relevant HTML page and DS file. The <a href="testing-evaluation.html">testing and evaluation chapter</a> gives the runnable commands.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

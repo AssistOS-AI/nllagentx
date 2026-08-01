@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["culture","culture"],["ritual","ritual"],["custom","custom"],["kinship","kinship"],["community","community"],["tradition","tradition"],["identity","identity"],["ethnographic","ethnographic"]]));

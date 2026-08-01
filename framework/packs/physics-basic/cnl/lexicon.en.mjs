@@ -1,0 +1,1 @@
+export const lexicon = Object.freeze(new Map([["force","force"],["mass","mass"],["speed","speed"],["energy","energy"],["temperature","temperature"],["wave","wave"],["voltage","voltage"],["resistance","resistance"]]));
