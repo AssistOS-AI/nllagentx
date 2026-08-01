@@ -29,6 +29,9 @@ This skill is installed from `project/nll-skills/nll-test/` into a run-local `sk
 ## Required design specifications
 
 - `DS-005_Testing_and_Developer_Verification.md`
+- `DS042-adaptive-task-local-authoring-and-verification.md`
+- `DS043-primary-markdown-cnl-response.md`
+- `DS044-response-circuit-composition-and-intent-presentation.md`
 
 Read the primary DS first, then only the domain DS files named by the run context. Generated catalogs summarize the current implementation but do not override the DS contract.
 
@@ -56,7 +59,10 @@ Use generated catalogs and source-slice tools before loading large implementatio
 4. Add deterministic mutations and finite generators.
 5. Use differential tests against a slow reference algorithm where applicable.
 6. Keep the test independent of coding agents and network services.
-7. Run fast and relevant standard suites.
+7. Assert the public `response.md`: expected stable code/status/group tags, meaningful rule text, exact input quotations, group counts, omission of internal/non-applicable results, absence of raw executable/assurance projections and byte-stable replay.
+8. Run fast and relevant standard suites.
+
+For adaptive review, treat deterministic acceptance as an invariant: ontology diagnostics, anchor validity, provider closure, task tests, material concrete output, qualitative Markdown CNL, response-circuit selection, abstract convergence, complete symbolic paths and response replay may be repaired but never disabled or weakened. Add a regression test for each observed failure before claiming that a cycle is accepted.
 
 ## Implementation rules
 
@@ -70,7 +76,7 @@ Use generated catalogs and source-slice tools before loading large implementatio
 
 ## Completion criterion
 
-Tests fail for the intended semantic defects, pass deterministically, use no JSON snapshots, and can run without Codex.
+Tests fail for the intended semantic or response defect, pass deterministically, use no JSON snapshots, validate human-readable Markdown directly, and can run without Codex.
 
 At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed canonical files and leave any genuinely blocked issue as a typed diagnostic or refinement demand. Do not claim success merely because code imports.
 
@@ -78,9 +84,9 @@ At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed
 
 The adjacent `workflow.mjs` is the executable skill contract. The CLI loads it through the SDK, resolves its skill dependencies transitively, and generates only the context artifacts declared there. The workflow never searches hidden skill directories.
 
-At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies/circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
+At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies, semantic circuits and response circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, `RESPONSE_CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
 
-The task folder owns source, IntentJS, LongTextJS, task-local ontology/circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
+The task folder owns source, IntentJS, LongTextJS, task-local ontology/semantic-circuit/response-circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
 
 
 ## Decisions & Questions

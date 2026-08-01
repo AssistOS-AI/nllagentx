@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — nll-runtime Skill</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,6 +17,7 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>nll-runtime Skill</nav>
       <p class="kicker">Coding workflow contract</p>
       <h1>nll-runtime Skill</h1>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
       
 <p class="lead">Use when implementing SemanticStore, transactions, indexes, query planning, scheduler, capability planning, traces, caches or analysis-method engines.</p>
 <h2>Executable workflow</h2><p>The workflow references <code>DS-003</code>. Dependency order: <code>nll-sdk</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>

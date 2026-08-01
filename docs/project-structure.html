@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Project Folders and Ownership</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from './assets/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Project Folders and Ownership</nav>
+      <p class="kicker">Where code, knowledge, tasks and evidence live</p>
+      <h1>Project Folders and Ownership</h1>
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
+      <p class="lead">Folder placement is part of the semantic contract. Framework code is reusable infrastructure, packs are default knowledge, an agent owns reusable local expertise, and a task owns one instruction, its sources, grounded interpretation, local code and results.</p>
+<div class="tree">
+<div><strong>design-specifications/</strong><span>Original DS-000 through DS-019, preserved without shortening.</span></div>
+<div><strong>docs/specs/</strong><span>Official contiguous DS000+ set; generated from the originals, skills and additive contracts.</span></div>
+<div><strong>framework/sdk/</strong><span>Fluent OntologyJS, IntentJS, LongTextJS, CircuitJS, CNL, agent and evaluation constructors.</span></div>
+<div><strong>framework/runtime/</strong><span>SemanticStore, queries, planner, scheduler, concrete and assurance algorithms, traces and cache.</span></div>
+<div><strong>framework/packs/</strong><span>Core language plus optional reusable domain ontology, circuits, signals, CNL and pack tests.</span></div>
+<div><strong>framework/tools/</strong><span>Folder resolution, source decoding, context generation, coding-agent adapters and execution helpers.</span></div>
+<div><strong>framework/cli/</strong><span>Thin command routing over reusable SDK, runtime and tool modules.</span></div>
+<div><strong>nll-skills/</strong><span>Ten coding-agent workflows; each has human instructions and an executable dependency/tool contract.</span></div>
+<div><strong>profiles/</strong><span>Executable default pack and planner policy; an agent can provide a same-name local override.</span></div>
+<div><strong>agents/&lt;name&gt;/</strong><span>Reusable local ontology, circuits, CNL, profiles, tests, coding runs and tasks.</span></div>
+<div><strong>agents/&lt;name&gt;/tasks/&lt;id&gt;/</strong><span>Instruction, decoded sources, IntentJS, LongTextJS, local extensions, tests, runs and results.</span></div>
+<div><strong>examples/</strong><span>Committed executable agents, tasks and evaluation declarations.</span></div>
+<div><strong>evaluations/</strong><span>Retained real evaluation agents, random-ID tasks, Codex logs, semantic programs and reports.</span></div>
+<div><strong>tools/</strong><span>Deterministic generators and project-wide verification utilities.</span></div>
+<div><strong>docs/</strong><span>Generated HTML documentation, relative navigation, loader and static assets.</span></div>
+</div>
+<h2>Resolution order</h2><p>The runtime loads mandatory framework defaults, the selected profile, agent-local modules, then task-local modules. Later layers may extend or explicitly override where the contract permits, but source assertions never become stable pack facts implicitly.</p>
+<h2>Generated task anatomy</h2><pre><code>tasks/task-ID/
+  task.mjs
+  source/                 original files, source-map.mjs, extractors/
+  intent/intent.mjs       requested concerns, outputs and selection
+  longtext/               root and source-unit semantic programs
+  ontologies/ circuits/   only genuinely task-local extensions
+  tests/                  task semantic and anchor tests
+  runs/run-ID/            skills, context, instructions and Codex logs
+  results/                plan, findings, CNL, trace and assurance
+                          adaptive cycle records when DS042 is enabled</code></pre>
+<p>The CLI accepts either names or explicit folders: <code>--agent</code>/<code>--agent-dir</code> and <code>--task</code>/<code>--task-dir</code>. Generated imports are relative to the target module and selected project root.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

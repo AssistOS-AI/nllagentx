@@ -5,7 +5,10 @@ export default codingSkill("nll-longtext")
     "DS-002",
     "DS-004",
     "DS-007-DS-019",
-    "DS037"
+    "DS037",
+    "DS041",
+    "DS042",
+    "DS043"
   )
   .context(
     contextArtifact("SOURCE_OUTLINE.md"),

@@ -5,10 +5,15 @@ export default codingSkill("nll-circuit")
     "DS-003",
     "DS-000",
     "DS-007-DS-019",
-    "DS005"
+    "DS005",
+    "DS041",
+    "DS042",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("CIRCUIT_CATALOG.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md"),
     contextArtifact("ONTOLOGY_CATALOG.md"),
     contextArtifact("SDK_CATALOG.md"),
     contextArtifact("DIAGNOSTICS.md")
@@ -34,7 +39,9 @@ export default codingSkill("nll-circuit")
   .edits(
     editRoot("framework/packs"),
     editRoot("agent/circuits"),
-    editRoot("task/circuits")
+    editRoot("agent/cnl"),
+    editRoot("task/circuits"),
+    editRoot("task/cnl")
   )
   .phase("discover", "author", "validate", "handoff")
   .seal();

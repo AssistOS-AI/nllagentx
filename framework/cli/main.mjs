@@ -1,6 +1,6 @@
 import { readFile } from "node:fs/promises";
 import { deserialize } from "node:v8";
-import { basename, isAbsolute, resolve } from "node:path";
+import { basename, isAbsolute, relative, resolve } from "node:path";
 import { parseArguments, requiredOption, numberOption, optionList } from "./args.mjs";
 import { helpText } from "./help.mjs";
 import { findProjectRoot, resolveAgentRoot, resolveTaskRoot } from "../tools/project-resolver.mjs";
@@ -18,6 +18,7 @@ import { renderCanonicalCNL, parseCanonicalCNL, frameProjection } from "../sdk/c
 import { runEvaluationSuite } from "../evaluation/runner.mjs";
 import { explainPlan } from "../runtime/planner/explain.mjs";
 import { checkSdkSurfaces, sdkUsage } from "../sdk/public-api.mjs";
+import { runAdaptiveAuthoring } from "../tools/adaptive-authoring.mjs";
 
 function projection(value, seen = new Set()) {
   if (value === null || value === undefined || ["string", "number", "boolean"].includes(typeof value)) return value;
@@ -43,15 +44,57 @@ async function roots(projectRoot, options, { task = false, agent = true, allowMi
 }
 
 async function codingCommand(projectRoot, phase, options) {
-  const taskRequired = ["intent", "longtext"].includes(phase); const selected = await roots(projectRoot, options, { task: taskRequired || Boolean(options.task || options["task-dir"]) });
+  const taskRequired = ["intent", "longtext"].includes(phase);
+  const selected = await roots(projectRoot, options, {
+    task: taskRequired || Boolean(options.task || options["task-dir"])
+  });
   const lock = await acquireWriteLock(selected.taskRoot ?? selected.agentRoot);
   try {
     const context = phase === "review"
-      ? await buildReviewBundle({ projectRoot, ...selected, diagnosticsPath: options.diagnostics ? resolve(options.diagnostics) : null })
-      : await buildContext({ projectRoot, ...selected, phase, profileId: options.profile, goal: typeof options.goal === "string" ? options.goal : null, selection: selectionOptions(options) });
-    if (options["prepare-only"]) return `${await describeContext(context.runRoot)}Prepared only; coding agent was not invoked.\n`;
-    const result = await new CodexAdapter({ executable: options["coding-agent"] ?? "codex" }).run({ projectRoot, workingDirectory: selected.taskRoot ?? selected.agentRoot, runRoot: context.runRoot, model: options.model ?? null, resume: options.resume ?? null });
-    if (result.exitCode !== 0) throw Object.assign(new Error(`CODING_AGENT_FAILED: exit ${result.exitCode}; see ${result.stderrPath}`), { exitCode: 4 });
+      ? await buildReviewBundle({
+        projectRoot,
+        ...selected,
+        diagnosticsPath: options.diagnostics ? resolve(options.diagnostics) : null,
+        goal: typeof options.goal === "string" ? options.goal : null
+      })
+      : await buildContext({
+        projectRoot,
+        ...selected,
+        phase,
+        profileId: options.profile,
+        goal: typeof options.goal === "string" ? options.goal : null,
+        selection: selectionOptions(options),
+        allowRuntimeFailure: Boolean(options.tolerateRuntimeFailure)
+      });
+    if (options["prepare-only"]) {
+      return `${await describeContext(context.runRoot)}Prepared only; coding agent was not invoked.\n`;
+    }
+    const adapter = new CodexAdapter({ executable: options["coding-agent"] ?? "codex" });
+    const result = await adapter.run({
+      projectRoot,
+      workingDirectory: selected.taskRoot ?? selected.agentRoot,
+      runRoot: context.runRoot,
+      model: options.model ?? null,
+      resume: options.resume ?? null
+    });
+    if (result.exitCode !== 0) {
+      throw Object.assign(
+        new Error(`CODING_AGENT_FAILED: exit ${result.exitCode}; see ${result.stderrPath}`),
+        { exitCode: 4 }
+      );
+    }
+    const record = Object.freeze({
+      phase,
+      adapter: result.adapterId,
+      exitCode: result.exitCode,
+      runPath: relative(projectRoot, context.runRoot),
+      stdoutPath: relative(projectRoot, result.stdoutPath),
+      stderrPath: relative(projectRoot, result.stderrPath),
+      finalResponsePath: relative(projectRoot, result.summaryPath),
+      startedAt: result.startedAt,
+      finishedAt: result.finishedAt
+    });
+    if (options.returnRecord) return record;
     return `Coding run completed: ${context.runRoot}\nFinal response: ${result.summaryPath}\n`;
   } finally { await lock.release(); }
 }
@@ -77,16 +120,84 @@ async function taskCommand(projectRoot, action, options) {
 }
 
 async function executionCommand(projectRoot, command, options) {
+  if (options["author-adaptive"] && options["author-missing"]) {
+    throw new Error("USAGE_AUTHORING_MODE_CONFLICT: choose --author-adaptive or --author-missing, not both");
+  }
   const selected = await roots(projectRoot, options, { task: true });
-  const checks = optionList(options, "check"); if (command === "generate") checks.push(requiredOption(options, "output"));
-  const common = { projectRoot, ...selected, profileId: options.profile, allCompatible: Boolean(options["all-compatible"]), domains: optionList(options, "domain"), excludeDomains: optionList(options, "exclude-domain"), checks, excludeChecks: optionList(options, "exclude-check"), only: Boolean(options.only), intentText: typeof options.intent === "string" ? options.intent : null, assurance: options.assurance ?? null };
+  const checks = optionList(options, "check");
+  if (command === "generate") checks.push(requiredOption(options, "output"));
+  const common = {
+    projectRoot,
+    ...selected,
+    profileId: options.profile,
+    allCompatible: Boolean(options["all-compatible"]),
+    domains: optionList(options, "domain"),
+    excludeDomains: optionList(options, "exclude-domain"),
+    checks,
+    excludeChecks: optionList(options, "exclude-check"),
+    only: Boolean(options.only),
+    intentText: typeof options.intent === "string" ? options.intent : null,
+    assurance: options.assurance ?? null
+  };
+  let adaptive = null;
+  if (command === "analyze" && options["author-adaptive"]) {
+    const maxReviewCycles = numberOption(options, "authoring-cycles", 3);
+    if (!Number.isInteger(maxReviewCycles) || maxReviewCycles < 1 || maxReviewCycles > 10) {
+      throw new Error("USAGE_AUTHORING_CYCLES_RANGE: --authoring-cycles must be an integer from 1 through 10");
+    }
+    const assurance = options.assurance ?? "all";
+    if (!["none", "abstract", "symbolic", "all"].includes(assurance)) {
+      throw new Error("USAGE_ASSURANCE_VALUE: use none, abstract, symbolic, or all");
+    }
+    adaptive = await runAdaptiveAuthoring({
+      projectRoot,
+      ...selected,
+      executionOptions: { ...common, assurance },
+      maxReviewCycles,
+      allowUnknown: Boolean(options["adaptive-allow-unknown"]),
+      assurance,
+      authorPhase: (phase, goal, diagnosticsPath = null) => codingCommand(projectRoot, phase, {
+        ...options,
+        returnRecord: true,
+        tolerateRuntimeFailure: true,
+        goal,
+        ...(diagnosticsPath ? { diagnostics: diagnosticsPath } : {})
+      })
+    });
+  }
   if (command === "analyze" && options["author-missing"]) {
     let runtime = await resolveRuntime(common);
     if (!runtime.intent) { await codingCommand(projectRoot, "intent", options); runtime = await resolveRuntime(common); }
     if (runtime.longTexts.length === 0) { await codingCommand(projectRoot, "longtext", options); runtime = await resolveRuntime(common); }
     if (checks.some((check) => runtime.registry.providersFor(check).length === 0)) await codingCommand(projectRoot, "circuit", options);
   }
-  if (command === "run" || command === "analyze" || command === "generate") { const result = await executeTask(common); return formatted({ task: result.runtime.task.id, profile: result.runtime.profile.id, circuits: result.executions.map((entry) => entry.circuit.id), findings: result.findings.map((entry) => ({ code: entry.code(), status: entry.status(), evidence: [...entry.evidence()].map(id) })), frames: result.frames.map(frameProjection), assurance: result.assurance.map((entry) => ({ circuit: entry.circuit, method: entry.method })), diagnostics: result.diagnostics, resultsRoot: result.resultsRoot }); }
+  if (command === "run" || command === "analyze" || command === "generate") {
+    const result = adaptive?.execution ?? await executeTask(common);
+    const format = options.format ?? "response";
+    if (!new Set(["response", "json"]).has(format)) {
+      throw new Error("USAGE_OUTPUT_FORMAT: --format must be response or json");
+    }
+    if (format === "response") return result.response;
+    return formatted({
+      task: result.runtime.task.id,
+      profile: result.runtime.profile.id,
+      circuits: result.executions.map((entry) => entry.circuit.id),
+      findings: result.findings.map((entry) => ({
+        code: entry.code(),
+        status: entry.status(),
+        evidence: [...entry.evidence()].map(id)
+      })),
+      frames: result.frames.map(frameProjection),
+      assurance: result.assurance.map((entry) => ({
+        circuit: entry.circuit,
+        method: entry.method
+      })),
+      diagnostics: result.diagnostics,
+      resultsRoot: result.resultsRoot,
+      response: resolve(result.resultsRoot, "response.md"),
+      ...(adaptive ? { adaptiveAuthoring: adaptive.record } : {})
+    });
+  }
   if (command === "plan") { const result = await prepareExecution(common); return options.explain || options["explain-plan"] ? explainPlan({ intent: result.runtime.intent, profile: { profile: result.runtime.profile.id, packs: result.runtime.packs, reasons: new Map() }, plan: result.plan }) : formatted(result.plan); }
   if (command === "query") { const expression = requiredOption(options, "expression"); const path = isAbsolute(expression) ? expression : resolve(selected.taskRoot, expression); return formatted(await executeQueryModule(common, path)); }
   throw new Error(`USAGE_UNKNOWN_EXECUTION_COMMAND: ${command}`);

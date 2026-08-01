@@ -46,6 +46,7 @@ export const inferFromSource = inferDomainsFromSource;
 export const concern = (value) => new IntentFragment("concern", value);
 export const findings = () => new IntentFragment("output", "findings");
 export const cnlObservations = () => new IntentFragment("output", "cnl-observations");
+export const markdownCnl = () => new IntentFragment("output", "markdown-cnl");
 export const compositionPlan = () => new IntentFragment("output", "composition-plan");
 export const structuralTrace = () => new IntentFragment("output", "structural-trace");
 export const repairFrames = () => new IntentFragment("output", "repair-frames");
@@ -69,6 +70,7 @@ export class IntentModel {
     this.evidence = Object.freeze([...builder.evidenceValues]);
     this.assurances = Object.freeze([...builder.assuranceValues]);
     this.outputs = Object.freeze([...builder.outputValues]);
+    this.presentation = Object.freeze([...builder.presentationValues]);
     this.exclusions = Object.freeze([...builder.exclusionValues]);
     this.scope = builder.scopeValue;
     this.resourcePolicy = builder.resourcePolicyValue;
@@ -82,7 +84,8 @@ export class IntentModel {
 export class IntentBuilder {
   constructor(id) {
     this.id = id; this.modes = []; this.targets = []; this.domainValues = []; this.concernValues = [];
-    this.evidenceValues = []; this.assuranceValues = []; this.outputValues = []; this.exclusionValues = [];
+    this.evidenceValues = []; this.assuranceValues = []; this.outputValues = []; this.presentationValues = [];
+    this.exclusionValues = [];
     this.scopeValue = null; this.resourcePolicyValue = null; this.fallbackValue = null; this.provenanceValues = [];
   }
   mode(...values) { this.modes.push(...values); return this; }
@@ -92,6 +95,7 @@ export class IntentBuilder {
   evidence(...values) { this.evidenceValues.push(...values); return this; }
   assurance(...values) { this.assuranceValues.push(...values); return this; }
   outputs(...values) { this.outputValues.push(...values); return this; }
+  present(...values) { this.presentationValues.push(...values); return this; }
   exclude(...values) { this.exclusionValues.push(...values); return this; }
   scope(value) { this.scopeValue = value; return this; }
   resources(value) { this.resourcePolicyValue = value; return this; }

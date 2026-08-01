@@ -2,12 +2,16 @@ import { codingSkill, contextArtifact, cliTool, editRoot } from "../../framework
 
 export default codingSkill("nll-test")
   .specs(
-    "DS-005"
+    "DS-005",
+    "DS042",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("PROJECT_MAP.md"),
     contextArtifact("DIAGNOSTICS.md"),
-    contextArtifact("SDK_CATALOG.md")
+    contextArtifact("SDK_CATALOG.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md")
   )
   .tools(
     cliTool("nllAgent test framework"),

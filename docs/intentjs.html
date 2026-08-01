@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — IntentJS in Detail</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from './assets/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>IntentJS in Detail</nav>
+      <p class="kicker">Task selection, outputs and evidence policy</p>
+      <h1>IntentJS in Detail</h1>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
+      <p class="lead">IntentJS states what one task asks the semantic runtime to do. It combines explicit instruction precedence, profile and pack constraints, concerns, target text, outputs, evidence policy, assurance, exclusions, resources and the fallback used when selection remains unclear.</p>
+<h2>Resolution precedence</h2><ol><li>Explicit CLI and system restrictions.</li><li>Task IntentJS declarations.</li><li>Agent default and selected profile.</li><li>Cheap lexical and already-materialized semantic signals.</li><li>Declared fallback, normally all compatible within loaded packs.</li></ol>
+<h2>Program shape</h2><pre><code>export default intent("review-contradictory-rules")
+  .mode(analyze())
+  .concerns(concern("RuleContradictionReview"))
+  .outputs(findings(), structuralTrace())
+  .evidence(sourceGrounded(), interpretationRobust())
+  .assurance(concreteExecution(), symbolicDecisionCoverage())
+  .whenUnclear(allCompatible())
+  .seal();</code></pre>
+<p>Signal inference can advise the coding agent and planner, but it does not silently author the canonical module. The complete generated intent for each concrete source is shown in the four tutorial pages.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

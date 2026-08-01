@@ -1,0 +1,13 @@
+COLD-CHAIN TRANSFER POLICY
+
+Rule CT-1. A refrigerated research sample may be released after a custody transfer only when all of the following are supported for that transfer: the sealed-container identifier is recorded; a temperature reading before handoff and a temperature reading after receipt are both between 2.0 °C and 8.0 °C; the readings come from a thermometer whose calibration is valid at the time of transfer; and both the releasing party and the receiving party acknowledge the transfer.
+
+Rule CT-2. Recording an identifier or reading proves only that the record exists. It does not prove that a thermometer calibration was valid or that an unrecorded acknowledgement occurred.
+
+Rule CT-3. If a temperature is above 8.0 °C for more than five minutes, quarantine is mandatory unless a named stability study explicitly supports the observed temperature and duration. An assertion that the sample is safe is not itself a stability study.
+
+TRANSFER RECORD AX-17
+
+Sample AX-17 was handed from North Courier to Vale Laboratory on 14 July 2026 at 10:15. Seal S-884 was recorded intact. Thermometer TH-9 recorded 6.2 °C before handoff and 6.7 °C after receipt. The calibration certificate for TH-9 expired on 13 July 2026. North Courier acknowledged release. The record contains no acknowledgement by Vale Laboratory. No temperature above 8.0 °C is reported and no stability study is cited.
+
+The transfer memo concludes: “Cold-chain custody was satisfied, so AX-17 may be released.”

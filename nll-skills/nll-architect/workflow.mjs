@@ -4,13 +4,18 @@ export default codingSkill("nll-architect")
   .specs(
     "DS-000",
     "DS-004",
-    "DS035"
+    "DS035",
+    "DS041",
+    "DS042",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("PROJECT_MAP.md"),
     contextArtifact("SDK_CATALOG.md"),
     contextArtifact("ONTOLOGY_CATALOG.md"),
     contextArtifact("CIRCUIT_CATALOG.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md"),
     contextArtifact("PROFILE_RESOLUTION.md"),
     contextArtifact("SOURCE_OUTLINE.md")
   )

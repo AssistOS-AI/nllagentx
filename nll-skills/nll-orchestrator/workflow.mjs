@@ -5,10 +5,15 @@ export default codingSkill("nll-orchestrator")
     "DS-001",
     "DS035",
     "DS036",
-    "DS037"
+    "DS037",
+    "DS041",
+    "DS042",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("PROJECT_MAP.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md"),
     contextArtifact("DIAGNOSTICS.md")
   )
   .tools(

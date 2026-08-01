@@ -20,6 +20,10 @@ The CLI may accept `--model <id>` and pass it through without embedding a hard-c
 
 Coding-agent success means process completion, not semantic acceptance. The workflow must run deterministic import, ontology, anchor, circuit, and test checks separately. Ordinary `run`, `plan`, `query`, source, and inspection commands must never invoke Codex. Evaluation invokes it only with `--invoke-agent` because authoring performance is then part of the measured system.
 
+Coding-agent phases are semantic authoring phases, not labels around fixture replay. Agent phases such as `architect`, `ontology`, and `circuit` operate on the agent brief and reusable agent folder. Task phases such as `intent`, `longtext`, optional `ontology` or `circuit`, `test`, and `review` operate on a concrete task instruction and its sources. Every phase must snapshot canonical artifacts before and after the process, retain created and modified paths, and run the deterministic checks appropriate to that phase.
+
+The adapter may report process success only from the actual subprocess exit. Evaluation acceptance additionally requires importable semantic code, valid ontology references, valid source anchors, declared circuit contracts, passing tests, and the expected execution behavior. Reports must link to the real run directory and generated files; placeholder phase pages are insufficient authoring evidence.
+
 ## Decisions & Questions
 
 ### Question #1: Why is there no fixed default model in repository code?

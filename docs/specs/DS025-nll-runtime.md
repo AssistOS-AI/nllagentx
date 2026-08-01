@@ -29,6 +29,8 @@ This skill is installed from `project/nll-skills/nll-runtime/` into a run-local 
 ## Required design specifications
 
 - `DS-003_SemanticStore_Circuit_Runtime_and_Analysis_Algorithms.md`
+- `DS043-primary-markdown-cnl-response.md`
+- `DS044-response-circuit-composition-and-intent-presentation.md`
 
 Read the primary DS first, then only the domain DS files named by the run context. Generated catalogs summarize the current implementation but do not override the DS contract.
 
@@ -60,7 +62,12 @@ Use generated catalogs and source-slice tools before loading large implementatio
 4. Provide diagnostics and trace reasons for every blocked or approximate result.
 5. Write a slow reference algorithm for differential testing when practical.
 6. Test invalidation, replay and interaction with existing planners.
-7. Document any guarantee boundary in the descriptor and catalog.
+7. When working after semantic execution, keep response-circuit stages pure over immutable execution state, apply deterministic identity/priority ordering and preserve the semantic/result boundary.
+8. Document any guarantee boundary in the descriptor and catalog.
+
+## Response composition invariant
+
+The runtime first completes semantic planning and CircuitJS execution. It then composes default, agent-local and task-local response circuits. These stages may select and organize results but cannot create truth-bearing store claims. Model-free replay compares selected semantic circuits, findings, frames, assurance selection and the SHA-256 digest of the rendered Markdown CNL response.
 
 ## Implementation rules
 
@@ -82,9 +89,9 @@ At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed
 
 The adjacent `workflow.mjs` is the executable skill contract. The CLI loads it through the SDK, resolves its skill dependencies transitively, and generates only the context artifacts declared there. The workflow never searches hidden skill directories.
 
-At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies/circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
+At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies, semantic circuits and response circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, `RESPONSE_CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
 
-The task folder owns source, IntentJS, LongTextJS, task-local ontology/circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
+The task folder owns source, IntentJS, LongTextJS, task-local ontology/semantic-circuit/response-circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
 
 
 ## Decisions & Questions

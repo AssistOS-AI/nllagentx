@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — Runtime and Analysis Methods</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,6 +17,7 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Runtime and Analysis Methods</nav>
       <p class="kicker">Deterministic semantic execution</p>
       <h1>Runtime and Analysis Methods</h1>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
       
 <p class="lead">The runtime combines an indexed transactional store with small analysis kernels. Methods are selected by circuit contracts and remain inspectable; unsupported fragments retain explicit diagnostics or symbolic forms.</p>
 <h2>Store, query, and schedule</h2><p><code>SemanticStore</code> indexes concepts, roles, reverse roles, claims, groundings, provenance, relations, coverage, capabilities, and subtype links. A transaction validates all staged claims before a commit changes any index. Query execution uses typed patterns and returns bindings plus evidence, interpretation, and scope. The scheduler discovers semantic dependencies, orders ready nodes deterministically, and keys cached outputs by content identity.</p>

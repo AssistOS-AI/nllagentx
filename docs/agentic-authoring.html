@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Agentic Natural-Language Authoring</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from './assets/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Agentic Natural-Language Authoring</nav>
+      <p class="kicker">Natural language to inspectable programs</p>
+      <h1>Agentic Natural-Language Authoring</h1>
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
+      <p class="lead">nllAgent behaves like a prompt-driven semantic system at its operator boundary, but it separates model-dependent authoring from deterministic reasoning. Codex reads a natural-language agent brief or task, uses installed nll skills and live catalogs, and writes canonical JavaScript DSL programs. The runtime subsequently executes and replays those programs without a model call.</p>
+<pre class="mermaid">flowchart LR
+  Brief[Agent brief] --> AgentCodex[Codex: architect, ontology, circuit]
+  AgentCodex --> AgentPrograms[Agent profile, OntologyJS, CircuitJS, tests]
+  Prompt[Task instruction plus source] --> TaskCodex[Codex: IntentJS, LongTextJS]
+  AgentPrograms --> Context[Resolved catalogs and skills]
+  Context --> TaskCodex
+  TaskCodex --> TaskPrograms[Task intent, grounding, tests]
+  AgentPrograms --> Runtime[Deterministic planner and store]
+  TaskPrograms --> Runtime
+  Runtime --> Output[Findings, CNL, traces, assurance]
+  Output --> Replay[Model-free replay]</pre>
+<h2>What the framework does</h2><p>It creates folders, decodes source bytes into stable units and spans, resolves project and agent dependencies, builds compact catalogs, installs the selected skill chain, starts the coding-agent adapter, retains logs and before/after artifact paths, and runs deterministic acceptance checks.</p>
+<h2>What the framework does not do</h2><p>It does not infer ontology concepts, source claims, IntentJS policy, circuit logic, findings, or generated answers during ingestion. Those are coding-agent authoring decisions. The durable boundary is executable <code>.mjs</code> code, never a JSON approximation or an uninspectable completion.</p>
+<h2>Real end-to-end command</h2><pre><code>node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent</code></pre>
+<p>The suite first builds an isolated reusable agent from a natural-language brief, then creates four random-ID tasks and asks Codex to author each task's intent and grounding. It accepts results only after semantic checks, concrete execution, expected outcomes and ordinary replay. See <a href="tutorials.html">the four concrete tutorials</a> and <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">DS041</a>.</p>
+<h2>When inherited semantics are insufficient</h2><p>The optional <a href="adaptive-authoring.html">adaptive analysis loop</a> additionally audits task ontology and circuits, creates only missing task-local code, and iterates mandatory Codex review over concrete, abstract, and symbolic evidence. The complete executed case is in <a href="tutorial-adaptive-cold-chain.html">the adaptive cold-chain tutorial</a>.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

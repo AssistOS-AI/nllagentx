@@ -1,0 +1,27 @@
+# Execution Plan
+
+Plan status: complete.
+
+Intent: `task-0g-oRJ4yTQO7FWVQ` (`nll.intent-plan-input:7b2775aac041c43e9ba490676bfd70609073fc9a16b4e3424eb5265d9fe9290b`).
+
+Profile: `minimal-core`.
+
+## Loaded packs
+
+- `core-language`: resolved-profile
+
+## Selected circuits
+
+- `circuit:core-language.CoreGroundingFinding@1.0.0`
+- `circuit:nl-rule-review.ExceptionJustificationReview@1.0.0`
+- `circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0`
+- `circuit:nl-rule-review.RuleContradictionReview@1.0.0`
+- `circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0`
+
+## Rejected candidates
+
+- None.
+
+## Blocked capabilities
+
+- None.

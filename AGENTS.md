@@ -13,7 +13,7 @@ The DS specifications under `docs/specs/` are the source of truth. The original 
 3. Open [the specification matrix](docs/specsLoader.html?spec=matrix.md) and read every DS affected by the task.
 4. Read the relevant skill's `SKILL.md` and executable `workflow.mjs` before using or changing that skill.
 5. Inspect the actual implementation, examples, and tests before modifying documentation or asserting behavior.
-6. For specification reviews, apply `review-specs` and update `Core Content` before recording rationale under numbered `Decisions & Questions` entries.
+6. For specification reviews, follow DS033: update `Core Content` before recording rationale under numbered `Decisions & Questions` entries.
 
 ## Current Skill Catalog
 
@@ -27,27 +27,29 @@ The DS specifications under `docs/specs/` are the source of truth. The original 
 - `nll-circuit`: reusable analysis, generation, and assurance circuits.
 - `nll-test`: deterministic structural, differential, mutation, and integration tests.
 - `nll-evaluate`: isolated evaluation agents, tasks, metrics, and reports.
-- `article-build`: self-contained incremental research-article generation, bibliography support validation, SVG checks, and final HTML review; it is not an nllAgent runtime dependency.
-- `gamp-specs`: repository documentation structure, HTML pages, AGENTS guidance, and DS maintenance.
-- `review-specs`: implementation-aware review of affected DS contracts and numbered decisions.
-
-`AGENTS.md`, the HTML skill catalog, and the DS matrix must be updated whenever a skill folder is added, removed, or renamed. The `gamp-specs` skill itself must be updated when new skill families, coding-style rules, or project bootstrap rules are introduced.
+`AGENTS.md`, the HTML skill catalog, and the DS matrix must be updated whenever a project-owned skill folder is added, removed, or renamed. Environment-managed maintenance skills are outside the project catalog and must not be edited or used as generator inputs.
 
 ## Repository Rules
 
-All persistent documentation, specifications, and code comments must be written in English. Preserve user-authored content; additions may clarify or strengthen it but must not silently shorten, rewrite, or delete it. Keep DS numbering gap-free. Every ordinary DS must contain `Introduction`, `Core Content`, `Decisions & Questions`, and `Conclusion`; decisions and unresolved alternatives use consecutively numbered `### Question #N` subchapters with `Response:` or `Options:`.
+All persistent documentation, specifications, and code comments must be written in English. Preserve user-authored content; additions may clarify or strengthen it but must not silently shorten, rewrite, or delete it. Keep every internal documentation URL document-relative; root-relative paths, machine-local absolute URLs, and fixed hosting prefixes are prohibited. Keep DS numbering gap-free. Every ordinary DS must contain `Introduction`, `Core Content`, `Decisions & Questions`, and `Conclusion`; decisions and unresolved alternatives use consecutively numbered `### Question #N` subchapters with `Response:` or `Options:`.
 
 Use `.mjs`, Node.js built-ins, immutable public semantic handles, deterministic identities, typed diagnostics, and atomic transactions. Keep semantic effects inside SDK constructors, store transactions, circuit emissions, or declared tool interfaces. Preserve claims versus facts, provenance, interpretation contexts, alternatives, explicit unknowns, and coverage-before-absence semantics.
 
-Source extraction follows DS037. Built-in UTF-8 and PDF decoding or an explicit task-local `source/extractors/<extension>.extractor.mjs` must produce deterministic decoded text before LongTextJS anchors are authored. Never fabricate text for an unsupported, encrypted, scanned, or undecodable source; retain a typed diagnostic and require an appropriate task-owned adapter.
+Source extraction follows DS037 and is strictly non-semantic. Built-in UTF-8 and PDF decoding or an explicit task-local `source/extractors/<extension>.extractor.mjs` must produce deterministic decoded text before LongTextJS anchors are authored. Never fabricate text for an unsupported, encrypted, scanned, or undecodable source; retain a typed diagnostic and require an appropriate task-owned adapter. Do not infer IntentJS, LongTextJS, OntologyJS, CircuitJS, findings, or generated answers inside ingestion.
 
-Agent and task folders are ownership boundaries. Reusable additions belong to the framework or agent; source-specific interpretations belong to the task. Coding-agent context must be resolved from canonical SDK modules, pack descriptors, exact DS files, and generated catalogs rather than duplicated theory. Only explicit `code` or requested evaluation authoring commands may invoke Codex.
+Agent and task folders are ownership boundaries. Reusable additions belong to the framework or agent; source-specific interpretations belong to the task. DS041 requires explicit coding-agent phases to translate natural-language briefs, instructions, and decoded sources into semantic `.mjs` programs. Coding-agent context must be resolved from canonical SDK modules, pack descriptors, exact DS files, and generated catalogs rather than duplicated theory. Only explicit `code` or requested evaluation authoring commands may invoke Codex; deterministic replay imports the resulting programs without Codex.
+
+DS042 defines the distinct `analyze --author-adaptive` fallback. It may audit and add missing task-local IntentJS, OntologyJS, LongTextJS, CircuitJS, and tests, but it must not mutate or silently promote reusable agent knowledge. Adaptive acceptance retains its initial inventory and every coding run, composes inherited and task providers through the planner, requires the requested concrete/abstract/symbolic evidence, invokes at least one Codex review, and fails explicitly when its bounded review cycles are exhausted. `--author-adaptive` and `--author-missing` are mutually exclusive.
+
+DS043 and DS044 define the public result boundary. `run`, `analyze`, and `generate` return `results/response.md` as tagged, source-grounded Markdown CNL by default. Response circuits filter internal and non-applicable results, group and count material findings, explain matched rules, select exact source quotations, and apply IntentJS presentation directives. Raw findings, assurance projections, logs, and traces remain separate technical artifacts.
+
+An evaluation may claim natural-language authoring only when it invokes the real coding-agent adapter, retains the exact natural-language inputs, installed skills, context, logs, final response, and before/after canonical artifacts, then passes phase-specific checks and ordinary replay. Prewritten fixtures and placeholder phase reports are useful infrastructure evidence but are not authoring evidence.
 
 Generated domain packs follow DS038. Keep every concept and frame in the explicit semantic allocation catalog and let the generator reject missing, unknown, or duplicate ownership. Do not derive ontology module ownership from array position or filename order.
 
 Use `node:test` and `node:assert/strict`. Add tests with every behavior change and run focused checks before the complete suite. Generated semantic fixtures and expected outputs remain `.mjs`, CNL, Markdown, text, or binary trace data—not JSON snapshots. Run `fileSizesCheck.sh` after large changes and decompose cohesive executable source that crosses the DS001 thresholds.
 
-This repository owns its local skill catalog, so each current skill has a local HTML page and DS contract. A downstream project that merely imports these skills must keep imported-skill DS files and skill pages out of the host project's `docs/`; imported guidance stays in the copied skill folders.
+This repository owns the ten skills under `nll-skills/`, so each has a local HTML page and DS contract. Environment-managed skills are not copied into this catalog or documentation set.
 
 ## Runtime Defaults
 
@@ -70,12 +72,17 @@ This repository owns its local skill catalog, so each current skill has a local 
 - `framework/sdk/`: OntologyJS, LongTextJS, IntentJS, CircuitJS, CNL, agent, and evaluation SDKs.
 - `framework/sdk/public-api.mjs`: live narrow-surface inventory used by `sdk check`, `sdk usage`, catalogs, and skills.
 - `framework/runtime/`: SemanticStore, planner, scheduler, algorithms, cache, and traces.
+- `framework/runtime/response/`: intent-selected response-circuit composition and filtering.
 - `framework/packs/`: core and domain knowledge packs.
 - `framework/tools/` and `framework/cli/`: folder resolution, context, execution, testing, evaluation adapters, and CLI routing.
 - `framework/tools/source-extractors.mjs`: built-in and task-local source decoding contract.
 - `nll-skills/`: executable coding-agent skill catalog.
-- `.agents/skills/`: repository documentation/specification maintenance skills.
+- `tools/docs-assets/` and `tools/specifications/`: project-owned documentation assets and additive DS sources.
 - `profiles/`: executable load profiles.
 - `examples/validation-agent/`: complete agent/task, concrete, abstract, and symbolic example.
 - `examples/evaluations/`: executable evaluation suites.
+- `examples/evaluations/agentic-nl-e2e/`: real natural-language-to-agent/task authoring suite defined by DS041.
+- `examples/evaluations/adaptive-task-e2e/`: DS042 core-only adaptive authoring and replay validation.
+- `evaluations/adaptive-task-e2e/`: retained real Codex runs, generated task-local programs, acceptance cycles, and replay evidence for DS042.
+- `evaluations/`: retained isolated evaluation agents, random-ID tasks, coding runs, semantic programs, and reports.
 - `observations.md`: non-authoritative review focus linked to normative DS decisions.

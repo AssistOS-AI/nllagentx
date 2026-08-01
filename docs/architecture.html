@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — Architecture and Execution Model</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,6 +17,7 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Architecture and Execution Model</nav>
       <p class="kicker">Boundaries and data flow</p>
       <h1>Architecture and Execution Model</h1>
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
       
 <p class="lead">The implementation separates authoring, semantic materialization, capability planning, execution, and retained explanation. Full JavaScript remains available to authors, but semantic state changes pass through explicit SDK and runtime boundaries.</p>
 <h2>Layer responsibilities</h2>

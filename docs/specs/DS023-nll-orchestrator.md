@@ -29,6 +29,13 @@ This skill is installed from `project/nll-skills/nll-orchestrator/` into a run-l
 ## Required design specifications
 
 - `DS-001_Workspaces_CLI_Coding_Agents_and_Skills.md`
+- `DS035-context-and-dependency-resolution.md`
+- `DS036-coding-agent-model-strategy.md`
+- `DS037-source-extraction-and-stable-offsets.md`
+- `DS041-agentic-natural-language-authoring.md`
+- `DS042-adaptive-task-local-authoring-and-verification.md`
+- `DS043-primary-markdown-cnl-response.md`
+- `DS044-response-circuit-composition-and-intent-presentation.md`
 
 Read the primary DS first, then only the domain DS files named by the run context. Generated catalogs summarize the current implementation but do not override the DS contract.
 
@@ -48,6 +55,9 @@ Codex works directly on canonical files in YOLO/direct-editing mode. There is no
 - `nllAgent review bundle`
 
 Use generated catalogs and source-slice tools before loading large implementation trees or whole documents into context.
+Use each command with the selectors required by its scope. Source operations require a concrete task, and
+`context show` requires `--run <runs/run-id>`. When a run already supplies the corresponding file under
+`context/`, read that file instead of issuing an incomplete discovery command.
 
 ## Workflow
 
@@ -57,7 +67,8 @@ Use generated catalogs and source-slice tools before loading large implementatio
 4. Build run directories, copy only selected skills and generate INSTRUCTIONS.md.
 5. Invoke Codex through CodingAgentAdapter in direct-editing mode; do not stage or approve patches.
 6. Implement fresh-process execution, lock handling, logs and deterministic exit statuses.
-7. Add unit and end-to-end workspace tests using temporary directories.
+7. Write `results/response.md` as the default stdout result and keep findings modules, assurance, traces and logs as separately linked technical artifacts. Load response circuits from framework, agent and task scopes in declared precedence.
+8. Add unit and end-to-end workspace tests using temporary directories.
 
 ## Implementation rules
 
@@ -69,6 +80,14 @@ Use generated catalogs and source-slice tools before loading large implementatio
 - Preserve provenance, interpretation context, coverage and explicit unknown status.
 - Prefer reusable framework or agent code over task-local duplication when the abstraction is real.
 
+## Natural-language authoring boundary
+
+Source ingestion ends after stable decoded text, units, digests, spans and non-semantic outlines. It must never infer IntentJS, LongTextJS, OntologyJS, CircuitJS, findings or generated answers. Explicit coding phases install the required skills and catalogs, invoke the coding-agent adapter, retain process evidence and created/modified canonical paths, then run deterministic acceptance checks.
+
+## Adaptive authoring orchestration
+
+The `--author-adaptive` path must remain explicit and separate from model-free execution. Resolve inherited knowledge and response policy, author a missing IntentJS, audit and minimally extend task ontology, author LongTextJS against that resolved vocabulary, then audit and minimally extend task semantic and response circuits. Execute focused tests plus concrete, abstract, symbolic and primary-response checks, write cycle diagnostics, and invoke the multi-skill review bundle at least once. Replay acceptance includes the byte-stable Markdown CNL digest. Repeat only within `--authoring-cycles`; on exhaustion return a typed failure and retain every run and assessment. The dynamic super-circuit is the planner's capability composition followed by response-circuit composition, not generated duplicate glue or a JSON manifest.
+
 ## Completion criterion
 
 CLI commands create the exact paths in DS-001, Codex can be launched and awaited, post-run checks can be executed, and no hidden skill directory or JSON manifest is introduced.
@@ -79,9 +98,9 @@ At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed
 
 The adjacent `workflow.mjs` is the executable skill contract. The CLI loads it through the SDK, resolves its skill dependencies transitively, and generates only the context artifacts declared there. The workflow never searches hidden skill directories.
 
-At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies/circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
+At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies, semantic circuits and response circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, `RESPONSE_CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
 
-The task folder owns source, IntentJS, LongTextJS, task-local ontology/circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
+The task folder owns source, IntentJS, LongTextJS, task-local ontology/semantic-circuit/response-circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
 
 
 ## Decisions & Questions

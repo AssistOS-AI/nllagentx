@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const specificationsRoot = resolve(root, "docs", "specs");
 await mkdir(specificationsRoot, { recursive: true });
+await mkdir(resolve(root, "docs", "assets"), { recursive: true });
 
 function frontmatter({ id, title, status = "implemented", owner = "nllAgent maintainers", summary }) {
   return `---\nid: ${id}\ntitle: ${title}\nstatus: ${status}\nowner: ${owner}\nsummary: ${summary}\n---\n`;
@@ -101,7 +102,7 @@ const alignments = [
   "The runtime implements transactional storage, indexed queries, deterministic scheduling, capability planning, traces, caching, exact rationals, finite-domain and Boolean solving, difference constraints, union-find, Allen relations, fixed points, automata, abstract interpretation, symbolic paths, state exploration, decision DAGs, rewriting, slicing, specialization, and factor inference.",
   "Intent and profile modules are executable .mjs. Resolution combines core defaults, profile packs, agent packs, task-local modules, explicit CLI domains/checks, exclusions, natural-language pack signals, and all-compatible fallback with a retained plan explanation.",
   "The deterministic test layer uses node:test, a real fixture harness, semantic assertions, seeded finite generators, mutation helpers, framework algorithm tests, pack tests, example tests, CLI workspace tests, and explicit fast/standard/exhaustive selection.",
-  "The evaluation SDK and runner create isolated evaluation agents and random-ID tasks, optionally invoke Codex, execute concrete and declared auxiliary analyses, retain task artifacts, load executable gold modules, calculate semantic classification and runtime metrics, and write Markdown plus .mjs reports.",
+  "The evaluation SDK and runner create isolated evaluation agents and random-ID tasks. A suite can retain an agent brief and declare agent-level architect/ontology/circuit phases plus task-level intent/longtext/ontology/circuit phases. With --invoke-agent, each declared phase runs the real Codex adapter, snapshots created and modified canonical artifacts, applies phase-specific deterministic acceptance, and retains instructions, installed skills, context, logs, and final response. Concrete execution, declared abstract/symbolic assurance, expected findings or generation frames, and model-free replay are then reported in Markdown plus executable .mjs artifacts. DS041 defines the complete natural-language authoring evidence contract.",
   ...Array.from({ length: 13 }, (_, index) => `The corresponding executable pack is installed under framework/packs and includes ontology modules, a sealed pack descriptor, capability-providing circuits, CNL support, lexical/semantic intent signals, and isolated ontology/circuit/intent/CNL tests. Pack ${index + 1} of the preserved domain sequence is also loadable through framework/packs/index.mjs.`)
 ];
 const additionalDecisions = new Map([
@@ -192,30 +193,61 @@ Response: It consumes run-local \`SDK_CATALOG.md\`, \`ONTOLOGY_CATALOG.md\`, \`C
 The skill is complete only when its workflow resolves through the real SDK, its edit boundary is respected, and its mandatory deterministic checks pass.`);
 }
 
-const metaSkills = [
-  [32, "gamp-specs", "GAMP Documentation and Specification Skill", ".agents/skills/gamp-specs/SKILL.md"],
-  [33, "review-specs", "Specification Review Skill", ".agents/skills/review-specs/SKILL.md"]
-];
-for (const [number, slug, title, path] of metaSkills) {
-  const source = await readFile(resolve(root, path), "utf8");
-  await writeSpecification(number, slug, { title, owner: slug, summary: `Defines the repository-local ${slug} workflow and its documentation contract.` }, `## Introduction
+await writeSpecification(32, "documentation-and-specification-ownership", {
+  title: "Documentation, Specification, and Tooling Ownership Boundary",
+  owner: "nllAgent maintainers",
+  summary: "Separates project-owned documentation generators and contracts from environment-managed agent skills."
+}, `## Introduction
 
-This repository-local skill governs how the official documentation and specifications are maintained.
+nllAgent may be maintained with environment-provided coding skills, but those skills are not project source and may be upgraded or removed independently. This specification makes the ownership boundary explicit.
 
 ## Core Content
 
-${source}
+Project code, tests, DS files, documentation sources, generated HTML, templates, link verifiers, and static-site checks must be owned under this repository outside \`.agents/\`. No project generator, runtime module, test, CLI command, or published document may require a file under \`.agents/\` in order to run or regenerate the project.
+
+Environment-managed skills may be read and followed during a maintenance session. Their source must not be edited as part of nllAgent implementation, embedded wholesale into official DS files, copied into the project skill catalog, or presented as an nllAgent runtime capability. The project-owned coding skills are the executable \`nll-skills/\` modules installed into coding-agent runs.
+
+Official DS generation must preserve the original \`design-specifications/\` files, add project-owned implementation contracts, and remain reproducible when \`.agents/\` is absent. HTML generation must use project-owned templates and assets. Documentation navigation may describe the role of external maintenance tooling only as an environment boundary, never as a project-owned skill page.
 
 ## Decisions & Questions
 
-### Question #1: Is this an imported downstream skill?
+### Question #1: Why may an external skill guide work without becoming project source?
 
-Response: No. It is retained inside this repository and actively governs the project documentation workflow, so it is represented in the local skill catalog, HTML documentation, AGENTS.md, and DS matrix.
+Response: A maintenance process can use tools supplied by its environment while the resulting code and contracts remain self-contained. Treating the tool itself as project input would make regeneration depend on mutable workstation state.
+
+### Question #2: Which skills are part of the product contract?
+
+Response: Only the ten visible executable skills under \`nll-skills/\`. They are installed into run-local coding contexts and are tested against the local SDK. Environment-maintenance skills are outside this catalog.
 
 ## Conclusion
 
-Changes to this workflow must be synchronized with AGENTS.md, the documentation shell, and the specification matrix.`);
-}
+nllAgent remains regenerable, testable, and understandable from project-owned files alone.`);
+
+await writeSpecification(33, "specification-review-contract", {
+  title: "Specification Review and Companion Synchronization",
+  owner: "nllAgent maintainers",
+  summary: "Defines how project-owned DS contracts are reviewed against implementation and synchronized companions."
+}, `## Introduction
+
+New user requirements and observed failures can change several contracts at once. This project-owned review contract prevents a local wording patch from leaving code, tests, tutorials, and related DS files inconsistent.
+
+## Core Content
+
+A review must identify every affected DS, implementation area, test surface, generated documentation page, and unresolved decision before editing. It must compare each DS against the current implementation and the new evidence. Contract changes belong in \`Core Content\`; detailed rationale and alternatives belong in consecutively numbered \`Decisions & Questions\` entries.
+
+Initial preserved specifications must remain byte-for-byte included in their official DS wrappers. Additive contracts may be strengthened or corrected, but a generator must remain their reproducible source. A behavior-changing review must update code, focused tests, exhaustive test expectations, CLI help, HTML documentation, tutorials, README or AGENTS guidance, and observations requiring human review in the same change set.
+
+The final audit must reread affected DS files in numeric order, verify contiguous numbering, run the original-specification fidelity check, and compare documented examples with retained real execution artifacts. An unresolved multi-option question must remain visible and unimplemented until a choice is selected.
+
+## Decisions & Questions
+
+### Question #1: Why is review policy project-owned rather than copied from a maintenance skill?
+
+Response: The project contract must survive changes to the agent environment. External skills may help apply this method, but this DS and its tests define what nllAgent itself preserves.
+
+## Conclusion
+
+Specification review is complete only when the authoritative contracts and every exposed companion describe the same verified implementation.`);
 
 await writeSpecification(34, "core-language-pack", {
   title: "Core Language Ontology Pack",
@@ -263,6 +295,10 @@ Skill workflows may name preserved original contracts with hyphenated references
 
 The agent folder owns reusable ontologies, circuits, methods, profiles, lexicons, CNL, tests, tasks, and agent-level coding runs. The task folder owns source maps, intent, longtext units and root, task-local ontologies/circuits, tests, runs, and retained results. A source interpretation must not be promoted to default knowledge without an explicit reusable contract and tests.
 
+Natural-language semantic authoring is an explicit two-level coding workflow. Agent-level authoring reads an agent brief and may create reusable OntologyJS, CircuitJS, CNL, profile, and test modules. Task-level authoring reads the task instruction plus decoded sources and may create task-owned IntentJS, LongTextJS, local ontology or circuit extensions, and tests. In both cases the context builder supplies the installed skill chain and live SDK, ontology, circuit, profile, source, and specification catalogs; it does not synthesize the semantic programs itself.
+
+An evaluation suite that claims coding-agent authoring must retain the brief, task instruction, exact source text, every generated canonical module, installed run-local skills, generated context, process logs, final response, deterministic verification results, and concrete or symbolic execution results. A fixture copied into place by the suite is not evidence that the coding agent learned the semantic program from natural language.
+
 Only one coding run may hold a write lock for a given target folder. Independent agent/task folders may proceed independently. Deterministic test and execution commands must never acquire the coding-agent adapter implicitly.
 
 ## Decisions & Questions
@@ -299,6 +335,10 @@ The CLI may accept \`--model <id>\` and pass it through without embedding a hard
 
 Coding-agent success means process completion, not semantic acceptance. The workflow must run deterministic import, ontology, anchor, circuit, and test checks separately. Ordinary \`run\`, \`plan\`, \`query\`, source, and inspection commands must never invoke Codex. Evaluation invokes it only with \`--invoke-agent\` because authoring performance is then part of the measured system.
 
+Coding-agent phases are semantic authoring phases, not labels around fixture replay. Agent phases such as \`architect\`, \`ontology\`, and \`circuit\` operate on the agent brief and reusable agent folder. Task phases such as \`intent\`, \`longtext\`, optional \`ontology\` or \`circuit\`, \`test\`, and \`review\` operate on a concrete task instruction and its sources. Every phase must snapshot canonical artifacts before and after the process, retain created and modified paths, and run the deterministic checks appropriate to that phase.
+
+The adapter may report process success only from the actual subprocess exit. Evaluation acceptance additionally requires importable semantic code, valid ontology references, valid source anchors, declared circuit contracts, passing tests, and the expected execution behavior. Reports must link to the real run directory and generated files; placeholder phase pages are insufficient authoring evidence.
+
 ## Decisions & Questions
 
 ### Question #1: Why is there no fixed default model in repository code?
@@ -325,6 +365,8 @@ Source provenance begins before LongTextJS: bytes must be decoded into stable te
 
 \`framework/tools/source-extractors.mjs\` is the extraction boundary. UTF-8 text, Markdown, CNL, CSV, and HTML use the built-in UTF-8 extractor. PDF input uses the dependency-free PDF text extractor, which validates the header, rejects encrypted documents, decodes unfiltered or Flate-compressed content streams, interprets literal and hexadecimal text operands, and records extractor and page metadata. Decoded text—not binary byte position—is the canonical coordinate space used by \`SourceUnit\` and \`SourceSpan\`.
 
+This boundary is deliberately non-semantic. Source ingestion may decode bytes, normalize stable source units, calculate digests, expose exact spans, and build a source outline. It must not infer IntentJS, ontology concepts, LongTextJS claims, circuit logic, contradiction results, or generated answers from natural language. Those artifacts are authored by a coding agent running the appropriate \`nll-*\` skills against the decoded source and live project catalogs. After authoring, deterministic runtime commands import and execute the resulting JavaScript DSL modules without another model call.
+
 A task may override or add a format through \`source/extractors/<extension>.extractor.mjs\`. The module exports \`default\` or \`extractSource\`, receives an immutable object containing path, extension, bytes, and task root, and returns a text string or \`{ text, metadata }\`. The ingestion tool validates this result, segments it deterministically, hashes the entire decoded text, and generates executable \`source-map.mjs\` with stable offsets and metadata.
 
 Extraction failure must never fabricate text. Unsupported formats, invalid modules, encryption, unsupported PDF encodings, and decoding failures produce typed source diagnostics. Scanned PDFs require a task-local OCR/extractor adapter because Node.js built-ins cannot infer glyphs from images. Source IDs remain deterministic under a lexically sorted source-file list.
@@ -338,6 +380,10 @@ Response: PDF text is stored through drawing operators, compression, and font en
 ### Question #2: Why may a task-local extractor override a built-in?
 
 Response: Specialized documents may require a known font map, OCR capture, or domain decoder. The explicit task-owned module makes that choice reviewable and reproducible while preserving the common ingestion contract.
+
+### Question #3: Does source extraction translate natural language into semantic DSL code?
+
+Response: No. It produces stable decoded evidence only. Explicit coding-agent phases use that evidence, the task instruction, the selected skills, and resolved SDK or ontology catalogs to author IntentJS, LongTextJS, OntologyJS, or CircuitJS. Conflating these operations would hide model-dependent interpretation inside deterministic ingestion and make the claimed authoring evaluation meaningless.
 
 ## Conclusion
 
@@ -403,33 +449,216 @@ Response: It gives coding skills one versioned local source for import paths and
 
 SDK discovery is a tested executable contract: skills can inspect live exports, select a narrow surface, and invoke only commands that the local CLI implements.`);
 
-const articleBuildSkill = await readFile(resolve(root, ".agents", "skills", "article-build", "SKILL.md"), "utf8");
-await writeSpecification(40, "article-build", {
-  title: "Article Build Skill Contract",
-  owner: "article-build",
-  summary: "Preserves the repository-local incremental research-article build and validation workflow."
+await writeSpecification(40, "html-documentation-generation-and-portability", {
+  title: "Project-Owned HTML Documentation Generation and Portability",
+  owner: "nllAgent maintainers",
+  summary: "Defines detailed generated HTML, project-owned assets, relative URLs, and retained-example fidelity."
 }, `## Introduction
 
-This repository-local skill is independent of nllAgent semantic execution but is owned by the same repository and therefore participates in the local GAMP skill catalog.
+The HTML documentation is a generated product interface. It must explain the executable system from project-owned sources and remain portable below any hosting prefix.
 
 ## Core Content
 
-${articleBuildSkill}
+\`tools/generate-html-docs.mjs\` and its project-owned helper modules must generate the complete HTML set, shared navigation, styles, specification loader, and local diagram assets. Generation must not read \`.agents/\`, a home directory, a CDN, localhost, or a fixed deployment prefix. Every internal link, script import, stylesheet, fetch target, and specification query must be document-relative.
+
+Documentation must provide detailed project structure, skill operation, OntologyJS, IntentJS, LongTextJS, CircuitJS, response-circuit, runtime, CLI, testing, evaluation, and tutorial pages. DSL reference pages must include comprehensive tables of the current exported constructors and fluent operations, their parameters, result types, invariants, and concrete usage. Tables must be generated from or checked against live SDK exports so documentation drift is visible.
+
+Tutorials must be built from retained accepted evaluations and fail closed when evidence is absent. Each natural-language case must show the exact input, instruction, task and agent semantic programs, real coding-agent runs, primary \`response.md\` Markdown CNL, deterministic replay, and links to technical evidence. Raw \`.mjs\` assurance projections may be linked from a technical section but must not be presented as the semantic answer.
+
+The documentation verifier must scan HTML, Markdown, CSS, JavaScript, and MJS assets for missing local targets and prohibited root-relative or machine-local URLs. A static-site verification must serve the generated tree under a non-root prefix and request the index, local assets, tutorials, and \`specsLoader.html?spec=matrix.md\`.
 
 ## Decisions & Questions
 
-### Question #1: Why is this skill documented although it is not an nllAgent coding phase?
+### Question #1: Why are large tutorial pages permitted?
 
-Response: GAMP requires one DS and one HTML page for every skill owned by the current project. The documentation records the ownership boundary without installing article-build into nllAgent coding runs or changing its self-contained article workflow.
+Response: Exact retained source, semantic code, CNL output, and run evidence can be large, and hiding them would make the tutorial unverifiable. Generator source remains modular; evidence-heavy output is allowed when sections and local navigation keep it usable.
 
-### Question #2: Do article build manifests violate the semantic JSON prohibition?
+### Question #2: Why must the renderer and loader be project-owned?
 
-Response: No. Article asset and incremental-build manifests describe document build mechanics, not OntologyJS, LongTextJS, IntentJS, CircuitJS, CNL, profile, task, test-oracle, or evaluation semantics. They remain confined to an explicit article root as required by the preserved skill contract.
+Response: Documentation must regenerate when environment-managed maintenance skills are unavailable. Project ownership also makes relative-URL and no-external-dependency guarantees testable in this repository.
 
 ## Conclusion
 
-The article workflow remains self-contained, incrementally reproducible, and cataloged as a local skill without becoming a dependency of the nllAgent runtime.`);
+The HTML documentation is complete only when it is detailed, evidence-backed, independently regenerable, and portable under arbitrary URL prefixes.`);
 
-await copyFile(resolve(root, ".agents", "skills", "gamp-specs", "assets", "specsLoader.html"), resolve(root, "docs", "specsLoader.html"));
-await copyFile(resolve(root, ".agents", "skills", "gamp-specs", "assets", "fileSizesCheck.sh"), resolve(root, "fileSizesCheck.sh"));
-console.log("Generated DS000 through DS040 and installed canonical GAMP assets.");
+await writeSpecification(41, "agentic-natural-language-authoring", {
+  title: "Agentic Natural-Language Semantic Authoring and End-to-End Evaluation",
+  owner: "nll-architect",
+  summary: "Defines prompt-like authoring through a real coding agent, deterministic semantic replay, and retained end-to-end evidence."
+}, `## Introduction
+
+nllAgent presents a prompt-like workflow to its operator, but it is intentionally not a monolithic hidden model call. A natural-language brief or task first drives a coding agent that authors inspectable semantic programs; the deterministic nllAgent runtime then executes those programs and can replay them without another coding-agent call. This specification makes that lifecycle explicit and closes the boundary left implicit by the source-extraction contract.
+
+## Core Content
+
+### Authoring and execution are separate stages
+
+The natural-language inputs are an agent brief, a task instruction, and one or more task source files. Agent-level coding phases use the brief to create reusable agent-owned profiles, OntologyJS concepts, CircuitJS behavior, CNL forms, and tests. Task-level coding phases use the instruction and decoded sources to create task-owned IntentJS, LongTextJS, optional task-local ontology or circuit extensions, and tests. Codex is the first supported author through \`CodingAgentAdapter\`; the architecture must remain adapter-based.
+
+The framework may prepare folders, decode sources, resolve dependencies, build catalogs, install skills, invoke the adapter, record artifacts, and validate the result. It must not replace the coding agent with keyword extraction or generate inert JSON descriptions of the DSLs. The coding agent directly edits canonical \`.mjs\` files through the SDK constructors exposed by the run-local catalogs and specifications.
+
+Once semantic code exists, \`plan\`, \`run\`, \`query\`, assurance, replay, and inspection are deterministic framework operations. Reusing the same agent on a new task normally requires task-level IntentJS and LongTextJS authoring, not regeneration of the reusable agent ontology and circuits. Replaying an unchanged task requires no coding-agent invocation.
+
+### Folder and evidence contract
+
+The evaluation root owns one isolated agent folder. Its \`source/agent-brief.md\` is the exact reusable natural-language requirement. Reusable generated programs live in \`profiles/\`, \`ontologies/\`, \`circuits/\`, \`cnl/\`, and \`tests/\`. Every coding phase has a retained \`runs/<run-id>/\` directory containing \`INSTRUCTIONS.md\`, installed skills, resolved context, stdout, stderr, final response, timings, exit status, and the created or modified canonical paths.
+
+Each evaluation case creates a new random-ID task folder. It retains the exact task instruction, original source files and decoded source map, generated \`intent/\`, generated \`longtext/\`, optional local extensions, tests, task-level coding runs, and deterministic \`results/\`. Reports must connect the human-readable case identifier to that concrete task folder and expose source text, generated code, findings or CNL frames, assurance outputs, and replay metrics.
+
+The primary case output is \`results/response.md\`: tagged, human-readable Markdown CNL selected and organized by
+response circuits according to IntentJS. Raw findings, executable result modules, assurance projections, logs,
+and traces are separate technical evidence. Evaluation acceptance must verify response tags, expected material
+results, exact source quotations, absence of non-applicable results, and model-free response replay in addition
+to semantic finding keys.
+
+Before a later suite invocation replaces the canonical report set, the runner must archive the previous executable
+agent-authoring and task-result records. Archived records continue to reference their original random-ID task and
+run folders. Evaluation reruns must not erase earlier coding-agent attempts, generated programs, logs, failures, or
+semantic results.
+
+### Acceptance and iteration
+
+A real authoring evaluation invokes the coding agent. Prewritten semantic fixtures, copied expected modules, or a report that merely says a phase occurred do not validate natural-language authoring. Each phase must be accepted by phase-specific deterministic checks. Each case must then execute through the real planner and SemanticStore, satisfy its semantic expectations, and reproduce its result during ordinary replay. Failed attempts remain retained as evidence; repairs use another explicit coding-agent phase or a new evaluation iteration until the suite meets its contract.
+
+When a case declares expected findings, acceptance rejects both missing expected findings and unexpected material findings. Additional \`NOT_APPLICABLE\` results from compatible but irrelevant circuits are permitted because they demonstrate correct filtering; additional \`SATISFIED\`, \`VIOLATED\`, \`UNKNOWN\`, or \`CONFLICT\` findings fail the case unless the suite explicitly declares a partial oracle. Generation cases also enforce their minimum typed-frame count.
+
+The minimum end-to-end validation covers materially different outcomes: contradiction detection, missing-justification detection, unsupported-conclusion detection, and controlled generation. At least one reusable agent ontology and the corresponding reusable circuits must be learned from the brief. Every task must obtain its own IntentJS and LongTextJS from its instruction and source. The controlled-generation case must produce a typed CNL frame rather than only a prose completion.
+
+## Decisions & Questions
+
+### Question #1: In what sense does nllAgent behave like an LLM?
+
+Response: Its operator can supply a natural-language instruction and source and receive an analysis or generated artifact. Internally, however, the first encounter is an explicit coding-agent authoring operation that leaves inspectable programs; subsequent execution is deterministic and replayable. This is a deliberate semantic-program architecture, not an attempt to implement neural inference inside the runtime.
+
+### Question #2: Why are agent-level and task-level authoring separate?
+
+Response: Reusable domain distinctions and checks belong to the agent, while claims grounded in one source and the requested operation belong to the task. The separation prevents source assertions from becoming default knowledge and lets many tasks reuse one reviewed semantic agent.
+
+### Question #3: May the source ingester infer enough semantics to skip Codex?
+
+Response: No. It may expose stable text, units, spans, digests, and non-semantic outlines. Semantic selection, grounding, ontology design, and circuit authoring remain coding-agent responsibilities. Deterministic execution may skip Codex only after the required canonical programs already exist.
+
+### Question #4: What proves that an evaluation is real?
+
+Response: Retained subprocess evidence, generated canonical code absent before the run, phase-specific validation, concrete and auxiliary execution artifacts, expected semantic outcomes, and model-free replay together prove the complete path. Hand-authored fixtures remain useful unit tests but are not authoring evaluations.
+
+## Conclusion
+
+Natural language enters nllAgent through an observable coding-agent authoring lifecycle and leaves behind executable semantic programs. Those programs—not hidden extraction heuristics or completion prose—are the durable interface between model-dependent interpretation and deterministic reasoning.`);
+
+await writeSpecification(42, "adaptive-task-local-authoring-and-verification", {
+  title: "Adaptive Task-Local Semantic Authoring and Verification Loop",
+  owner: "nll-orchestrator",
+  summary: "Defines an explicit deep-authoring CLI mode that fills missing task semantics and iterates Codex review over concrete, abstract, and symbolic evidence."
+}, `## Introduction
+
+Most production tasks should use an agent whose ontology and circuits are already reviewed, calibrated, and reusable.
+Some inputs nevertheless introduce meanings or checks that the selected agent cannot express. This specification
+defines an explicit optional mode that can extend the current task through a coding-agent loop without mutating
+the reusable agent or hiding model-dependent work inside deterministic execution.
+
+## Core Content
+
+### Explicit CLI boundary
+
+\`nllAgent analyze --author-adaptive\` enables deep task-local authoring. It is distinct from ordinary \`run\`
+and \`analyze\`, which never invoke a coding agent, and from the narrower backward-compatible
+\`--author-missing\`, which only fills the historically expected task artifacts. Adaptive authoring accepts
+\`--authoring-cycles <1..10>\`, \`--assurance none|abstract|symbolic|all\`, and
+\`--adaptive-allow-unknown\`. The default auxiliary requirement is \`all\`; unknown-only output is not material
+acceptance unless the operator explicitly permits it.
+
+### Authoring and inheritance sequence
+
+The task begins with framework packs, the selected profile, and reusable agent ontologies and circuits. Codex
+authors IntentJS when absent, audits semantic vocabulary through the ontology skill, authors only genuinely
+missing task-local OntologyJS, then authors source-grounded LongTextJS. It audits the combined circuit registry
+and creates task-local CircuitJS only when the requested behavior is not already provided realistically. Every
+phase edits canonical \`.mjs\` modules and focused tests directly and retains its run-local skills, catalogs,
+instructions, logs, and final response.
+
+The resulting execution plan is the dynamic composition boundary sometimes described as a super-circuit. It is
+not one generated monolith. The capability registry and planner merge framework, profile, agent, and task-local
+circuits, close their declared requirements and provisions, and retain the selected, rejected, and blocked
+explanation. This preserves SOLID ownership and lets a later reusable agent absorb a proven task extension through
+an explicit review rather than an implicit promotion.
+
+### Deterministic acceptance and Codex review
+
+After initial authoring, nllAgent imports the complete runtime, checks ontology closure, verifies all source
+anchors, requires focused task tests, and validates that IntentJS retains instruction provenance, a semantic
+concern, source-grounded evidence, concrete execution, and the requested auxiliary modes. It checks that every
+requested concern has a circuit provider and executes the
+real planner and SemanticStore. Acceptance requires a selected non-core circuit to produce a material finding or
+typed generated frame, so generic core grounding alone cannot pass; it also requires no blocking
+diagnostics, and the requested auxiliary interpretations for every selected non-core circuit. Abstract execution
+must converge. Symbolic decision coverage must produce at least one non-truncated path. A second ordinary
+model-free execution must reproduce the selected circuits, finding keys, generated-frame identities, and
+assurance selection before the cycle can be accepted.
+
+The tool writes a cycle-specific diagnostic bundle containing failures, selected circuits, findings, generated
+frame counts, abstract convergence, symbolic path counts, and truncation status. Codex then runs the review skill
+chain with access to IntentJS, OntologyJS, LongTextJS, CircuitJS, runtime, and test guidance. It may repair only the
+task-owned programs and tests and must not weaken acceptance. Deterministic acceptance reruns after every review
+until it succeeds or the explicit cycle limit is exhausted. Exhaustion is a typed command failure, never a partial
+success. If a task-local module cannot be imported, the review context falls back to inherited catalogs, retains
+the complete resolution exception as a diagnostic, and still invokes Codex so syntax or construction failures are
+repairable rather than preventing the repair phase itself.
+
+### Retained artifacts
+
+The task retains a pre-authoring \`results/adaptive-initial-state.mjs\` inventory,
+\`adaptive-authoring-cycle-<n>.md\`, \`adaptive-authoring.mjs\`, \`adaptive-authoring.md\`, normal
+findings/CNL/trace outputs, and complete auxiliary assurance artifacts. The
+executable record names every authoring phase, review cycle, failure, circuit, finding, frame count, and assurance
+summary. The task also retains the primary \`response.md\`, its semantic-program manifest, and the selected
+response-circuit trace. \`adaptive-replay.mjs\` records the accepted model-free replay projection, and ordinary \`run\` can then
+replay the accepted task without Codex.
+
+## Decisions & Questions
+
+### Question #1: Why is adaptive authoring task-local by default?
+
+Response: A complex source can justify new representational code without proving that the code is stable reusable
+knowledge. Keeping it under the task prevents source claims and one-off rule interpretations from silently
+changing every future task. Promotion to the agent requires a separate reusable contract, calibration cases, and
+review.
+
+### Question #2: Can deterministic code decide that an ontology is semantically sufficient?
+
+Response: It can detect missing imports, invalid identities, unsatisfied providers, failed tests, and incomplete
+assurance, but not every conceptual omission in natural language. The ontology and circuit coding phases therefore
+ask Codex to audit semantic sufficiency against the source while deterministic checks enforce the executable
+boundary.
+
+### Question #3: Why require a review even when the first concrete run succeeds?
+
+Response: A single successful output may hide weak provenance, overfitted rules, absent unknown behavior, or an
+empty symbolic model. The mandatory first review receives both successes and failures and audits the complete
+concrete/abstract/symbolic evidence. It should make no changes when the task is already robust.
+
+### Question #4: When should unknown-only output be accepted?
+
+Response: Only when the operator selects \`--adaptive-allow-unknown\`. The default treats unknown-only output as a
+signal that semantic authoring or evidence coverage remains incomplete, while the explicit option supports tasks
+whose correct outcome is genuinely indeterminate.
+
+## Conclusion
+
+Adaptive authoring is a bounded, observable fallback for complex inputs, not the default execution path. It
+inherits reviewed knowledge, adds minimal task-local semantic programs through Codex, composes them dynamically,
+and accepts them only after repeatable concrete, abstract, symbolic, provenance, and test evidence.`);
+
+await writeSpecification(43, "primary-markdown-cnl-response", {
+  title: "Primary Human-Facing Markdown CNL Response",
+  owner: "nll-runtime",
+  summary: "Defines NL input to qualitative tagged Markdown CNL output and separate technical execution evidence."
+}, await readFile(resolve(root, "tools", "specifications", "DS043-primary-markdown-cnl-response.md"), "utf8"));
+
+await writeSpecification(44, "response-circuit-composition-and-intent-presentation", {
+  title: "Response Circuit Composition and Intent-Selected Presentation",
+  owner: "nll-circuit",
+  summary: "Defines response-circuit DSL, dynamic filtering, grouping, counting, evidence, and presentation styles."
+}, await readFile(resolve(root, "tools", "specifications", "DS044-response-circuit-composition.md"), "utf8"));
+
+console.log("Generated DS000 through DS044 from project-owned inputs.");

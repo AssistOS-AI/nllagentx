@@ -2,11 +2,14 @@ import { codingSkill, contextArtifact, cliTool, editRoot } from "../../framework
 
 export default codingSkill("nll-runtime")
   .specs(
-    "DS-003"
+    "DS-003",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("SDK_CATALOG.md"),
     contextArtifact("CIRCUIT_CATALOG.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md"),
     contextArtifact("DIAGNOSTICS.md")
   )
   .tools(

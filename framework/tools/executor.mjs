@@ -7,11 +7,14 @@ import { CapabilityPlanner } from "../runtime/planner/capability-search.mjs";
 import { explainPlan } from "../runtime/planner/explain.mjs";
 import { abstractCircuit } from "../runtime/methods/abstract/worklist.mjs";
 import { exploreDecisionConditions } from "../runtime/methods/symbolic/explorer.mjs";
+import { composeResponse } from "../runtime/response/composer.mjs";
+import { defaultResponseCircuits } from "../runtime/response/default-circuits.mjs";
 import { findingFrame, literalSlot } from "../sdk/cnl/frames.mjs";
 import { renderCanonicalCNL } from "../sdk/cnl/grammar.mjs";
 import { resolveRuntime, importFresh } from "./module-loader.mjs";
 import { atomicWrite, ensureDirectory, jsString } from "./filesystem.mjs";
 import { loadSourceRegistry } from "./source-tools.mjs";
+import { renderArtifactManifest, renderTaskResponse } from "./response-renderer.mjs";
 
 function identityOf(value) {
   if (typeof value?.identity === "function") return value.identity();
@@ -112,8 +115,47 @@ export async function executeTask(options) {
   await atomicWrite(resolve(resultsRoot, "trace-summary.md"), `# Trace Summary\n\nEvents: ${traceEvents.length}. Circuits: ${executions.length}. Findings: ${findings.length}. CNL frames: ${frames.length}.\n`);
   await atomicWrite(resolve(resultsRoot, "assurance.mjs"), `export default Object.freeze(${renderJsValue(safeProjection(assurance))});\n`);
   await atomicWrite(resolve(resultsRoot, "assurance.md"), `# Auxiliary assurance\n\n${assurance.length ? assurance.map((entry) => `- \`${entry.circuit}\`: ${entry.method}`).join("\n") : "No auxiliary assurance pass was requested and declared by a selected circuit."}\n`);
-  await atomicWrite(resolve(resultsRoot, "report.md"), `# nllAgent Task Report\n\nTask: \`${prepared.runtime.task.id}\`. Profile: \`${prepared.runtime.profile.id}\`.\n\n- Executed circuits: ${executions.length}\n- Findings: ${findings.length}\n- Generated CNL frames: ${frames.length}\n- Auxiliary assurance passes: ${assurance.length}\n- Blocking diagnostics: ${diagnostics.length}\n\nSee \`execution-plan.md\`, \`findings.cnl\`, \`observations.cnl\`, \`assurance.md\`, and \`trace-summary.md\`.\n`);
-  return Object.freeze({ ...prepared, executions: Object.freeze(executions), findings: Object.freeze(findings), frames: Object.freeze(frames), assurance: Object.freeze(assurance), diagnostics: Object.freeze(diagnostics), resultsRoot });
+  const composition = composeResponse({
+    intent: prepared.runtime.intent,
+    findings,
+    frames,
+    executions,
+    circuits: [...defaultResponseCircuits, ...prepared.runtime.responseCircuits]
+  });
+  const sourceRegistry = await loadSourceRegistry(options.taskRoot, { projectRoot: options.projectRoot });
+  const response = await renderTaskResponse({
+    runtime: prepared.runtime,
+    store: prepared.store,
+    composition,
+    diagnostics,
+    sourceRegistry
+  });
+  await atomicWrite(resolve(resultsRoot, "response.md"), response);
+  await atomicWrite(resolve(resultsRoot, "artifacts.md"), await renderArtifactManifest({
+    taskRoot: options.taskRoot,
+    resultsRoot
+  }));
+  await atomicWrite(
+    resolve(resultsRoot, "response-circuits.mjs"),
+    `export default Object.freeze(${renderJsValue(safeProjection({
+      style: composition.style,
+      grouping: composition.grouping,
+      selectedCircuits: composition.selectedCircuits,
+      trace: composition.trace
+    }))});\n`
+  );
+  await atomicWrite(resolve(resultsRoot, "report.md"), `# Technical execution report\n\nThe primary human-facing result is [\`response.md\`](response.md). This file reports execution mechanics only.\n\nTask: \`${prepared.runtime.task.id}\`. Profile: \`${prepared.runtime.profile.id}\`.\n\n- Executed semantic circuits: ${executions.length}\n- Selected response circuits: ${composition.selectedCircuits.length}\n- Public CNL findings: ${composition.entries.length}\n- Raw findings, including internal and non-applicable results: ${findings.length}\n- Generated CNL frames: ${frames.length}\n- Auxiliary assurance passes: ${assurance.length}\n- Blocking diagnostics: ${diagnostics.length}\n\nSee [\`artifacts.md\`](artifacts.md) for semantic programs, coding-agent evidence, canonical CNL, assurance, diagnostics, and trace artifacts.\n`);
+  return Object.freeze({
+    ...prepared,
+    executions: Object.freeze(executions),
+    findings: Object.freeze(findings),
+    frames: Object.freeze(frames),
+    assurance: Object.freeze(assurance),
+    diagnostics: Object.freeze(diagnostics),
+    composition,
+    response,
+    resultsRoot
+  });
 }
 
 function symbolicEvidence(rows) {

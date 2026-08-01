@@ -1,0 +1,9 @@
+import { findingResult, findingSet } from "../../../../../../../framework/sdk/circuit/results.mjs";
+
+export default findingSet(
+  findingResult("CoreGroundingFinding.grounded", "SATISFIED", ["nll.source-span:5168a59fec0c5757a11d9076fe7ba9d01f2f23646b51cab8b43397eb44c0e076", "nll.source-span:5794a29125acb452c714b5935f5ad6b6bd3c759ee02089a6d57a8ad975766bea", "nll.source-span:bc223ebc4acf20a1339b83385e531985e76c54a6ec6d07cbb5df5c564575ae65", "nll.source-span:d3a26ffa811ee92c7f8663cfda96c134305b11e6a862cdd84c6d075c78c01539", "nll.source-span:e3ccd6c8d72fccd6171c16fff1dbf2a4caab61be4361dff614ce81ab754ac9d9"], { "claims": 5, "grounded": 5, "ungrounded": [] }, "", "circuit:core-language.CoreGroundingFinding@1.0.0"),
+  findingResult("EXCEPTION_JUSTIFICATION_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "invocations": [], "requirements": [] }, "", "circuit:nl-rule-review.ExceptionJustificationReview@1.0.0"),
+  findingResult("PROCEDURE_PLAN_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "requests": [] }, "", "circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0"),
+  findingResult("RULE_CONTRADICTION_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "comparablePairs": 0, "rules": [] }, "", "circuit:nl-rule-review.RuleContradictionReview@1.0.0"),
+  findingResult("UNSUPPORTED_SAFETY_CONCLUSION", "VIOLATED", ["nll.claim:966bf8a8ca6e5fb56902b1b062cb5f55258b8e8afdc007ed6301eed66067942d", "nll.ground-term:e1a5ad4b97c0c3c635e99a1fc866b68ac9aca5ad92adfd39a227fa1a7f445d61", "nll.source-span:e3ccd6c8d72fccd6171c16fff1dbf2a4caab61be4361dff614ce81ab754ac9d9"], { "checkedConclusions": 1, "decisiveConclusions": ["nll.ground-term:e1a5ad4b97c0c3c635e99a1fc866b68ac9aca5ad92adfd39a227fa1a7f445d61"], "supportLinks": [], "supportingEvidence": [] }, "", "circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0")
+);

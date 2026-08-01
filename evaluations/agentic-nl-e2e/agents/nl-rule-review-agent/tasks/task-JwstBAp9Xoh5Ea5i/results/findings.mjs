@@ -1,0 +1,9 @@
+import { findingResult, findingSet } from "../../../../../../../framework/sdk/circuit/results.mjs";
+
+export default findingSet(
+  findingResult("CoreGroundingFinding.grounded", "SATISFIED", ["nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f", "nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97", "nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e"], { "claims": 3, "grounded": 3, "ungrounded": [] }, "", "circuit:core-language.CoreGroundingFinding@1.0.0"),
+  findingResult("MISSING_EXCEPTION_JUSTIFICATION", "VIOLATED", ["nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69", "nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3", "nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e", "nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518", "nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97", "nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e"], { "checkedInvocations": 1, "decisiveInvocations": ["nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e"], "justificationRecords": [] }, "", "circuit:nl-rule-review.ExceptionJustificationReview@1.0.0"),
+  findingResult("PROCEDURE_PLAN_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "requests": [] }, "", "circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0"),
+  findingResult("RULE_CONTRADICTION_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "comparablePairs": 0, "rules": [] }, "", "circuit:nl-rule-review.RuleContradictionReview@1.0.0"),
+  findingResult("SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "conclusions": [] }, "", "circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0")
+);

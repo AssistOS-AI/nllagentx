@@ -119,9 +119,12 @@ Start with:
 - `AGENTS.md` for repository rules and the active skill catalog;
 - `node nllAgent.mjs help` for the implemented CLI;
 - `examples/validation-agent/` for a complete source-grounded concrete, abstract, and symbolic task;
+- `examples/evaluations/agentic-nl-e2e/` for the real Codex-authored natural-language agent/task evaluation;
+- `examples/evaluations/adaptive-task-e2e/` for the DS042 evaluation declaration and command;
+- `evaluations/adaptive-task-e2e/` for the retained core-only task that learns missing task-local semantics through Codex and proves concrete, abstract, symbolic, review, and replay acceptance;
 - `observations.md` for review areas and implementation decisions that were not explicit in the original specifications.
 
-The implementation supplies the SDK, SemanticStore, planner, scheduler, analysis kernels, fourteen packs including `core-language`, folder-aware workspace tools, Codex adapter, evaluation runner, deterministic test support, and retained result formats. Semantic artifacts remain executable `.mjs`; the JSON files now present are repository/plugin integration manifests, not semantic programs.
+The implementation supplies the SDK, SemanticStore, planner, scheduler, analysis kernels, fourteen packs including `core-language`, folder-aware workspace tools, Codex adapter, evaluation runner, deterministic test support, and retained result formats. Source ingestion is non-semantic: explicit coding-agent phases translate a natural-language agent brief, task instruction, and decoded source into reusable agent OntologyJS/CircuitJS and task-owned IntentJS/LongTextJS. Ordinary execution then replays those programs without Codex. Semantic artifacts remain executable `.mjs`; the JSON files now present are repository/plugin integration manifests, not semantic programs.
 
 Run the main checks with:
 
@@ -131,6 +134,11 @@ node nllAgent.mjs test packs --level standard
 node nllAgent.mjs test task --agent-dir examples/validation-agent --task task-symbolic-validation
 node nllAgent.mjs source ingest --agent-dir examples/validation-agent --task task-symbolic-validation
 node nllAgent.mjs evaluate --suite school-smoke
+node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent
+node nllAgent.mjs analyze --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \
+  --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \
+  --author-adaptive --authoring-cycles 3 --assurance all
+node evaluations/adaptive-task-e2e/validate.mjs
 ```
 
 SDK-aware coding workflows can inspect the exact local API without copied theory:
@@ -141,4 +149,4 @@ node nllAgent.mjs sdk usage --surface longtext
 node nllAgent.mjs plan show --agent-dir examples/validation-agent --task task-symbolic-validation
 ```
 
-The final exhaustive run passes 173 tests across 64 files. The retained validation task reports grounded source integrity and `ORDER_OK` as `SATISFIED`, abstract convergence in six steps with all four logic outcomes, and four path-complete symbolic cases including the deliberately exposed missing `CONFLICT` row. The local skill catalog also documents the pre-existing self-contained `article-build` workflow; it is not an nllAgent runtime dependency.
+The final exhaustive run passes 180 tests across 64 files. The retained validation task reports grounded source integrity and `ORDER_OK` as `SATISFIED`, abstract convergence in six steps with all four logic outcomes, and four path-complete symbolic cases including the deliberately exposed missing `CONFLICT` row. The retained adaptive cold-chain task starts with no task semantic programs, completes five real Codex authoring/review phases, produces `COLD_CHAIN_RELEASE_UNSUPPORTED` as `VIOLATED`, converges abstractly, explores four non-truncated symbolic paths, and replays model-free under an independent domain oracle. The local skill catalog also documents the pre-existing self-contained `article-build` workflow; it is not an nllAgent runtime dependency.

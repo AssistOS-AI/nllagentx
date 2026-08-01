@@ -9,6 +9,9 @@ Workspace:
 
 Execution:
   analyze|run|generate|plan|query --agent ... --task ...
+  run|analyze|generate ... [--format response|json]       response is tagged human-readable Markdown CNL (default)
+  analyze ... --author-adaptive [--authoring-cycles 1..10] [--assurance none|abstract|symbolic|all]
+              [--adaptive-allow-unknown]
   test framework|packs|agent|task|all [--level fast|standard|exhaustive]
   evaluate --suite <name-or-suite.mjs> [--invoke-agent] [--model <id>]
 

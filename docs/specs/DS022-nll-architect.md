@@ -30,6 +30,10 @@ This skill is installed from `project/nll-skills/nll-architect/` into a run-loca
 
 - `DS-000_System_Architecture_and_Check_Catalog.md`
 - `DS-004_IntentJS_Load_Profiles_and_Dynamic_Circuit_Selection.md`
+- `DS041-agentic-natural-language-authoring.md`
+- `DS042-adaptive-task-local-authoring-and-verification.md`
+- `DS043-primary-markdown-cnl-response.md`
+- `DS044-response-circuit-composition-and-intent-presentation.md`
 
 Read the primary DS first, then only the domain DS files named by the run context. Generated catalogs summarize the current implementation but do not override the DS contract.
 
@@ -50,15 +54,19 @@ Codex works directly on canonical files in YOLO/direct-editing mode. There is no
 - `nllAgent context show`
 
 Use generated catalogs and source-slice tools before loading large implementation trees or whole documents into context.
+The run-local `context/` files already contain the requested catalog outputs. Invoke task-only source commands only
+when `INSTRUCTIONS.md` names a task root. At agent scope, read `context/SOURCE_OUTLINE.md` directly; do not call
+`source outline` without `--task`/`--task-dir`. `context show` requires the concrete run directory through
+`--run <runs/run-id>` and is optional when the generated context files are already open.
 
 ## Workflow
 
 1. Restate the semantic goal in terms of outputs, concerns, target texts and guarantees.
-2. Identify which meanings belong in OntologyJS, which source facts belong in LongTextJS, which judgments belong in CircuitJS and which selection policy belongs in IntentJS.
+2. Identify which meanings belong in OntologyJS, which source facts belong in LongTextJS, which judgments belong in semantic CircuitJS, which presentation policy belongs in IntentJS and whether an orthogonal response circuit is required.
 3. Choose framework packs, agent extensions and task-local artifacts. Prefer reuse over copying.
 4. Decompose work into skill phases with canonical edit roots and dependencies.
 5. Create architecture-plan.mjs and work-plan.mjs using fluent project builders.
-6. List required tests, evaluation cases and CNL outputs.
+6. List required tests, evaluation cases and the primary Markdown CNL contract: material filtering, grouping, stable tags, rule explanation, exact quotations and technical-artifact separation.
 7. Run plan/profile/catalog checks and leave a concise handoff.
 
 ## Implementation rules
@@ -71,6 +79,14 @@ Use generated catalogs and source-slice tools before loading large implementatio
 - Preserve provenance, interpretation context, coverage and explicit unknown status.
 - Prefer reusable framework or agent code over task-local duplication when the abstraction is real.
 
+## Natural-language authoring boundary
+
+When the requested phase targets an agent, read the retained agent brief and design reusable agent-owned ontology, semantic circuits, response circuits, CNL, profile policy and tests. When it targets a task, keep the instruction, grounded source interpretation and task-local extensions in that task. The framework prepares context and invokes the coding agent; it must not pre-author semantic modules or replace this phase with keyword extraction.
+
+## Adaptive allocation decision
+
+For adaptive analysis, inventory the inherited framework, profile and agent capabilities before proposing code. Put a meaning or circuit under the task when it is required only by the current source or has not yet earned a reusable contract. Do not copy an inherited provider into the task. Record any candidate promotion to the agent as a later review decision; adaptive authoring itself must not mutate reusable agent knowledge.
+
 ## Completion criterion
 
 The plan names every semantic artifact, owner skill, selected DS file, target directory, test obligation and handoff. No unresolved design question blocks the next skill.
@@ -81,9 +97,9 @@ At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed
 
 The adjacent `workflow.mjs` is the executable skill contract. The CLI loads it through the SDK, resolves its skill dependencies transitively, and generates only the context artifacts declared there. The workflow never searches hidden skill directories.
 
-At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies/circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
+At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies, semantic circuits and response circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, `RESPONSE_CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
 
-The task folder owns source, IntentJS, LongTextJS, task-local ontology/circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
+The task folder owns source, IntentJS, LongTextJS, task-local ontology/semantic-circuit/response-circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
 
 
 ## Decisions & Questions

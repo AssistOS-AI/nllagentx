@@ -3,11 +3,14 @@ import { codingSkill, contextArtifact, cliTool, editRoot } from "../../framework
 export default codingSkill("nll-sdk")
   .specs(
     "DS-002",
-    "DS039"
+    "DS039",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("SDK_CATALOG.md"),
-    contextArtifact("ONTOLOGY_CATALOG.md")
+    contextArtifact("ONTOLOGY_CATALOG.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md")
   )
   .tools(
     cliTool("nllAgent catalog sdk"),

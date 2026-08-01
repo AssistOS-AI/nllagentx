@@ -4,9 +4,9 @@ This file is the user-requested review index for decisions that were not explici
 
 ## 1. Semantic JSON prohibition versus integration manifests
 
-Decision: the prohibition applies to OntologyJS, LongTextJS, IntentJS, CircuitJS, CNL, agent/task/profile/evaluation semantics, fixtures, gold structures, and snapshots. Existing `.agents/**/skill.json` and `ploinky-skills-manifest.json` files remain because they configure Codex/plugin integration rather than semantic knowledge. Article-build asset and build manifests describe document-build mechanics within an explicit article root. This interpretation is recorded in DS001 Question #2, DS000 Core Content, and DS040 Question #2.
+Decision: the prohibition applies to OntologyJS, LongTextJS, IntentJS, semantic CircuitJS, response circuits, CNL, agent/task/profile/evaluation semantics, fixtures, gold structures, and snapshots. The project has no semantic JSON format. Environment-owned Codex/plugin configuration is outside the project boundary and is neither copied into documentation nor required by a generator, runtime command, test or published page. This interpretation is recorded in DS001 Question #2, DS000 Core Content, DS032 and DS040.
 
-Review focus: confirm whether future marketplace manifests should remain in this repository or be generated outside it. No semantic module currently depends on JSON.
+Review focus: keep future integration manifests outside the semantic artifact model. No semantic module currently depends on JSON.
 
 ## 2. Binary and PDF source extraction
 
@@ -58,7 +58,7 @@ Review focus: this is the highest-value semantic review area. Named school-domai
 
 ## 10. Evaluation baseline interpretation
 
-Decision: `school-smoke` is an executable infrastructure suite, not a claimed quality benchmark. Without `--invoke-agent`, it measures isolated creation, replay, retention, anchor accounting, and runtime plumbing. With `--invoke-agent`, its declared modes request IntentJS and LongTextJS authoring.
+Decision: `school-smoke` is an executable infrastructure suite, not a claimed quality benchmark. Without `--invoke-agent`, it measures isolated creation, replay, retention, anchor accounting, and runtime plumbing. Its historical authoring mode covers task IntentJS and LongTextJS only; it does not prove that Codex learned a reusable agent ontology and circuits from a natural-language brief. The `agentic-nl-e2e` suite is the stronger acceptance path for that claim.
 
 Review focus: add held-out executable gold modules and capability-specific semantic metrics before using the suite to compare models or pack quality. Fixed model selection, corpus licensing, and target thresholds require explicit suite decisions.
 
@@ -70,15 +70,15 @@ Review focus: always edit the original source file first when changing an inheri
 
 ## 12. Large preserved specification files
 
-Decision: DS001's file-size thresholds apply to cohesive executable source. Official DS files containing verbatim original specifications are allowed to exceed them because splitting or reflowing those blocks would violate source fidelity. The pre-existing self-contained article-build implementation also contains two warning-sized modules (`skill.mjs` and `bibliography.mjs`); this nllAgent implementation did not rewrite or split that user-owned workflow.
+Decision: DS001's file-size thresholds apply to cohesive executable source. Official DS files containing verbatim original specifications are allowed to exceed them because splitting or reflowing those blocks would violate source fidelity. Project-owned HTML generation is split across focused navigation, style, file-helper, DSL-reference, evaluation-case and page-composition modules.
 
-Review focus: generated HTML and nllAgent executable source should still be decomposed normally. `fileSizesCheck.sh` reports the preserved DS/context long lines and those two article-build modules; it does not automatically approve future growth. Review article-build decomposition separately if that skill is next modified.
+Review focus: generated HTML and nllAgent executable source should still be decomposed normally. Preserved DS/context long lines do not automatically approve future executable growth.
 
-## 13. GAMP helper path correction
+## 13. Project-owned specification and documentation tooling
 
-Decision: the bundled GAMP scripts originally assumed `skills/gamp-specs/`, while this repository stores the skill under `.agents/skills/gamp-specs/`. Their repository-root calculation was corrected by one parent level, and the matrix generator now emits the required `/specsLoader.html?spec=...` links.
+Decision: official specification generation, matrix generation, HTML generation, the Markdown specification loader, the diagram renderer, link verification and static-site verification are all project-owned under `tools/`. They do not read environment-managed skill folders. The matrix generator emits document-relative `specsLoader.html?spec=...` links so documentation remains valid below an arbitrary URL prefix.
 
-Review focus: if the skill is packaged into a different depth, replace depth-based root discovery with upward marker discovery. The current correction is exact for this repository layout.
+Review focus: preserve this portability boundary when adding new documentation tooling; no generated page may require a home-directory path, localhost, an origin-root path or a CDN.
 
 ## 14. Semantic ownership inside generated ontology modules
 
@@ -91,3 +91,97 @@ Review focus: treat the allocation catalog as part of pack review whenever the o
 Decision: executable nll skill workflows may reference preserved originals as `DS-003` and additive official contracts as `DS039`. The context resolver distinguishes these namespaces, filters original domain ranges to loaded packs, and includes the official cross-cutting DS files declared by the selected skill. A deterministic test verifies that every workflow dependency resolves and every declared `nllAgent` tool maps to an implemented CLI command.
 
 Review focus: keep original hyphenated IDs and official compact IDs visibly distinct when adding future specifications. A new cross-cutting SDK, source, folder, or pack-generation decision should be added to the affected workflow instead of copied into every `SKILL.md`.
+
+## 16. Natural-language authoring versus deterministic ingestion
+
+Decision: DS041 now makes the intended boundary explicit. Source ingestion only decodes bytes, establishes stable source units and offsets, and exposes non-semantic outlines. A real coding-agent process, initially Codex with the resolved `nll-*` skills, authors reusable agent OntologyJS/CircuitJS and task-owned IntentJS/LongTextJS from natural-language inputs. Ordinary planning and execution then reuse those programs without a model call. No deterministic keyword extractor may silently replace the coding-agent authoring claim.
+
+Review focus: inspect the retained `agentic-nl-e2e` Codex runs and generated files rather than accepting report prose. The most important follow-up question is how much reusable rule generalization a single agent brief should demand before ontology/circuit review becomes a separate approval workflow. Current acceptance requires four distinct behaviors, exact findings or CNL outputs, phase-specific checks, and model-free replay; it does not claim that four cases measure broad language understanding.
+
+## 17. Strict evaluation oracles and retained iterations
+
+Decision: an evaluation case with declared expected findings rejects both missing findings and additional material
+`SATISFIED`, `VIOLATED`, `UNKNOWN`, or `CONFLICT` findings. Additional `NOT_APPLICABLE` findings remain permitted
+because the all-compatible planner deliberately executes semantically compatible circuits before instance-level
+applicability is known. A suite may opt into a partial oracle explicitly. Before a new suite invocation overwrites
+the canonical report set, the runner archives the previous executable reports; task folders, coding runs, failures,
+and generated programs are never removed by evaluation reruns.
+
+Review focus: decide case by case whether a benchmark really has a complete oracle before leaving strict mode
+enabled. A partial oracle is useful for exploratory corpora, but it must not be used to hide unintended material
+findings in acceptance evaluations.
+
+## 18. Adaptive task-local authoring and promotion boundary
+
+Decision: DS042 adds an explicit `analyze --author-adaptive` mode for complex tasks whose inherited framework,
+profile, and agent knowledge cannot express the requested operation. Codex authors or audits task IntentJS,
+OntologyJS, LongTextJS, CircuitJS, and focused tests, while the planner composes inherited and task-local providers
+dynamically. Acceptance defaults to concrete output plus convergent abstract and non-truncated symbolic evidence,
+and a Codex review is mandatory even after an initially successful execution. The mode never promotes task code
+into the reusable agent automatically, never accepts unknown-only output unless explicitly requested, and never
+turns the composed plan into an opaque monolithic circuit.
+
+The retained cold-chain case adds a deliberately stronger evaluation-only oracle: task-local OntologyJS and
+CircuitJS must have been absent initially and generated by successful Codex phases; a selected non-core circuit
+must violate the unsupported release conclusion; its evidence must cite both the expired calibration and the
+missing receiving acknowledgement; and abstract, symbolic, and replay checks must pass. These domain phrases are
+not hard-coded into the generic adaptive runtime.
+
+The first retained adaptive attempt also exposed a naming trap: the historical `minimal-core` profile loads
+`logic-basic` and `reasoning-errors` in addition to `core-language`. The real isolation case therefore uses an
+agent-local `adaptive-core-only` profile. The interrupted attempt and its catalogs remain retained instead of
+being rewritten as a success.
+
+Review focus: decide when a repeatedly successful task-local ontology or circuit has enough independent
+calibration cases to be promoted to an agent. The implementation intentionally records that possibility without
+choosing a numeric promotion threshold. Also review whether particular legitimate indeterminate workloads should
+declare `--adaptive-allow-unknown` in a saved executable profile rather than as a one-off CLI option.
+
+## 19. Evaluation-backed tutorial generation fails closed
+
+Decision: the HTML generator throws when any of the four DS041 tutorial results or the accepted DS042 adaptive
+record is absent. It no longer emits a page that asks the documentation reader to run an evaluation. This makes a
+successful documentation build evidence that the displayed semantic programs, Codex logs, execution artifacts,
+and replay results actually exist. The generator still refuses to synthesize example output.
+
+Review focus: retained evaluations make the documentation build intentionally dependent on repository artifacts.
+If distribution size later requires omitting full run logs, define a signed or content-addressed evidence bundle
+before weakening this fail-closed rule.
+
+## 20. Relative diagram assets and complete evidence size
+
+Decision: generated HTML loads the repository-local `docs/assets/diagram-renderer.mjs` renderer through a relative
+URL. The renderer has no package or network dependency and preserves every diagram definition in an expandable
+source block. The link verifier now scans `.mjs` assets and static imports as well as HTML, Markdown, CSS, and
+ordinary JavaScript. No generated documentation resource assumes an origin root, localhost, a workspace mount,
+or an external CDN.
+
+The four strict tutorials and the adaptive tutorial intentionally exceed ordinary source-size thresholds because
+they reproduce complete input, semantic programs, assurance projections, and retained results rather than
+summaries. Run-local SDK catalogs are likewise immutable context evidence. The executable documentation logic was
+split into focused file helpers, evaluation declarations, page composition, navigation, and styles. The remaining
+warning-sized official-spec generator contains contract template data and stays below the 800-line decomposition
+threshold.
+
+Review focus: if more additive DS contracts make the official-spec generator materially larger, move cohesive
+contract families into imported definition modules while preserving deterministic generation and byte-for-byte
+original-spec inclusion. If a richer diagram layout is required later, extend the local renderer or vendor a
+reviewed local asset; do not restore an absolute CDN URL.
+
+## 21. Primary Markdown CNL and technical evidence boundary
+
+Decision: `run`, `analyze` and `generate` write and return `results/response.md` by default. The response is tagged Markdown CNL containing only intent-visible, applicable semantic results. Raw executable findings, canonical frame projections, assurance paths, traces, diagnostics and logs remain linked from `artifacts.md` and `report.md`. Material problems suppress unrelated confirmations unless IntentJS explicitly requests a complete audit. Exact verified source spans are ranked and quoted so the answer explains the concrete text that caused a rule to pass, fail, conflict or remain unknown.
+
+Review focus: review domain-specific wording and evidence ranking on new corpora. Response templates are deterministic and grounded, but a later formatter LLM may improve prose only after the tagged blocks and quotations have been produced.
+
+## 22. Response circuits and local override precedence
+
+Decision: post-semantic presentation is executable code. Framework defaults select material results, infer style, group/count findings and select generated frames. IntentJS supplies typed presentation directives. Agent policies load from `agent/cnl/*.response.circuit.mjs`, task policies load from `task/cnl/*.response.circuit.mjs`, and later identical identities replace earlier ones before deterministic priority ordering. Response circuits can filter, rank, group and explain existing outcomes; they cannot alter truth, invent evidence or write ontology facts. Adaptive acceptance includes the rendered response digest.
+
+Review focus: a task-local response circuit is justified only by an actual presentation need orthogonal to semantic truth. Repeated policies with independent calibration cases are candidates for promotion to the agent layer, but promotion remains an explicit review decision.
+
+## 23. Environment-managed Codex assets are not project assets
+
+Decision: the repository does not edit, copy, publish or depend on environment-managed Codex skills. The `nll-skills/` directory is the project-owned executable skill set used by coding runs. DS032, DS033 and DS040 describe project-owned documentation/specification responsibilities rather than external maintenance packages.
+
+Review focus: if an external tool is useful during maintenance, its effect must still be reproducible through checked-in project code before it becomes part of the build or runtime contract.

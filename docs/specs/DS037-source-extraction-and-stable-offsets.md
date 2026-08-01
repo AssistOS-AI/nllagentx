@@ -16,6 +16,8 @@ Source provenance begins before LongTextJS: bytes must be decoded into stable te
 
 `framework/tools/source-extractors.mjs` is the extraction boundary. UTF-8 text, Markdown, CNL, CSV, and HTML use the built-in UTF-8 extractor. PDF input uses the dependency-free PDF text extractor, which validates the header, rejects encrypted documents, decodes unfiltered or Flate-compressed content streams, interprets literal and hexadecimal text operands, and records extractor and page metadata. Decoded text—not binary byte position—is the canonical coordinate space used by `SourceUnit` and `SourceSpan`.
 
+This boundary is deliberately non-semantic. Source ingestion may decode bytes, normalize stable source units, calculate digests, expose exact spans, and build a source outline. It must not infer IntentJS, ontology concepts, LongTextJS claims, circuit logic, contradiction results, or generated answers from natural language. Those artifacts are authored by a coding agent running the appropriate `nll-*` skills against the decoded source and live project catalogs. After authoring, deterministic runtime commands import and execute the resulting JavaScript DSL modules without another model call.
+
 A task may override or add a format through `source/extractors/<extension>.extractor.mjs`. The module exports `default` or `extractSource`, receives an immutable object containing path, extension, bytes, and task root, and returns a text string or `{ text, metadata }`. The ingestion tool validates this result, segments it deterministically, hashes the entire decoded text, and generates executable `source-map.mjs` with stable offsets and metadata.
 
 Extraction failure must never fabricate text. Unsupported formats, invalid modules, encryption, unsupported PDF encodings, and decoding failures produce typed source diagnostics. Scanned PDFs require a task-local OCR/extractor adapter because Node.js built-ins cannot infer glyphs from images. Source IDs remain deterministic under a lexically sorted source-file list.
@@ -29,6 +31,10 @@ Response: PDF text is stored through drawing operators, compression, and font en
 ### Question #2: Why may a task-local extractor override a built-in?
 
 Response: Specialized documents may require a known font map, OCR capture, or domain decoder. The explicit task-owned module makes that choice reviewable and reproducible while preserving the common ingestion contract.
+
+### Question #3: Does source extraction translate natural language into semantic DSL code?
+
+Response: No. It produces stable decoded evidence only. Explicit coding-agent phases use that evidence, the task instruction, the selected skills, and resolved SDK or ontology catalogs to author IntentJS, LongTextJS, OntologyJS, or CircuitJS. Conflating these operations would hide model-dependent interpretation inside deterministic ingestion and make the claimed authoring evaluation meaningless.
 
 ## Conclusion
 

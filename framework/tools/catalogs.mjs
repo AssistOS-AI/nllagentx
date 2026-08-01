@@ -28,10 +28,31 @@ export function circuitCatalog(circuits) {
   return `${lines.join("\n")}\n`;
 }
 
+export function responseCircuitCatalog(circuits) {
+  const lines = [
+    "# Response Circuit Catalog",
+    "",
+    `Resolved response circuits: ${circuits.length}.`,
+    "",
+    "These circuits run after semantic CircuitJS. They may select, suppress, group, count, rank, and explain existing findings or typed frames, but they must not invent semantic truth.",
+    "",
+    "| Response circuit | Priority | Stages | Applicability |",
+    "| --- | ---: | --- | --- |"
+  ];
+  for (const circuit of circuits) {
+    lines.push(`| \`${circuit.identity}\` | ${circuit.priority} | ${circuit.stages.map((stage) => `\`${stage.id}\``).join(", ") || "—"} | executable \`applies(context)\` predicate |`);
+  }
+  lines.push(
+    "",
+    "Agent response circuits are loaded from `agent/cnl/*.response.circuit.mjs`; task overrides and additions are loaded from `task/cnl/*.response.circuit.mjs`. Later modules with the same circuit identity replace earlier modules during composition."
+  );
+  return `${lines.join("\n")}\n`;
+}
+
 function label(value) { return `\`${value?.name ?? (typeof value?.identity === "function" ? value.identity() : value?.identity) ?? String(value)}\``; }
 
 export function profileResolutionCatalog(runtime) {
-  const lines = ["# Profile Resolution", "", `Profile: \`${runtime.profile.id}\`.`, "", "## Loaded packs", "", ...runtime.packs.map((pack, index) => `${index + 1}. \`${pack.id}\` (${pack.tier}, ${pack.knowledgeLevel})`), "", "## Precedence", "", "1. framework SDK and core packs", "2. resolved load profile", "3. agent-local ontology and circuit modules", "4. task-local ontology, circuit, and IntentJS modules", "5. generated context (informational only)"];
+  const lines = ["# Profile Resolution", "", `Profile: \`${runtime.profile.id}\`.`, "", "## Loaded packs", "", ...runtime.packs.map((pack, index) => `${index + 1}. \`${pack.id}\` (${pack.tier}, ${pack.knowledgeLevel})`), "", "## Precedence", "", "1. framework SDK, default knowledge, and default response circuits", "2. resolved load profile", "3. agent-local ontology, semantic-circuit, and response-circuit modules", "4. task-local ontology, semantic-circuit, response-circuit, and IntentJS modules", "5. generated context (informational only)"];
   return `${lines.join("\n")}\n`;
 }
 

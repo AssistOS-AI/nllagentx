@@ -1,7 +1,8 @@
 import { createWriteStream } from "node:fs";
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { spawn } from "node:child_process";
 import { relative, resolve } from "node:path";
+import { finished } from "node:stream/promises";
 import { atomicWrite } from "./filesystem.mjs";
 
 export class CodingAgentAdapter {
@@ -26,15 +27,30 @@ export class CodexAdapter extends CodingAgentAdapter {
       NLL_RUN_ROOT: runRoot
     };
     const startedAt = new Date().toISOString();
-    const exitCode = await new Promise((resolveExit, reject) => {
+    const stdout = createWriteStream(stdoutPath);
+    const stderr = createWriteStream(stderrPath);
+    const processCompletion = new Promise((resolveExit, reject) => {
       const child = spawn(this.executable, args, { cwd: workingDirectory, env: environment, stdio: ["ignore", "pipe", "pipe"] });
-      const stdout = createWriteStream(stdoutPath); const stderr = createWriteStream(stderrPath);
       child.stdout.pipe(stdout); child.stderr.pipe(stderr);
-      child.on("error", reject);
-      child.on("close", (code) => { stdout.end(); stderr.end(); resolveExit(code ?? 4); });
+      child.on("error", (error) => {
+        stdout.destroy(error);
+        stderr.destroy(error);
+        reject(error);
+      });
+      child.on("close", (code) => resolveExit(code ?? 4));
     });
+    const [exitCode] = await Promise.all([
+      processCompletion,
+      finished(stdout),
+      finished(stderr)
+    ]);
     const finishedAt = new Date().toISOString();
     await atomicWrite(resolve(runRoot, "logs", "process.md"), `# Coding-agent process\n\n- Adapter: Codex\n- Started: ${startedAt}\n- Finished: ${finishedAt}\n- Exit status: ${exitCode}\n- Working directory: ${relative(projectRoot, workingDirectory)}\n- Standard output: \`logs/codex.stdout.log\`\n- Standard error: \`logs/codex.stderr.log\`\n- Final response: \`logs/codex.final.md\`\n`);
-    return Object.freeze({ exitCode, stdoutPath, stderrPath, summaryPath, startedAt, finishedAt });
+    return Object.freeze({ adapterId: "codex", exitCode, stdoutPath, stderrPath, summaryPath, startedAt, finishedAt });
   }
+}
+
+export function createCodingAgentAdapter(id, options = {}) {
+  if (id === "codex") return new CodexAdapter(options);
+  throw new Error(`CODING_AGENT_ADAPTER_UNKNOWN: ${id}`);
 }

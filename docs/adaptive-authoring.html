@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Adaptive Analysis Loop</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from './assets/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Adaptive Analysis Loop</nav>
+      <p class="kicker">Task-local semantic growth with deterministic acceptance</p>
+      <h1>Adaptive Analysis Loop</h1>
+      <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
+      <p class="lead">Adaptive analysis is the explicit fallback for a complex source whose requested operation is not covered realistically by inherited framework, profile, and agent knowledge. It uses Codex to add only missing task-local semantic programs, then tests and executes the dynamically composed plan until the bounded review contract passes.</p>
+<pre class="mermaid">flowchart TD
+  Input[Task instruction and exact source] --> Inherit[Resolve framework, profile, and agent knowledge]
+  Inherit --> Intent[Codex: missing IntentJS]
+  Intent --> Ontology[Codex: ontology sufficiency audit]
+  Ontology --> LongText[Codex: source-grounded LongTextJS]
+  LongText --> Circuit[Codex: circuit sufficiency audit]
+  Circuit --> Compose[Planner composes inherited plus task-local circuits]
+  Compose --> Validate[Tests, anchors, providers, concrete, abstract, symbolic]
+  Validate --> Review[Mandatory Codex multi-skill review]
+  Review -->|failures remain and cycles available| Compose
+  Review -->|accepted| Replay[Model-free replay]</pre>
+<h2>CLI contract</h2>
+<pre><code>node nllAgent.mjs analyze \
+  --agent-dir path/to/agent --task-dir path/to/task \
+  --author-adaptive --authoring-cycles 3 --assurance all
+
+# Domain-specific acceptance for the retained DS042 case.
+node evaluations/adaptive-task-e2e/validate.mjs</code></pre>
+<table><thead><tr><th>Parameter</th><th>Contract</th></tr></thead><tbody>
+<tr><td><code>--author-adaptive</code></td><td>Explicitly permits Codex to audit and create missing task-owned semantic code.</td></tr>
+<tr><td><code>--authoring-cycles 1..10</code></td><td>Maximum Codex review repairs after initial intent, ontology, LongText, and circuit phases; default 3.</td></tr>
+<tr><td><code>--assurance none|abstract|symbolic|all</code></td><td>Auxiliary acceptance required from every selected non-core circuit; adaptive default is <code>all</code>.</td></tr>
+<tr><td><code>--adaptive-allow-unknown</code></td><td>Allows unknown-only concrete output to be material when indeterminacy is the requested correct result.</td></tr>
+</tbody></table>
+<h2>What may change</h2><p>The task may gain executable <code>intent/</code>, <code>ontologies/</code>, <code>longtext/</code>, <code>circuits/</code>, and <code>tests/</code> modules plus retained <code>runs/</code> and <code>results/</code>. Framework and reusable agent code remain inherited and unchanged. A proven task extension can be proposed for later promotion, but adaptive execution never promotes it silently.</p>
+<h2>Acceptance boundary</h2><p>Ontology diagnostics, exact source anchors, requested capability providers, focused tests, blocking diagnostics, material non-core concrete findings or frames, abstract convergence, non-empty non-truncated symbolic paths, an equivalent second model-free execution, and mandatory review are all checked. Reaching the cycle limit is a typed failure, not a partial success.</p>
+<p>See <a href="tutorial-adaptive-cold-chain.html">the complete real cold-chain run</a> and <a href="specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md">DS042</a>.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

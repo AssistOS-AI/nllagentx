@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — Source Ingestion and Provenance</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,8 +17,10 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Source Ingestion and Provenance</nav>
       <p class="kicker">Deterministic bytes-to-spans pipeline</p>
       <h1>Source Ingestion and Provenance</h1>
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
       
-<p class="lead">Source ingestion turns retained files into deterministic decoded text before LongTextJS can claim exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON.</p>
+<p class="lead">Source ingestion turns retained files into deterministic decoded text before a coding agent can author LongTextJS with exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON or hidden semantic extraction.</p>
+<div class="callout"><strong>Boundary.</strong> Ingestion stops at text, units, digests, offsets and non-semantic outlines. It does not infer IntentJS, LongTextJS, ontology, circuits, findings or generated answers. Codex performs that semantic authoring in explicit skill phases; deterministic runtime commands reuse the resulting code.</div>
 <h2>Run and inspect ingestion</h2>
 <pre><code>node nllAgent.mjs source ingest   --agent-dir examples/validation-agent   --task task-symbolic-validation
 
@@ -53,7 +55,7 @@ node nllAgent.mjs source verify-anchors   --agent-dir examples/validation-agent 
 <p>The generated registry records extractor metadata, a SHA-256 digest of decoded text, and absolute decoded offsets. A LongTextJS anchor is valid only when the source, unit, bounds, digest, and selected text hash all match. Encrypted, scanned, or custom-font PDFs require a retained task adapter; the built-in never invents OCR text.</p>
 <h2>Observed output</h2>
 <p>The validation task produces one source unit, and its two facility-event claims verify against exact source spans. <code>results/source-diagnostics.md</code> states <code>No source extraction diagnostics.</code> after a clean ingestion, avoiding stale errors from earlier source revisions.</p>
-<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for the normative extraction and decoded-offset contract.</p>
+<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for extraction and decoded offsets and <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">DS041</a> for the coding-agent authoring boundary.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>

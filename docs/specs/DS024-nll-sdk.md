@@ -29,6 +29,8 @@ This skill is installed from `project/nll-skills/nll-sdk/` into a run-local `ski
 ## Required design specifications
 
 - `DS-002_Internal_MJS_DSLs_and_SDK.md`
+- `DS043-primary-markdown-cnl-response.md`
+- `DS044-response-circuit-composition-and-intent-presentation.md`
 
 Read the primary DS first, then only the domain DS files named by the run context. Generated catalogs summarize the current implementation but do not override the DS contract.
 
@@ -53,7 +55,7 @@ Use generated catalogs and source-slice tools before loading large implementatio
 
 1. Search the catalog for an existing primitive or kit before adding one.
 2. Define the semantic sort, input/output contract, provenance behavior and canonical identity.
-3. Implement a fluent API returning opaque semantic handles rather than generic field objects.
+3. Implement a fluent API returning opaque semantic handles rather than generic field objects. Response policy uses typed `ResponseDirective`, `ResponseStage` and `ResponseCircuitModel` objects, never untyped JSON.
 4. Register a descriptor with examples, diagnostics and determinism notes.
 5. Add concrete tests and, where useful, abstract/symbolic adapters or explicit unsupported behavior.
 6. Update generated catalogs and constructor facades.
@@ -71,7 +73,7 @@ Use generated catalogs and source-slice tools before loading large implementatio
 
 ## Completion criterion
 
-The new SDK feature is reusable by ontology, LongText or circuit code; has no external dependency; is cataloged; and is tested through public APIs.
+The new SDK feature is reusable by ontology, LongText, semantic-circuit or response-circuit code; has no external dependency; is cataloged; and is tested through public APIs.
 
 At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed canonical files and leave any genuinely blocked issue as a typed diagnostic or refinement demand. Do not claim success merely because code imports.
 
@@ -79,9 +81,9 @@ At completion, run the fast checks named in `INSTRUCTIONS.md`, summarize changed
 
 The adjacent `workflow.mjs` is the executable skill contract. The CLI loads it through the SDK, resolves its skill dependencies transitively, and generates only the context artifacts declared there. The workflow never searches hidden skill directories.
 
-At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies/circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
+At runtime, `nllAgent context build` resolves either `--agent <name>` or `--agent-dir <path>`, and either `--task <id>` or `--task-dir <path>`. It imports framework default knowledge, then profile, agent, and task ontologies, semantic circuits and response circuits in that precedence order. Generated `SDK_CATALOG.md`, `ONTOLOGY_CATALOG.md`, `CIRCUIT_CATALOG.md`, `RESPONSE_CIRCUIT_CATALOG.md`, and `PROFILE_RESOLUTION.md` describe the actual resolved modules. Skill code must use those SDK constructors and ontology identities; it must not copy catalog prose into semantic modules or replace executable DSL code with data manifests.
 
-The task folder owns source, IntentJS, LongTextJS, task-local ontology/circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
+The task folder owns source, IntentJS, LongTextJS, task-local ontology/semantic-circuit/response-circuit code, tests, runs, and results. The agent folder owns reusable extensions. A reusable dependency belongs in the framework or agent layer, while a source-specific interpretation belongs in the task layer.
 
 
 ## Decisions & Questions

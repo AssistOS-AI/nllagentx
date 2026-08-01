@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — CLI Reference</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,16 +17,43 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>CLI Reference</nav>
       <p class="kicker">Commands and parameters</p>
       <h1>CLI Reference</h1>
+      <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">All command families are implemented by <code>framework/cli/main.mjs</code> and use Node.js built-ins. Run <code>node nllAgent.mjs help</code> for the compact grammar.</p>
 <h2>Workspace and coding commands</h2>
 <pre><code>node nllAgent.mjs agent create --agent reviewer --profile general-broad
-node nllAgent.mjs task create --agent reviewer --source notes.md --title "Policy review"
+node nllAgent.mjs task create --agent reviewer --source notes.md   --title "Policy review" --instruction "Find grounded contradictions"
+node nllAgent.mjs code architect --agent reviewer   --goal "Read source/agent-brief.md and create the reusable agent plan"
+node nllAgent.mjs code ontology --agent reviewer
 node nllAgent.mjs code intent --agent reviewer --task task-ID
 node nllAgent.mjs code longtext --agent reviewer --task task-ID --model MODEL
 node nllAgent.mjs code review --agent reviewer --task task-ID --diagnostics failures.md
 node nllAgent.mjs code circuit --agent-dir path/to/agent --task-dir path/to/task --prepare-only</code></pre>
 <p><code>--prepare-only</code> builds the exact context and skill dependency chain without invoking Codex. Coding runs retain instructions, context catalogs, installed skills, executable run metadata, process logs, and the final coding-agent response.</p>
+<h2>Prompt-like authoring and replay</h2>
+<p>There are two explicit prompt-like workflows. To teach reusable semantics, retain the natural-language brief at <code>agents/reviewer/source/agent-brief.md</code>, then run agent-level <code>code architect</code>, <code>code ontology</code>, <code>code circuit</code>, and <code>code review</code>. To analyze one source, create a task with its separate instruction and use <code>--author-missing</code> once; later <code>run</code> calls replay the generated programs without Codex.</p>
+<pre><code>node nllAgent.mjs code circuit --agent reviewer
+node nllAgent.mjs code review --agent reviewer
+
+node nllAgent.mjs task create --agent reviewer   --source inputs/policy.txt   --instruction "Find contradictions and unsupported conclusions"
+
+# Replace task-ID with the random identifier printed by task create.
+node nllAgent.mjs analyze --agent reviewer --task task-ID   --author-missing --assurance all
+node nllAgent.mjs run --agent reviewer --task task-ID --assurance all</code></pre>
+<p>The first <code>analyze</code> authors missing IntentJS and LongTextJS through Codex and then executes them. The second command imports the retained <code>.mjs</code> programs directly. The complete evaluation automating both reusable-agent and per-task authoring is <code>node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent</code>.</p>
+<h2>Adaptive task-local authoring</h2>
+<p>Use the distinct adaptive mode when the inherited agent may lack ontology meanings or a realistic circuit for a complex task. It audits and creates only task-owned semantic modules, executes deterministic acceptance, invokes a mandatory Codex review, and repeats within the explicit cycle bound.</p>
+<pre><code>node nllAgent.mjs analyze \
+  --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \
+  --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \
+  --author-adaptive --authoring-cycles 3 --assurance all
+
+# Accepted programs replay without Codex.
+node nllAgent.mjs run \
+  --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \
+  --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \
+  --assurance all</code></pre>
+<p><code>--author-adaptive</code> and <code>--author-missing</code> are mutually exclusive. See <a href="adaptive-authoring.html">the adaptive lifecycle</a> and <a href="tutorial-adaptive-cold-chain.html">the retained real run</a>.</p>
 <h2>Execution and selection</h2>
 <pre><code>node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
 node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation
@@ -34,6 +61,23 @@ node nllAgent.mjs plan --agent reviewer --task task-ID --explain-plan
 node nllAgent.mjs generate --agent reviewer --task task-ID --output PolicySpecificationPlan
 node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/open-events.mjs</code></pre>
 <p>Selection controls include repeatable <code>--domain</code> and <code>--check</code>, <code>--exclude-domain</code>, <code>--exclude-check</code>, <code>--only</code>, <code>--all-compatible</code>, <code>--profile</code>, <code>--intent</code>, and <code>--assurance abstract|symbolic|all</code>.</p>
+<h2>Authoring parameters</h2>
+<table><thead><tr><th>Parameter</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>--agent</code> / <code>--agent-dir</code></td><td>Resolve an agent by default name/path or by an explicit folder.</td></tr>
+<tr><td><code>--task</code> / <code>--task-dir</code></td><td>Resolve a random task ID/path or an explicit task folder.</td></tr>
+<tr><td><code>--source</code></td><td>Source file copied into a newly created task; repeat the task workflow for additional cases.</td></tr>
+<tr><td><code>--instruction</code></td><td>Persistent task direction, kept separate from claims made by the source.</td></tr>
+<tr><td><code>--goal</code></td><td>Additional coding-phase objective retained in the run instructions.</td></tr>
+<tr><td><code>--model</code></td><td>Explicit coding-agent model override; omitted means local Codex configuration.</td></tr>
+<tr><td><code>--coding-agent</code></td><td>Executable used by the current Codex adapter.</td></tr>
+<tr><td><code>--resume</code></td><td>Explicit Codex resume identifier for a follow-up authoring run.</td></tr>
+<tr><td><code>--prepare-only</code></td><td>Build context and installed skills but do not invoke the adapter.</td></tr>
+<tr><td><code>--author-missing</code></td><td>Permit <code>analyze</code> to author missing task semantic programs before deterministic execution.</td></tr>
+<tr><td><code>--author-adaptive</code></td><td>Run the task-local intent, ontology, LongText, circuit, deterministic acceptance, and mandatory review lifecycle.</td></tr>
+<tr><td><code>--authoring-cycles</code></td><td>Maximum adaptive Codex review cycles, an integer from 1 through 10; default 3.</td></tr>
+<tr><td><code>--adaptive-allow-unknown</code></td><td>Permit unknown-only output to satisfy the adaptive material-output gate for intentionally indeterminate tasks.</td></tr>
+<tr><td><code>--assurance</code></td><td><code>none</code>, <code>abstract</code>, <code>symbolic</code>, or <code>all</code>; adaptive authoring defaults to <code>all</code>.</td></tr>
+</tbody></table>
 <h2>Inspection tools</h2>
 <p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> are the agent-facing discovery commands declared by the installed skill workflows.</p>
 <h2>Exit status</h2><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td>0</td><td>Tool completed and requested outputs were written.</td></tr><tr><td>2</td><td>CLI usage error.</td></tr><tr><td>3</td><td>Import, validation, execution, or I/O failure.</td></tr><tr><td>4</td><td>Explicit coding-agent process failed.</td></tr></tbody></table>

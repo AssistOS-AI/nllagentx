@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — LongTextJS in Detail</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from './assets/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>LongTextJS in Detail</nav>
+      <p class="kicker">Grounded interpretation with explicit coverage</p>
+      <h1>LongTextJS in Detail</h1>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
+      <p class="lead">LongTextJS is executable source interpretation. Codex reads decoded evidence and creates terms, claims, contexts, alternatives, identity hypotheses, exact anchors and coverage witnesses. The ingester itself never performs that semantic translation.</p>
+<h2>Core distinctions</h2><table><thead><tr><th>Value</th><th>Meaning</th></tr></thead><tbody><tr><td>Term</td><td>An entity, event, state, proposition or other ontology-constructed semantic value.</td></tr><tr><td>Claim</td><td>A source-attributed assertion about a term, with modality, polarity and context.</td></tr><tr><td>Grounding</td><td>An exact source span and provenance chain supporting the claim.</td></tr><tr><td>Alternative</td><td>A competing interpretation retained without premature collapse.</td></tr><tr><td>Coverage</td><td>An explicit witness that a region/concept was inspected; required before negative absence conclusions.</td></tr></tbody></table>
+<h2>Program shape</h2><pre><code>const source = taskSource("source-001", registry);
+const authorContext = reportedBy(author).seal();
+const groundedRule = claim(ruleTerm)
+  .within(authorContext)
+  .grounding(groundedAt(source.spanByText("exact source words")));
+
+export default describe("policy-source")
+  .section(section("rules", sequence(groundedRule)))
+  .coverage(coverage(OperationalRule).forScope("rules").complete())
+  .commit();</code></pre>
+<p>Run <code>source verify-anchors</code>, <code>longtext check</code>, <code>longtext execute</code> and focused queries before accepting the phase. Complete generated unit and root modules are included in every concrete tutorial.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — Semantic DSLs and SDK</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,13 +17,14 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Semantic DSLs and SDK</nav>
       <p class="kicker">Executable .mjs contracts</p>
       <h1>Semantic DSLs and SDK</h1>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
       
 <p class="lead">The DSLs share stable semantic identities while preserving separate responsibilities. The root SDK offers namespace exports for cases where two DSLs intentionally use the same fluent name.</p>
-<h2>OntologyJS</h2><p>Ontology builders declare pack-qualified concepts, roles, relations, lexicalizations, facts, laws, capabilities, and cardinalities. Sealed modules expose generated constructors through <code>constructorFor()</code> and diagnostic construction through <code>tryConstruct()</code>. Ground terms enforce declared role cardinality and direct range constraints; pattern terms may omit roles for partial queries.</p>
+<h2>OntologyJS</h2><p>Ontology builders declare pack-qualified concepts, roles, relations, lexicalizations, facts, laws, capabilities, and cardinalities. Sealed modules expose generated constructors through <code>constructorFor()</code> and diagnostic construction through <code>tryConstruct()</code>. Ground terms enforce declared role cardinality and direct range constraints; pattern terms may omit roles for partial queries. Read the <a href="ontologyjs.html">detailed OntologyJS chapter</a>.</p>
 <h2>Live public API inventory</h2><p><code>framework/sdk/public-api.mjs</code> inventories nine narrow surfaces from their imported namespaces. Run <code>node nllAgent.mjs sdk check</code> to validate the live export sets and <code>node nllAgent.mjs sdk usage --surface longtext</code> for canonical paths, exports, and composition examples. Repeated fluent names are reported and resolved through narrow imports or root namespaces. See <a href="specsLoader.html?spec=DS039-sdk-public-surfaces-and-tooling.md">DS039</a>.</p>
-<h2>LongTextJS</h2><p>LongTextJS separates terms from claims, anchors claims to exact <code>SourceSpan</code> values, represents context and alternatives, and commits coverage witnesses explicitly. Source verification checks source identity, digest, unit identity, bounds, and text hashes before an anchor is considered valid.</p>
-<h2>IntentJS and profiles</h2><p>Intent modules express modes, domains, concerns, evidence policy, assurance, outputs, exclusions, scope, resources, and fallback. Profiles are executable modules that choose packs and selection policy. CLI domains, exclusions, checks, and text signals can refine runtime resolution without replacing the canonical task module.</p>
-<h2>CircuitJS and CNL</h2><p>Circuits declare requirements and provisions, then compose queries, decision tables, procedural stages, emissions, and assurance requests. The scheduler infers stage dependencies from semantic references. CNL frames retain typed slots and provenance, render to a canonical textual form, and parse back for semantic comparison.</p>
+<h2>LongTextJS</h2><p>LongTextJS separates terms from claims, anchors claims to exact <code>SourceSpan</code> values, represents context and alternatives, and commits coverage witnesses explicitly. Source verification checks source identity, digest, unit identity, bounds, and text hashes before an anchor is considered valid. Read the <a href="longtextjs.html">detailed LongTextJS chapter</a>.</p>
+<h2>IntentJS and profiles</h2><p>Intent modules express modes, domains, concerns, evidence policy, assurance, outputs, exclusions, scope, resources, and fallback. Profiles are executable modules that choose packs and selection policy. CLI domains, exclusions, checks, and text signals can refine runtime resolution without replacing the canonical task module. Read the <a href="intentjs.html">detailed IntentJS chapter</a>.</p>
+<h2>CircuitJS and CNL</h2><p>Circuits declare requirements and provisions, then compose queries, decision tables, procedural stages, emissions, and assurance requests. The scheduler infers stage dependencies from semantic references. CNL frames retain typed slots and provenance, render to a canonical textual form, and parse back for semantic comparison. Read the <a href="circuitjs.html">detailed CircuitJS chapter</a>.</p>
 <pre class="mermaid">classDiagram
   SemanticHandle <|-- SemanticTerm
   SemanticHandle <|-- Claim

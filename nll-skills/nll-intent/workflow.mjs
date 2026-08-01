@@ -3,12 +3,17 @@ import { codingSkill, contextArtifact, cliTool, editRoot } from "../../framework
 export default codingSkill("nll-intent")
   .specs(
     "DS-004",
-    "DS035"
+    "DS035",
+    "DS041",
+    "DS042",
+    "DS043",
+    "DS044"
   )
   .context(
     contextArtifact("SOURCE_OUTLINE.md"),
     contextArtifact("ONTOLOGY_CATALOG.md"),
     contextArtifact("CIRCUIT_CATALOG.md"),
+    contextArtifact("RESPONSE_CIRCUIT_CATALOG.md"),
     contextArtifact("PROFILE_RESOLUTION.md")
   )
   .tools(

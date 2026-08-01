@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — nll-ontology Skill</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,9 +17,10 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>nll-ontology Skill</nav>
       <p class="kicker">Coding workflow contract</p>
       <h1>nll-ontology Skill</h1>
+      <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">Use when a concept, frame, role, relation, lexicalization, stable pack fact or semantic law is missing or when creating a predefined/domain agent pack.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-002</code>, <code>DS-007-DS-019</code>, <code>DS038</code>. Dependency order: <code>nll-sdk</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
+<h2>Executable workflow</h2><p>The workflow references <code>DS-002</code>, <code>DS-007-DS-019</code>, <code>DS038</code>, <code>DS041</code>, <code>DS042</code>. Dependency order: <code>nll-sdk</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
 <pre class="mermaid">flowchart LR
   P1[discover] --> P2[author] --> P3[validate] --> P4[handoff]
   Context[Resolved SDK, ontology, circuit, profile, source catalogs] --> P1</pre>

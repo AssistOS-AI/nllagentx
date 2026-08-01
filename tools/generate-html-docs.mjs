@@ -2,13 +2,16 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { buildAgenticDocumentationPages } from "./docs-agentic-pages.mjs";
+import { documentationHeader, documentationSectionNavigation } from "./docs-navigation.mjs";
+import { documentationStyles } from "./docs-styles.mjs";
 
 const root = resolve(import.meta.dirname, ".."); const docs = resolve(root, "docs");
 await mkdir(resolve(docs, "partials"), { recursive: true }); await mkdir(resolve(docs, "assets"), { recursive: true });
 
-const mermaid = `<script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+const diagrams = `<script type="module">
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>`;
 const escapeHtml = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 const code = (value) => `<code>${escapeHtml(value)}</code>`;
@@ -20,7 +23,7 @@ function shell(title, kicker, content) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — ${escapeHtml(title)}</title>
   <link rel="stylesheet" href="styles.css">
-  ${mermaid}
+  ${diagrams}
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -29,6 +32,7 @@ function shell(title, kicker, content) {
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>${escapeHtml(title)}</nav>
       <p class="kicker">${escapeHtml(kicker)}</p>
       <h1>${escapeHtml(title)}</h1>
+      ${documentationSectionNavigation(title)}
       ${content}
     </article>
   </main>
@@ -52,11 +56,19 @@ pages.set("index.html", shell("System Guide", "Executable semantic programs", `
   Resolver --> Planner[Capability planner]
   Store --> Planner
   Planner --> Runner[Circuit runner]
-  Runner --> Results[Findings, CNL, trace, assurance]
+  Runner --> SemanticResults[Findings and typed CNL frames]
+  SemanticResults --> ResponseCircuits[Intent-selected response circuits]
+  ResponseCircuits --> Results[Grounded response.md]
+  SemanticResults --> Technical[Trace, assurance, diagnostics]
   Skills[Coding skills] --> Context[Run-local context]
   Context --> Codex[Explicit coding-agent adapter]
+  Codex --> Ontology[OntologyJS]
+  Codex --> Circuits[Semantic CircuitJS]
+  Codex --> ResponseCircuits
   Codex --> Intent
-  Codex --> LongText</pre>
+  Codex --> LongText
+  Ontology --> Store
+  Circuits --> Planner</pre>
 <h2>Repository structure and ownership</h2>
 <p>The SDK defines semantic values and fluent builders. The runtime materializes one logical store, closes circuit dependencies, schedules stages, and executes concrete or declared auxiliary methods. Framework packs provide default ontology and circuit modules. Agent folders own reusable extensions; task folders own source interpretation, intent, task-local code, tests, coding runs, and retained results.</p>
 <div class="tree" role="group" aria-label="Repository layout">
@@ -67,6 +79,7 @@ pages.set("index.html", shell("System Guide", "Executable semantic programs", `
   <div><strong>nll-skills/</strong><span>ten executable coding workflows</span></div>
   <div><strong>docs/specs/</strong><span>official gap-free contract set</span></div>
 </div>
+<p>For a folder-by-folder ownership map, see <a href="project-structure.html">Project folders and ownership</a>. For the natural-language-to-program lifecycle, see <a href="agentic-authoring.html">Agentic natural-language authoring</a>.</p>
 <h2>Runtime defaults</h2>
 <p>Commands use <code>node nllAgent.mjs</code>. Semantic configuration always names an agent through <code>--agent</code> or <code>--agent-dir</code>; task operations also use <code>--task</code> or <code>--task-dir</code>. The mandatory <code>core-language</code> pack supplies shared vocabulary. Profiles and explicit CLI controls select additional packs. When intent remains open, the planner executes every compatible circuit in the resolved pack set and records the selection.</p>
 <h2>Tests and documentation maintenance</h2>
@@ -103,7 +116,8 @@ pages.set("architecture.html", shell("Architecture and Execution Model", "Bounda
 <p>Process exit status describes tool success. Semantic outcomes remain findings such as <code>UNKNOWN</code>, <code>CONFLICT</code>, <code>BLOCKED_ONTOLOGY</code>, or <code>BLOCKED_COVERAGE</code>. Source decoding failures retain typed diagnostics without pretending that binary extraction succeeded.</p>`));
 
 pages.set("source-ingestion.html", shell("Source Ingestion and Provenance", "Deterministic bytes-to-spans pipeline", `
-<p class="lead">Source ingestion turns retained files into deterministic decoded text before LongTextJS can claim exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON.</p>
+<p class="lead">Source ingestion turns retained files into deterministic decoded text before a coding agent can author LongTextJS with exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON or hidden semantic extraction.</p>
+<div class="callout"><strong>Boundary.</strong> Ingestion stops at text, units, digests, offsets and non-semantic outlines. It does not infer IntentJS, LongTextJS, ontology, circuits, findings or generated answers. Codex performs that semantic authoring in explicit skill phases; deterministic runtime commands reuse the resulting code.</div>
 <h2>Run and inspect ingestion</h2>
 <pre><code>node nllAgent.mjs source ingest \
   --agent-dir examples/validation-agent \
@@ -147,15 +161,15 @@ node nllAgent.mjs source verify-anchors \
 <p>The generated registry records extractor metadata, a SHA-256 digest of decoded text, and absolute decoded offsets. A LongTextJS anchor is valid only when the source, unit, bounds, digest, and selected text hash all match. Encrypted, scanned, or custom-font PDFs require a retained task adapter; the built-in never invents OCR text.</p>
 <h2>Observed output</h2>
 <p>The validation task produces one source unit, and its two facility-event claims verify against exact source spans. <code>results/source-diagnostics.md</code> states <code>No source extraction diagnostics.</code> after a clean ingestion, avoiding stale errors from earlier source revisions.</p>
-<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for the normative extraction and decoded-offset contract.</p>`));
+<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for extraction and decoded offsets and <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">DS041</a> for the coding-agent authoring boundary.</p>`));
 
 pages.set("semantic-dsls.html", shell("Semantic DSLs and SDK", "Executable .mjs contracts", `
 <p class="lead">The DSLs share stable semantic identities while preserving separate responsibilities. The root SDK offers namespace exports for cases where two DSLs intentionally use the same fluent name.</p>
-<h2>OntologyJS</h2><p>Ontology builders declare pack-qualified concepts, roles, relations, lexicalizations, facts, laws, capabilities, and cardinalities. Sealed modules expose generated constructors through <code>constructorFor()</code> and diagnostic construction through <code>tryConstruct()</code>. Ground terms enforce declared role cardinality and direct range constraints; pattern terms may omit roles for partial queries.</p>
+<h2>OntologyJS</h2><p>Ontology builders declare pack-qualified concepts, roles, relations, lexicalizations, facts, laws, capabilities, and cardinalities. Sealed modules expose generated constructors through <code>constructorFor()</code> and diagnostic construction through <code>tryConstruct()</code>. Ground terms enforce declared role cardinality and direct range constraints; pattern terms may omit roles for partial queries. Read the <a href="ontologyjs.html">detailed OntologyJS chapter</a>.</p>
 <h2>Live public API inventory</h2><p><code>framework/sdk/public-api.mjs</code> inventories nine narrow surfaces from their imported namespaces. Run <code>node nllAgent.mjs sdk check</code> to validate the live export sets and <code>node nllAgent.mjs sdk usage --surface longtext</code> for canonical paths, exports, and composition examples. Repeated fluent names are reported and resolved through narrow imports or root namespaces. See <a href="specsLoader.html?spec=DS039-sdk-public-surfaces-and-tooling.md">DS039</a>.</p>
-<h2>LongTextJS</h2><p>LongTextJS separates terms from claims, anchors claims to exact <code>SourceSpan</code> values, represents context and alternatives, and commits coverage witnesses explicitly. Source verification checks source identity, digest, unit identity, bounds, and text hashes before an anchor is considered valid.</p>
-<h2>IntentJS and profiles</h2><p>Intent modules express modes, domains, concerns, evidence policy, assurance, outputs, exclusions, scope, resources, and fallback. Profiles are executable modules that choose packs and selection policy. CLI domains, exclusions, checks, and text signals can refine runtime resolution without replacing the canonical task module.</p>
-<h2>CircuitJS and CNL</h2><p>Circuits declare requirements and provisions, then compose queries, decision tables, procedural stages, emissions, and assurance requests. The scheduler infers stage dependencies from semantic references. CNL frames retain typed slots and provenance, render to a canonical textual form, and parse back for semantic comparison.</p>
+<h2>LongTextJS</h2><p>LongTextJS separates terms from claims, anchors claims to exact <code>SourceSpan</code> values, represents context and alternatives, and commits coverage witnesses explicitly. Source verification checks source identity, digest, unit identity, bounds, and text hashes before an anchor is considered valid. Read the <a href="longtextjs.html">detailed LongTextJS chapter</a>.</p>
+<h2>IntentJS and profiles</h2><p>Intent modules express modes, domains, concerns, evidence policy, assurance, outputs, exclusions, scope, resources, and fallback. Profiles are executable modules that choose packs and selection policy. CLI domains, exclusions, checks, and text signals can refine runtime resolution without replacing the canonical task module. Read the <a href="intentjs.html">detailed IntentJS chapter</a>.</p>
+<h2>CircuitJS and CNL</h2><p>Circuits declare requirements and provisions, then compose queries, decision tables, procedural stages, emissions, and assurance requests. The scheduler infers stage dependencies from semantic references. CNL frames retain typed slots and provenance, render to a canonical textual form, and parse back for semantic comparison. Read the <a href="circuitjs.html">detailed CircuitJS chapter</a>.</p>
 <pre class="mermaid">classDiagram
   SemanticHandle <|-- SemanticTerm
   SemanticHandle <|-- Claim
@@ -205,12 +219,43 @@ pages.set("cli-reference.html", shell("CLI Reference", "Commands and parameters"
 <p class="lead">All command families are implemented by <code>framework/cli/main.mjs</code> and use Node.js built-ins. Run <code>node nllAgent.mjs help</code> for the compact grammar.</p>
 <h2>Workspace and coding commands</h2>
 <pre><code>node nllAgent.mjs agent create --agent reviewer --profile general-broad
-node nllAgent.mjs task create --agent reviewer --source notes.md --title "Policy review"
+node nllAgent.mjs task create --agent reviewer --source notes.md \
+  --title "Policy review" --instruction "Find grounded contradictions"
+node nllAgent.mjs code architect --agent reviewer \
+  --goal "Read source/agent-brief.md and create the reusable agent plan"
+node nllAgent.mjs code ontology --agent reviewer
 node nllAgent.mjs code intent --agent reviewer --task task-ID
 node nllAgent.mjs code longtext --agent reviewer --task task-ID --model MODEL
 node nllAgent.mjs code review --agent reviewer --task task-ID --diagnostics failures.md
 node nllAgent.mjs code circuit --agent-dir path/to/agent --task-dir path/to/task --prepare-only</code></pre>
 <p><code>--prepare-only</code> builds the exact context and skill dependency chain without invoking Codex. Coding runs retain instructions, context catalogs, installed skills, executable run metadata, process logs, and the final coding-agent response.</p>
+<h2>Prompt-like authoring and replay</h2>
+<p>There are two explicit prompt-like workflows. To teach reusable semantics, retain the natural-language brief at <code>agents/reviewer/source/agent-brief.md</code>, then run agent-level <code>code architect</code>, <code>code ontology</code>, <code>code circuit</code>, and <code>code review</code>. To analyze one source, create a task with its separate instruction and use <code>--author-missing</code> once; later <code>run</code> calls replay the generated programs without Codex.</p>
+<pre><code>node nllAgent.mjs code circuit --agent reviewer
+node nllAgent.mjs code review --agent reviewer
+
+node nllAgent.mjs task create --agent reviewer \
+  --source inputs/policy.txt \
+  --instruction "Find contradictions and unsupported conclusions"
+
+# Replace task-ID with the random identifier printed by task create.
+node nllAgent.mjs analyze --agent reviewer --task task-ID \
+  --author-missing --assurance all
+node nllAgent.mjs run --agent reviewer --task task-ID --assurance all</code></pre>
+<p>The first <code>analyze</code> authors missing IntentJS and LongTextJS through Codex and then executes them. The second command imports the retained <code>.mjs</code> programs directly. The complete evaluation automating both reusable-agent and per-task authoring is <code>node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent</code>.</p>
+<h2>Adaptive task-local authoring</h2>
+<p>Use the distinct adaptive mode when the inherited agent may lack ontology meanings or a realistic circuit for a complex task. It audits and creates only task-owned semantic modules, executes deterministic acceptance, invokes a mandatory Codex review, and repeats within the explicit cycle bound.</p>
+<pre><code>node nllAgent.mjs analyze \\
+  --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \\
+  --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \\
+  --author-adaptive --authoring-cycles 3 --assurance all
+
+# Accepted programs replay without Codex.
+node nllAgent.mjs run \\
+  --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \\
+  --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \\
+  --assurance all</code></pre>
+<p><code>--author-adaptive</code> and <code>--author-missing</code> are mutually exclusive. See <a href="adaptive-authoring.html">the adaptive lifecycle</a> and <a href="tutorial-adaptive-cold-chain.html">the retained real run</a>.</p>
 <h2>Execution and selection</h2>
 <pre><code>node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
 node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation
@@ -218,6 +263,23 @@ node nllAgent.mjs plan --agent reviewer --task task-ID --explain-plan
 node nllAgent.mjs generate --agent reviewer --task task-ID --output PolicySpecificationPlan
 node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/open-events.mjs</code></pre>
 <p>Selection controls include repeatable <code>--domain</code> and <code>--check</code>, <code>--exclude-domain</code>, <code>--exclude-check</code>, <code>--only</code>, <code>--all-compatible</code>, <code>--profile</code>, <code>--intent</code>, and <code>--assurance abstract|symbolic|all</code>.</p>
+<h2>Authoring parameters</h2>
+<table><thead><tr><th>Parameter</th><th>Meaning</th></tr></thead><tbody>
+<tr><td><code>--agent</code> / <code>--agent-dir</code></td><td>Resolve an agent by default name/path or by an explicit folder.</td></tr>
+<tr><td><code>--task</code> / <code>--task-dir</code></td><td>Resolve a random task ID/path or an explicit task folder.</td></tr>
+<tr><td><code>--source</code></td><td>Source file copied into a newly created task; repeat the task workflow for additional cases.</td></tr>
+<tr><td><code>--instruction</code></td><td>Persistent task direction, kept separate from claims made by the source.</td></tr>
+<tr><td><code>--goal</code></td><td>Additional coding-phase objective retained in the run instructions.</td></tr>
+<tr><td><code>--model</code></td><td>Explicit coding-agent model override; omitted means local Codex configuration.</td></tr>
+<tr><td><code>--coding-agent</code></td><td>Executable used by the current Codex adapter.</td></tr>
+<tr><td><code>--resume</code></td><td>Explicit Codex resume identifier for a follow-up authoring run.</td></tr>
+<tr><td><code>--prepare-only</code></td><td>Build context and installed skills but do not invoke the adapter.</td></tr>
+<tr><td><code>--author-missing</code></td><td>Permit <code>analyze</code> to author missing task semantic programs before deterministic execution.</td></tr>
+<tr><td><code>--author-adaptive</code></td><td>Run the task-local intent, ontology, LongText, circuit, deterministic acceptance, and mandatory review lifecycle.</td></tr>
+<tr><td><code>--authoring-cycles</code></td><td>Maximum adaptive Codex review cycles, an integer from 1 through 10; default 3.</td></tr>
+<tr><td><code>--adaptive-allow-unknown</code></td><td>Permit unknown-only output to satisfy the adaptive material-output gate for intentionally indeterminate tasks.</td></tr>
+<tr><td><code>--assurance</code></td><td><code>none</code>, <code>abstract</code>, <code>symbolic</code>, or <code>all</code>; adaptive authoring defaults to <code>all</code>.</td></tr>
+</tbody></table>
 <h2>Inspection tools</h2>
 <p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> are the agent-facing discovery commands declared by the installed skill workflows.</p>
 <h2>Exit status</h2><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td>0</td><td>Tool completed and requested outputs were written.</td></tr><tr><td>2</td><td>CLI usage error.</td></tr><tr><td>3</td><td>Import, validation, execution, or I/O failure.</td></tr><tr><td>4</td><td>Explicit coding-agent process failed.</td></tr></tbody></table>`));
@@ -252,22 +314,26 @@ node nllAgent.mjs test all --level exhaustive</code></pre>
 <h2>Evaluation commands</h2>
 <pre><code>node nllAgent.mjs evaluate --suite school-smoke
 node nllAgent.mjs evaluate --suite school-smoke --invoke-agent
+node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent
 node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODEL</code></pre>
-<p>The infrastructure-only school smoke run creates one isolated random-ID task per declared profile, completes deterministic execution and replay, compares the profile ablation, and writes aggregate anchor validity, replay equivalence, and elapsed-time metrics. With <code>--invoke-agent</code>, the runner uses the suite modes to start intent, longtext, or circuit authoring phases before replay.</p>
+<p>The infrastructure-only school smoke run creates one isolated random-ID task per declared profile, completes deterministic execution and replay, compares the profile ablation, and writes aggregate anchor validity, replay equivalence, and elapsed-time metrics. It is not evidence that a reusable agent was learned from natural language. The <code>agentic-nl-e2e</code> suite retains a natural-language agent brief, runs real architect/ontology/circuit Codex phases, creates four tasks, runs real intent/longtext phases, checks expected findings or generation frames, and proves model-free replay.</p>
+<p>The DS042 adaptive validation starts with a core-only agent and a cold-chain task that demonstrably lacks task intent, ontology, LongText, circuits, tests, runs, and results. The public <code>analyze --author-adaptive</code> command must generate the missing executable programs through Codex, pass concrete plus abstract and symbolic acceptance, complete mandatory review, and then replay through ordinary <code>run</code>. Its full retained evidence is reproduced in <a href="tutorial-adaptive-cold-chain.html">the adaptive tutorial</a>.</p>
 <pre class="mermaid">sequenceDiagram
   participant Suite
   participant Agent as Isolated agent
   participant Codex
   participant Runtime
+  Suite->>Agent: retain natural-language agent brief
+  Agent->>Codex: architect, ontology and circuit contexts
+  Codex-->>Agent: reusable executable programs and tests
   Suite->>Agent: create random-ID task and copy source
-  opt --invoke-agent
-    Agent->>Codex: intent/longtext/circuit contexts
-    Codex-->>Agent: executable semantic modules and tests
-  end
+  Agent->>Codex: task intent and longtext contexts
+  Codex-->>Agent: grounded task programs and tests
   Agent->>Runtime: deterministic execution and assurance
   Runtime-->>Suite: findings, CNL, trace, metrics
+  Suite->>Runtime: ordinary replay without Codex
   Suite->>Suite: Markdown and executable .mjs reports</pre>
-<h2>Retained reports</h2><p>Evaluation reports distinguish completed and failed cases and keep failure stacks under <code>reports/failures/</code>. Gold expectations may be executable <code>.gold.mjs</code> modules. Precision, recall, F1, anchor validity, runtime, and assurance artifacts remain tied to task IDs.</p>`));
+<h2>Retained reports</h2><p>Evaluation reports distinguish completed and failed cases and keep failure stacks under <code>reports/failures/</code>. Authoring reports link each real subprocess to instructions, installed skills, context, stdout, stderr, final response and created/modified code. Gold expectations may be executable <code>.gold.mjs</code> modules. Precision, recall, F1, anchor validity, replay equivalence, runtime, generated frames and assurance artifacts remain tied to task IDs.</p>`));
 
 pages.set("tutorial-agent-task.html", shell("Tutorial: Agent, Task, and Concrete Run", "Reproducible folder workflow", `
 <p class="lead">This tutorial uses the committed validation agent so every command can be rerun without network access or a coding agent.</p>
@@ -327,6 +393,9 @@ pages.set("results.html", shell("Artifacts and Retained Results", "Inspectable o
 <p class="lead">Every important intermediate and final result is a file owned by an agent run, task result, or evaluation suite.</p>
 <h2>Task results</h2>
 <table><thead><tr><th>Artifact</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>response.md</code></td><td>primary tagged, grounded, human-readable Markdown CNL answer</td></tr>
+<tr><td><code>artifacts.md</code></td><td>relative links to semantic programs, Codex runs, and technical evidence</td></tr>
+<tr><td><code>response-circuits.mjs</code></td><td>technical response-policy selection and stage trace</td></tr>
 <tr><td><code>execution-plan.md</code></td><td>profile, loaded packs, selected/rejected circuits, and blocked capabilities</td></tr>
 <tr><td><code>findings.mjs</code></td><td>executable finding structures reconstructed through the SDK</td></tr>
 <tr><td><code>findings.cnl</code></td><td>canonical evidence-bearing finding frames</td></tr>
@@ -336,16 +405,16 @@ pages.set("results.html", shell("Artifacts and Retained Results", "Inspectable o
 <tr><td><code>diagnostics.md</code></td><td>typed planning and execution failures</td></tr>
 <tr><td><code>trace.bin</code></td><td>Node V8 binary serialization of semantic trace projections</td></tr>
 <tr><td><code>assurance.mjs</code></td><td>executable abstract/symbolic auxiliary results</td></tr>
-<tr><td><code>report.md</code></td><td>task-level outcome index</td></tr>
+<tr><td><code>report.md</code></td><td>technical task-level execution summary</td></tr>
 </tbody></table>
 <h2>Coding-run context</h2><p>A run directory contains <code>INSTRUCTIONS.md</code>, executable <code>run.mjs</code>, installed skill folders, context catalogs, checks, scratch space, and process logs. Exact design-specification paths and the project CLI invocation are resolved for the selected working directory.</p>
 <h2>Source artifacts</h2><p><code>source/source-map.mjs</code> registers decoded text, extractor metadata, and stable units. Its generated import path points to the selected project's SDK even for an explicit agent directory. UTF-8 formats and ordinary unencrypted PDF text streams have built-in extraction. A task can add or override a decoder with <code>source/extractors/&lt;extension&gt;.extractor.mjs</code>; unsupported filters, scans, encryption, or formats retain typed diagnostics rather than fabricated text. DS037 defines decoded-offset provenance.</p>
-<h2>No semantic JSON</h2><p>Findings, gold expectations, source maps, run declarations, suite declarations, and catalogs use executable modules or human-readable Markdown/CNL. The repository retains existing JSON only where Codex/plugin integration requires a manifest; those files do not encode semantic programs.</p>`));
+<h2>No semantic JSON</h2><p>Findings, gold expectations, source maps, run declarations, suite declarations, and catalogs use executable modules or human-readable Markdown/CNL. Environment-managed Codex/plugin configuration is outside the project artifact model and is not a build or runtime dependency.</p>`));
 
 const skillIds = ["nll-architect", "nll-orchestrator", "nll-sdk", "nll-runtime", "nll-intent", "nll-ontology", "nll-longtext", "nll-circuit", "nll-test", "nll-evaluate"];
-const skillLinks = [...skillIds, "article-build", "gamp-specs", "review-specs"].map((id) => `<li><a href="skill-${id}.html"><code>${id}</code></a></li>`).join("");
+const skillLinks = skillIds.map((id) => `<li><a href="skill-${id}.html"><code>${id}</code></a></li>`).join("");
 pages.set("skills.html", shell("Skill Catalog", "Executable coding workflows", `
-<p class="lead">The repository contains ten nllAgent authoring skills, the self-contained article-build skill, and two documentation/specification maintenance skills. Each locally owned skill has a dedicated HTML chapter and official DS contract.</p>
+<p class="lead">The repository contains ten project-owned nllAgent authoring skills. Each skill has a dedicated HTML chapter, executable workflow and official DS contract. Environment-managed skills are not copied, published or required by this project.</p>
 <ul class="catalog-list">${skillLinks}</ul>
 <h2>Resolution model</h2><pre class="mermaid">flowchart LR
   Requested[Requested phase skill] --> Loader[Skill loader]
@@ -353,7 +422,7 @@ pages.set("skills.html", shell("Skill Catalog", "Executable coding workflows", `
   Dependencies --> Installed[Run-local skill folders]
   Installed --> Catalogs[Declared context catalogs]
   Catalogs --> CodingAgent[Coding agent reads and edits canonical files]</pre>
-<p>The adjacent <code>workflow.mjs</code> is machine-resolvable and the <code>SKILL.md</code> is agent-facing. Context is generated from live SDK descriptors and resolved ontologies/circuits. Skills do not search hidden folders and do not copy the framework theory into task artifacts.</p>`));
+<p>The adjacent <code>workflow.mjs</code> is machine-resolvable and the <code>SKILL.md</code> is agent-facing. Context is generated from live SDK descriptors and resolved ontologies, semantic circuits and response circuits. Skills do not search hidden folders and do not copy the framework theory into task artifacts.</p>`));
 
 for (const skillId of skillIds) {
   const skillRoot = resolve(root, "nll-skills", skillId); const workflow = (await import(`${pathToFileURL(resolve(skillRoot, "workflow.mjs")).href}?docs=${Date.now()}`)).default;
@@ -366,73 +435,56 @@ for (const skillId of skillIds) {
 <h2>Executable workflow</h2><p>The workflow references ${workflow.designSpecifications.map(code).join(", ")}. Dependency order: ${dependencies}. Its declared phases are ${workflow.phases.map(code).join(", ")}.</p>
 <pre class="mermaid">flowchart LR
   ${phases}
-  Context[Resolved SDK, ontology, circuit, profile, source catalogs] --> P1</pre>
+  Context[Resolved SDK, ontology, semantic circuit, response circuit, profile, source catalogs] --> P1</pre>
 <h2>Required tools</h2><ul>${tools}</ul>
 <h2>Canonical edit roots</h2><ul>${roots}</ul>
 <h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS${String(22 + skillIds.indexOf(skillId)).padStart(3, "0")}-${skillId}.md">its DS entry</a>, synchronized with <code>nll-skills/${skillId}/SKILL.md</code> and <code>workflow.mjs</code>.</p>`));
 }
 
-pages.set("skill-gamp-specs.html", shell("gamp-specs Skill", "Documentation structure authority", `
-<p class="lead">This repository-local skill governs the AGENTS, HTML, specification, matrix, loader, and verification layout.</p>
-<h2>Owned artifacts</h2><p>It requires <code>AGENTS.md</code>, a single primary HTML navigation model, Mermaid support on every page, <code>docs/specsLoader.html</code>, contiguous DS numbering, generated <code>matrix.md</code>, coding-style authority in DS001, one page and DS per current local skill, and post-generation link/static checks.</p>
-<h2>Preservation and synchronization</h2><p>Existing guidance is ingested before normalization. Contract changes update implementation, affected DS files, HTML pages, AGENTS guidance, and the skill catalog together. The original nllAgent design specifications are therefore embedded intact in the official sequence instead of being replaced by shorter prose.</p>
-<pre class="mermaid">flowchart TD
-  Sources[Code, README, original DS, skills] --> Official[Official DS set]
-  Official --> Matrix[Generated matrix]
-  Sources --> HTML[Technical HTML]
-  Official --> HTML
-  Matrix --> Verify[Link and static verification]
-  HTML --> Verify
-  Agents[AGENTS.md] --> Verify</pre>
-<p>See <a href="specsLoader.html?spec=DS032-gamp-specs.md">DS032</a> for the complete preserved skill instructions.</p>`));
-
-pages.set("skill-article-build.html", shell("article-build Skill", "Self-contained research-article regeneration", `
-<p class="lead">This repository-local skill incrementally rebuilds a research article from article-owned plans, chapters, bibliography evidence, and SVG assets. It is cataloged here because the repository owns it, while remaining independent of nllAgent semantic execution.</p>
-<h2>Article-owned pipeline</h2>
-<pre class="mermaid">flowchart TD
-  Plan[plan.md and plan_chN.md] --> Chapters[Generated chapter Markdown]
-  Bibliography[bibliography source and evidence cache] --> Validate[Citation support validation]
-  Assets[assets declaration and source SVG] --> SVG[Copy and geometry validation]
-  Chapters --> HTML[index.html]
-  Validate --> HTML
-  SVG --> HTML
-  HTML --> Review[Agent structural and visual review]
-  Review -->|substantive gap| Plan
-  Review --> Manifest[Incremental build manifest]</pre>
-<h2>Ownership boundary</h2><p>The skill reads an explicit article root and only its own self-contained modules. It does not import the nllAgent runtime or install itself into nllAgent task coding runs. Chapter Markdown and final HTML are generated from article plans; bibliography checks retain supporting snippets and spans; figures remain separate SVG assets; a second unchanged build verifies incremental stability.</p>
-<h2>Manifest distinction</h2><p>Article asset and build manifests describe document-build mechanics. They are not semantic nllAgent artifacts and do not weaken the prohibition on JSON OntologyJS, LongTextJS, IntentJS, CircuitJS, task, profile, evaluation, or test-oracle representations.</p>
-<p>See <a href="specsLoader.html?spec=DS040-article-build.md">DS040</a> for the complete preserved local skill contract.</p>`));
-
-pages.set("skill-review-specs.html", shell("review-specs Skill", "Contract-focused specification review", `
-<p class="lead">This skill reviews each affected DS against implementation, user instructions, repository guidance, and observed failures.</p>
-<h2>Review boundary</h2><p><code>Core Content</code> remains the contract backbone. Detailed rationale, trade-offs, and unresolved choices belong in consecutively numbered <code>Decisions &amp; Questions</code> subchapters. An unresolved multiple-option question is not implemented until one option is selected.</p>
-<h2>Companion synchronization</h2><p>When a review changes interfaces, behavior, architecture, constraints, or workflows, the review also updates tests, HTML pages, AGENTS guidance, README content, and local skill summaries that expose the same contract.</p>
+pages.set("documentation-ownership.html", shell("Documentation ownership", "Project and environment boundary", `
+<p class="lead">All published documentation, templates, assets, generators, and verifiers are project-owned. Environment-managed agent skills may guide maintenance but are not product source or runtime capabilities.</p>
+<h2>Self-contained generation</h2><p>The generators read <code>design-specifications/</code>, <code>nll-skills/</code>, project code, retained evaluations, and project-owned files under <code>tools/</code>. They do not read environment-managed skill directories, home folders, a CDN, or a fixed deployment path.</p>
 <pre class="mermaid">flowchart LR
-  Context[New context or failure] --> Compare[Compare affected DS and code]
-  Compare --> Core[Update Core Content]
-  Core --> Decisions[Record numbered rationale]
-  Decisions --> Companions[Synchronize code, tests, HTML, guidance]
-  Companions --> Reread[Sequential reread and verification]</pre>
-<p>See <a href="specsLoader.html?spec=DS033-review-specs.md">DS033</a> for the complete skill contract.</p>`));
+  Project[Project-owned sources] --> Specs[DS000 through DS044]
+  Project --> HTML[Detailed HTML pages]
+  Evaluations[Accepted evaluations] --> Tutorials[Real tutorials]
+  Specs --> Verify[Project-owned verification]
+  HTML --> Verify
+  Tutorials --> Verify</pre>
+<p>See <a href="specsLoader.html?spec=DS032-documentation-and-specification-ownership.md">DS032</a>.</p>`));
 
-await writeFile(resolve(docs, "styles.css"), `:root { color-scheme: light; --ink:#17212b; --muted:#566371; --line:#d8dee5; --paper:#fff; --wash:#f4f7f9; --accent:#075985; --accent2:#0f766e; }
-* { box-sizing:border-box; } body { margin:0; color:var(--ink); background:var(--wash); font:16px/1.65 system-ui,-apple-system,Segoe UI,sans-serif; }
-a { color:var(--accent); text-decoration-thickness:.08em; text-underline-offset:.15em; } code { font: .9em ui-monospace,SFMono-Regular,Consolas,monospace; background:#eef3f6; padding:.08rem .28rem; border-radius:.2rem; }
-.site-header { background:#102a3a; color:white; border-bottom:4px solid #14b8a6; } .site-header__inner { max-width:1240px; margin:auto; padding:1rem 1.5rem; display:flex; align-items:center; gap:2rem; }
-.brand { color:white; text-decoration:none; font-weight:760; letter-spacing:.01em; white-space:nowrap; } .primary-nav { display:flex; flex-wrap:wrap; gap:.35rem 1rem; } .primary-nav a { color:#dceef6; }
-.page { max-width:1120px; margin:2rem auto; padding:0 1.25rem; } .page__panel { background:var(--paper); padding:clamp(1.5rem,4vw,3.5rem); border:1px solid var(--line); box-shadow:0 12px 35px #17304212; }
-.content { max-width:100%; } .content > p,.content > ul,.content > ol { max-width:78ch; } h1 { font-size:clamp(2rem,5vw,3.3rem); line-height:1.1; margin:.25rem 0 1.5rem; } h2 { margin-top:2.5rem; line-height:1.25; } h3 { margin-top:1.75rem; }
-.lead { font-size:1.18rem; color:#334554; } .kicker { color:var(--accent2); text-transform:uppercase; letter-spacing:.11em; font-size:.76rem; font-weight:800; } .breadcrumb { display:flex; gap:.55rem; color:var(--muted); font-size:.88rem; }
-.callout { max-width:82ch; border-left:4px solid #14b8a6; background:#ecfdf9; padding:1rem 1.2rem; margin:1.5rem 0; } pre:not(.mermaid) { overflow:auto; background:#102a3a; color:#e8f3f7; padding:1rem 1.2rem; border-radius:.35rem; } pre code { background:transparent; padding:0; color:inherit; }
-.mermaid { margin:2rem 0; overflow:auto; } table { border-collapse:collapse; width:100%; margin:1rem 0 2rem; font-size:.94rem; } th,td { border:1px solid var(--line); padding:.65rem .75rem; text-align:left; vertical-align:top; } th { background:#edf4f7; }
-.tree { border-left:2px solid #8fb3c4; margin:1.5rem 0; } .tree div { display:grid; grid-template-columns:minmax(13rem,1fr) 2fr; gap:1rem; border-bottom:1px solid var(--line); padding:.7rem 1rem; } .tree span { color:var(--muted); }
-.catalog-list { columns:2; max-width:55rem; } .site-footer { max-width:1120px; margin:0 auto; padding:1rem 1.25rem 3rem; color:var(--muted); font-size:.88rem; }
-.loader-frame { min-height:60vh; } .loader-heading { display:flex; justify-content:space-between; gap:1rem; align-items:start; } .loading { color:var(--muted); }
-@media (max-width:760px) { .site-header__inner { align-items:flex-start; flex-direction:column; gap:.6rem; } .page { margin:1rem auto; padding:0 .6rem; } .page__panel { padding:1.25rem; } .tree div { grid-template-columns:1fr; gap:.1rem; } .catalog-list { columns:1; } .loader-heading { flex-direction:column; } }
-`);
-await writeFile(resolve(docs, "partials", "header.html"), `<header class="site-header"><div class="site-header__inner"><a class="brand" href="index.html">nllAgent Documentation</a><nav class="primary-nav" aria-label="Primary"><a href="architecture.html">Architecture</a><a href="source-ingestion.html">Sources</a><a href="semantic-dsls.html">SDK &amp; DSLs</a><a href="runtime.html">Runtime</a><a href="cli-reference.html">CLI</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests</a><a href="tutorial-agent-task.html">Tutorials</a><a href="skills.html">Skills</a><a href="specsLoader.html?spec=matrix.md">Specifications</a></nav></div></header>`);
+pages.set("specification-review.html", shell("Specification review", "Project-owned contract synchronization", `
+<p class="lead">A review identifies affected DS files, code, tests, CLI behavior, HTML pages, tutorials, and unresolved decisions before editing.</p>
+<h2>Review sequence</h2><pre class="mermaid">flowchart LR
+  Context[New requirement or failure] --> Compare[Compare DS and implementation]
+  Compare --> Contract[Update Core Content]
+  Contract --> Rationale[Number decisions]
+  Rationale --> Companions[Synchronize code tests docs]
+  Companions --> Evidence[Run fidelity and behavior checks]</pre>
+<p>Initial specifications remain byte-for-byte preserved. Additive contracts are regenerated from project-owned sources and verified in numeric order. See <a href="specsLoader.html?spec=DS033-specification-review-contract.md">DS033</a>.</p>`));
+
+pages.set("documentation-generation.html", shell("Documentation generation", "Detailed, portable, evidence-backed HTML", `
+<p class="lead">The HTML set is rebuilt from implementation and retained accepted evaluations. Tutorials fail closed rather than inventing a source, semantic module, agent run, or result.</p>
+<h2>Portability</h2><p>Every link, asset import, specification query, and partial fetch is document-relative. The generated site is verified under a non-root path, including the matrix query and project-owned diagram renderer.</p>
+<h2>Evidence hierarchy</h2><p>Tutorials show <code>response.md</code> first. Exact input, generated semantic code, Codex runs, tests, replay, and technical assurance remain available in dedicated sections without presenting raw projections as the answer.</p>
+<p>See <a href="specsLoader.html?spec=DS040-html-documentation-generation-and-portability.md">DS040</a>.</p>`));
+
+for (const page of await buildAgenticDocumentationPages({ root, escapeHtml })) {
+  pages.set(page.name, shell(page.title, page.kicker, page.content));
+}
+
+await writeFile(resolve(docs, "styles.css"), documentationStyles);
+await writeFile(resolve(docs, "partials", "header.html"), documentationHeader());
 await writeFile(resolve(docs, "partials", "footer.html"), `<footer class="site-footer">nllAgent technical documentation. The DS set is authoritative; generated catalogs report the current executable implementation.</footer>`);
 await writeFile(resolve(docs, "partials-loader.js"), `document.addEventListener("DOMContentLoaded", async () => { for (const node of document.querySelectorAll("[data-include]")) { const response = await fetch(node.dataset.include); if (!response.ok) { node.textContent = \`Unable to load \${node.dataset.include}\`; continue; } node.innerHTML = await response.text(); } });\n`);
+await writeFile(
+  resolve(docs, "assets", "diagram-renderer.mjs"),
+  await readFile(resolve(root, "tools", "docs-assets", "diagram-renderer.mjs"), "utf8")
+);
+await writeFile(
+  resolve(docs, "specsLoader.html"),
+  await readFile(resolve(root, "tools", "docs-assets", "specsLoader.html"), "utf8")
+);
 for (const [name, html] of pages) await writeFile(resolve(docs, name), html);
 console.log(`Generated ${pages.size} detailed HTML documentation pages.`);

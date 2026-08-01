@@ -1,0 +1,1 @@
+export default Object.freeze({ "capturedBeforeAuthoring": true, "taskSemanticFiles": Object.freeze([]), "inheritedOntologies": Object.freeze(["core-language"]), "inheritedCircuits": Object.freeze(["core-language.CoreGroundingFinding"]), "resolutionFailure": null, "assurance": "all", "maxReviewCycles": 3 });

@@ -39,7 +39,7 @@ export default semanticAgent(${jsString(name)})
 
 export async function createTask(agentRoot, { projectRoot = null, sourcePath = null, title = null, instruction = null, profile = null } = {}) {
   const id = randomId("task-"); const root = resolve(agentRoot, "tasks", id);
-  for (const directory of ["source", "intent", "longtext/units", "ontologies", "circuits", "tests", "runs", "results"]) await mkdir(resolve(root, directory), { recursive: true });
+  for (const directory of ["source", "intent", "longtext/units", "ontologies", "circuits", "cnl", "tests", "runs", "results"]) await mkdir(resolve(root, directory), { recursive: true });
   let sourceDirective = null;
   if (sourcePath) {
     const extension = extname(sourcePath).toLocaleLowerCase("en") || ".txt";
@@ -58,7 +58,7 @@ export async function createTask(agentRoot, { projectRoot = null, sourcePath = n
   if (sourceDirective) lines.push(`  .source(${sourceDirective})`);
   if (instruction) lines.push(`  .instruction(taskInstruction(${jsString(instruction)}))`);
   if (profile) lines.push(`  .profile(taskProfile(${jsString(profile)}))`);
-  lines.push(`  .output(requestedOutput("findings"), requestedOutput("cnl-observations"))`, "  .seal();", "");
+  lines.push(`  .output(requestedOutput("findings"), requestedOutput("cnl-observations"), requestedOutput("markdown-cnl"))`, "  .seal();", "");
   await atomicWrite(resolve(root, "task.mjs"), lines.join("\n"));
   return Object.freeze({ id, root });
 }

@@ -80,6 +80,10 @@ export async function resolveRuntime({ projectRoot, agentRoot, taskRoot = null, 
     ...(await loadModules(resolve(agentRoot, "circuits"), ".circuit.mjs")),
     ...(taskRoot ? await loadModules(resolve(taskRoot, "circuits"), ".circuit.mjs") : [])
   ];
+  const responseCircuits = [
+    ...(await loadModules(resolve(agentRoot, "cnl"), ".response.circuit.mjs")),
+    ...(taskRoot ? await loadModules(resolve(taskRoot, "cnl"), ".response.circuit.mjs") : [])
+  ];
   const ontologies = [...packs.flatMap((pack) => pack.ontologies), ...localOntologies];
   const checkSet = new Set(checks); const excludedCheckSet = new Set(excludeChecks);
   const matchesCheck = (circuit, selected) => selected.has(circuit.id) || selected.has(circuit.identity) || circuit.provisions.some((value) => selected.has(value?.name ?? value?.identity ?? String(value)));
@@ -91,7 +95,19 @@ export async function resolveRuntime({ projectRoot, agentRoot, taskRoot = null, 
     const rootLongText = resolve(taskRoot, "longtext", "root.longtext.mjs");
     longTexts = await exists(rootLongText) ? [await loadDefault(rootLongText)] : await loadModules(resolve(taskRoot, "longtext"), ".longtext.mjs");
   }
-  return Object.freeze({ agent, task, profile, packs: Object.freeze(packs), ontologies: Object.freeze(ontologies), circuits: Object.freeze(circuits), registry, intent: intents.at(-1) ?? null, longTexts: Object.freeze(longTexts), allFrameworkPacks: frameworkPacks });
+  return Object.freeze({
+    agent,
+    task,
+    profile,
+    packs: Object.freeze(packs),
+    ontologies: Object.freeze(ontologies),
+    circuits: Object.freeze(circuits),
+    responseCircuits: Object.freeze(responseCircuits),
+    registry,
+    intent: intents.at(-1) ?? null,
+    longTexts: Object.freeze(longTexts),
+    allFrameworkPacks: frameworkPacks
+  });
 }
 
 export function moduleLabel(value) { return value.id ?? value.identity ?? basename(String(value)); }

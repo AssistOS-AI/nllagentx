@@ -22,6 +22,10 @@ Skill workflows may name preserved original contracts with hyphenated references
 
 The agent folder owns reusable ontologies, circuits, methods, profiles, lexicons, CNL, tests, tasks, and agent-level coding runs. The task folder owns source maps, intent, longtext units and root, task-local ontologies/circuits, tests, runs, and retained results. A source interpretation must not be promoted to default knowledge without an explicit reusable contract and tests.
 
+Natural-language semantic authoring is an explicit two-level coding workflow. Agent-level authoring reads an agent brief and may create reusable OntologyJS, CircuitJS, CNL, profile, and test modules. Task-level authoring reads the task instruction plus decoded sources and may create task-owned IntentJS, LongTextJS, local ontology or circuit extensions, and tests. In both cases the context builder supplies the installed skill chain and live SDK, ontology, circuit, profile, source, and specification catalogs; it does not synthesize the semantic programs itself.
+
+An evaluation suite that claims coding-agent authoring must retain the brief, task instruction, exact source text, every generated canonical module, installed run-local skills, generated context, process logs, final response, deterministic verification results, and concrete or symbolic execution results. A fixture copied into place by the suite is not evidence that the coding agent learned the semantic program from natural language.
+
 Only one coding run may hold a write lock for a given target folder. Independent agent/task folders may proceed independently. Deterministic test and execution commands must never acquire the coding-agent adapter implicitly.
 
 ## Decisions & Questions

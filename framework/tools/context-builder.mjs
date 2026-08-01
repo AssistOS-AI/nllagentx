@@ -5,12 +5,13 @@ import { atomicWrite, ensureDirectory, exists, jsString } from "./filesystem.mjs
 import { installSkills } from "./skill-loader.mjs";
 import { resolveRuntime } from "./module-loader.mjs";
 import { ingestTaskSources, loadSourceRegistry, sourceOutline } from "./source-tools.mjs";
-import { sdkCatalog, ontologyCatalog, circuitCatalog, profileResolutionCatalog, projectMap } from "./catalogs.mjs";
+import { sdkCatalog, ontologyCatalog, circuitCatalog, responseCircuitCatalog, profileResolutionCatalog, projectMap } from "./catalogs.mjs";
+import { defaultResponseCircuits } from "../runtime/response/default-circuits.mjs";
 
 export const phaseSkills = Object.freeze({
   architect: ["nll-architect"], intent: ["nll-intent"], ontology: ["nll-ontology"], longtext: ["nll-longtext"],
   circuit: ["nll-circuit"], sdk: ["nll-sdk"], runtime: ["nll-runtime"], test: ["nll-test"], evaluate: ["nll-evaluate"],
-  review: ["nll-test", "nll-runtime", "nll-circuit"]
+  review: ["nll-test", "nll-intent", "nll-ontology", "nll-longtext", "nll-circuit", "nll-runtime"]
 });
 
 const packSpecificationNumber = Object.freeze({ "core-commonsense": 7, "world-basic": 8, "math-basic": 9, "physics-basic": 10, "chemistry-basic": 11, "biology-basic": 12, "psychology-basic": 13, "anthropology-basic": 14, "sociology-basic": 15, "logic-basic": 16, "reasoning-errors": 17, "law-basic": 18, "social-interaction": 19 });
@@ -36,12 +37,20 @@ function relativeImport(fromDirectory, target) {
   return value;
 }
 
-export async function buildContext({ projectRoot, agentRoot, taskRoot = null, phase = "architect", profileId = null, goal = null, selectedSkills = null, selection = {} }) {
+export async function buildContext({ projectRoot, agentRoot, taskRoot = null, phase = "architect", profileId = null, goal = null, selectedSkills = null, selection = {}, allowRuntimeFailure = false }) {
   const runBase = resolve(taskRoot ?? agentRoot, "runs"); await ensureDirectory(runBase);
   const runId = randomId("run-"); const runRoot = resolve(runBase, runId);
   for (const directory of ["context", "skills", "logs", "checks", "scratch"]) await mkdir(resolve(runRoot, directory), { recursive: true });
   if (taskRoot) await ingestTaskSources(taskRoot, { projectRoot });
-  const runtime = await resolveRuntime({ projectRoot, agentRoot, taskRoot, profileId, ...selection });
+  let runtime;
+  let resolutionFailure = null;
+  try {
+    runtime = await resolveRuntime({ projectRoot, agentRoot, taskRoot, profileId, ...selection });
+  } catch (error) {
+    if (!allowRuntimeFailure || !taskRoot) throw error;
+    resolutionFailure = error;
+    runtime = await resolveRuntime({ projectRoot, agentRoot, profileId, ...selection });
+  }
   const skillIds = selectedSkills ?? phaseSkills[phase] ?? ["nll-architect"];
   const skills = await installSkills(projectRoot, runRoot, skillIds);
   const contextRoot = resolve(runRoot, "context");
@@ -49,11 +58,17 @@ export async function buildContext({ projectRoot, agentRoot, taskRoot = null, ph
   await atomicWrite(resolve(contextRoot, "SDK_CATALOG.md"), sdkCatalog());
   await atomicWrite(resolve(contextRoot, "ONTOLOGY_CATALOG.md"), ontologyCatalog(runtime.ontologies));
   await atomicWrite(resolve(contextRoot, "CIRCUIT_CATALOG.md"), circuitCatalog(runtime.circuits));
+  const resolvedResponseCircuits = [...new Map(
+    [...defaultResponseCircuits, ...runtime.responseCircuits].map((circuit) => [circuit.identity, circuit])
+  ).values()];
+  await atomicWrite(resolve(contextRoot, "RESPONSE_CIRCUIT_CATALOG.md"), responseCircuitCatalog(resolvedResponseCircuits));
   await atomicWrite(resolve(contextRoot, "PROFILE_RESOLUTION.md"), profileResolutionCatalog(runtime));
   if (taskRoot) await atomicWrite(resolve(contextRoot, "SOURCE_OUTLINE.md"), sourceOutline(await loadSourceRegistry(taskRoot, { projectRoot })));
   else await atomicWrite(resolve(contextRoot, "SOURCE_OUTLINE.md"), "# Source Outline\n\nNo task source was selected for this run.\n");
   const diagnosticPaths = taskRoot ? [resolve(taskRoot, "results", "diagnostics.md"), resolve(taskRoot, "results", "source-diagnostics.md")] : [];
-  const diagnosticTexts = []; for (const path of diagnosticPaths) if (await exists(path)) diagnosticTexts.push(await readFile(path, "utf8"));
+  const diagnosticTexts = [];
+  if (resolutionFailure) diagnosticTexts.push(`# Runtime resolution failure\n\n\`\`\`text\n${resolutionFailure.stack ?? resolutionFailure}\n\`\`\``);
+  for (const path of diagnosticPaths) if (await exists(path)) diagnosticTexts.push(await readFile(path, "utf8"));
   await atomicWrite(resolve(contextRoot, "DIAGNOSTICS.md"), diagnosticTexts.length ? diagnosticTexts.join("\n\n") : "# Diagnostics\n\nNo existing diagnostics.\n");
   const workingDirectory = taskRoot ?? agentRoot;
   const skillOrder = skills.map((skill) => {
@@ -79,7 +94,7 @@ CLI invocation: \`node ${resolve(projectRoot, "nllAgent.mjs")}\`
 ${skillOrder}
 3. The relevant design specifications:
 ${specOrder}
-4. Context catalogs under \`${relative(workingDirectory, contextRoot).split(sep).join("/")}\`.
+4. Context catalogs under \`${relative(workingDirectory, contextRoot).split(sep).join("/")}\`, including the resolved semantic and response-circuit catalogs.
 5. Canonical source files needed for the requested change.
 
 Use actual SDK constructors and resolved ontology identities. Keep semantic artifacts as executable \`.mjs\` modules. Do not create JSON or TypeScript semantic artifacts. Edit canonical agent/task/framework files directly, add tests, run the skill checks, and report typed diagnostics for genuinely unsupported operations.
@@ -107,8 +122,15 @@ export async function describeContext(runRoot) {
   return `Run: ${runRoot}\nContext artifacts:\n${entries.filter((entry) => entry.isFile()).map((entry) => `- context/${entry.name}`).sort().join("\n")}\n`;
 }
 
-export async function buildReviewBundle({ projectRoot, agentRoot, taskRoot = null, diagnosticsPath = null }) {
-  const context = await buildContext({ projectRoot, agentRoot, taskRoot, phase: "review", goal: "Review and repair the supplied deterministic failures without weakening tests." });
+export async function buildReviewBundle({ projectRoot, agentRoot, taskRoot = null, diagnosticsPath = null, goal = null }) {
+  const context = await buildContext({
+    projectRoot,
+    agentRoot,
+    taskRoot,
+    phase: "review",
+    goal: goal ?? "Review and repair the supplied deterministic failures without weakening tests.",
+    allowRuntimeFailure: true
+  });
   const diagnostics = diagnosticsPath && await exists(diagnosticsPath) ? await readFile(diagnosticsPath, "utf8") : "No explicit diagnostics file was supplied.";
   await atomicWrite(resolve(context.runRoot, "context", "REVIEW_BUNDLE.md"), `# Review Bundle\n\n${diagnostics}\n`);
   return context;

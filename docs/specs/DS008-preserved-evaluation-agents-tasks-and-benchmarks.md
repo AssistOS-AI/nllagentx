@@ -306,7 +306,7 @@ The evaluation subsystem is complete when it can:
 
 ### Additive implementation alignment
 
-The evaluation SDK and runner create isolated evaluation agents and random-ID tasks, optionally invoke Codex, execute concrete and declared auxiliary analyses, retain task artifacts, load executable gold modules, calculate semantic classification and runtime metrics, and write Markdown plus .mjs reports.
+The evaluation SDK and runner create isolated evaluation agents and random-ID tasks. A suite can retain an agent brief and declare agent-level architect/ontology/circuit phases plus task-level intent/longtext/ontology/circuit phases. With --invoke-agent, each declared phase runs the real Codex adapter, snapshots created and modified canonical artifacts, applies phase-specific deterministic acceptance, and retains instructions, installed skills, context, logs, and final response. Concrete execution, declared abstract/symbolic assurance, expected findings or generation frames, and model-free replay are then reported in Markdown plus executable .mjs artifacts. DS041 defines the complete natural-language authoring evidence contract.
 
 ## Decisions & Questions
 

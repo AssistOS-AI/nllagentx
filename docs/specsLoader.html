@@ -6,7 +6,7 @@
   <title>Specification Matrix - Skill Repository Documentation</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -25,6 +25,13 @@
           <span id="current-spec">Loading...</span>
         </small>
       </div>
+      <nav class="section-nav" aria-label="Reference pages">
+        <span>Reference</span>
+        <a href="specsLoader.html?spec=matrix.md">Specification matrix</a>
+        <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">Agentic authoring contract</a>
+        <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">Source boundary</a>
+        <a href="specsLoader.html?spec=DS001-coding-style.md">Coding style</a>
+      </nav>
 
       <div id="spec-meta"></div>
       <div id="content" class="content">

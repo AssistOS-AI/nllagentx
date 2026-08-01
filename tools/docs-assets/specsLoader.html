@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent specification viewer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel loader-frame">
+      <div class="loader-heading">
+        <div><p class="kicker">Specification viewer</p><h1 id="spec-title">Specifications</h1></div>
+        <small><a href="index.html">Home</a> · <a href="specsLoader.html?spec=matrix.md">Matrix</a> · <span id="current-spec">Loading</span></small>
+      </div>
+      <nav class="section-nav" aria-label="Specification references">
+        <span>Reference</span>
+        <a href="specsLoader.html?spec=matrix.md">Matrix</a>
+        <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">Agentic authoring</a>
+        <a href="specsLoader.html?spec=DS043-primary-markdown-cnl-response.md">Markdown CNL response</a>
+        <a href="specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md">Response circuits</a>
+      </nav>
+      <div id="spec-meta"></div>
+      <div id="content" class="content"><p>Loading specification…</p></div>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script>
+    const escapeHtml = (value) => String(value)
+      .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+
+    function inline(markdown) {
+      const code = [];
+      let value = markdown.replace(/`([^`]+)`/g, (_, text) => {
+        code.push(text);
+        return `@@CODE_${code.length - 1}@@`;
+      });
+      value = escapeHtml(value)
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+        .replace(/\[\[status:([a-z-]+)\]\]/gi, '<span class="spec-status spec-status--$1">$1</span>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+      return value.replace(/@@CODE_(\d+)@@/g, (_, index) => `<code>${escapeHtml(code[Number(index)])}</code>`);
+    }
+
+    function tableAt(lines, start) {
+      if (!/^\s*\|.+\|\s*$/.test(lines[start] ?? '') || !/^\s*\|?[\s:|-]+\|?\s*$/.test(lines[start + 1] ?? '')) return null;
+      const cells = (line) => line.trim().slice(1, -1).split('|').map((cell) => inline(cell.trim()));
+      const headers = cells(lines[start]);
+      const rows = [];
+      let cursor = start + 2;
+      while (/^\s*\|.+\|\s*$/.test(lines[cursor] ?? '')) rows.push(cells(lines[cursor++]));
+      return {
+        next: cursor,
+        html: `<div class="table-wrap"><table class="spec-table"><thead><tr>${headers.map((cell) => `<th>${cell}</th>`).join('')}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`
+      };
+    }
+
+    function markdownToHtml(markdown) {
+      const lines = markdown.split(/\r?\n/);
+      const output = [];
+      let paragraph = [];
+      let list = [];
+      let ordered = false;
+      let code = null;
+      const flushParagraph = () => {
+        if (paragraph.length) output.push(`<p>${paragraph.map(inline).join('<br>')}</p>`);
+        paragraph = [];
+      };
+      const flushList = () => {
+        if (list.length) output.push(`<${ordered ? 'ol' : 'ul'}>${list.map((item) => `<li>${inline(item)}</li>`).join('')}</${ordered ? 'ol' : 'ul'}>`);
+        list = [];
+      };
+      for (let index = 0; index < lines.length; index += 1) {
+        const raw = lines[index];
+        const text = raw.trim();
+        if (text.startsWith('```')) {
+          if (code === null) { flushParagraph(); flushList(); code = []; }
+          else { output.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`); code = null; }
+          continue;
+        }
+        if (code !== null) { code.push(raw); continue; }
+        if (!text) { flushParagraph(); flushList(); continue; }
+        const table = tableAt(lines, index);
+        if (table) { flushParagraph(); flushList(); output.push(table.html); index = table.next - 1; continue; }
+        const heading = text.match(/^(#{1,4})\s+(.+)$/);
+        if (heading) { flushParagraph(); flushList(); output.push(`<h${heading[1].length}>${inline(heading[2])}</h${heading[1].length}>`); continue; }
+        const item = text.match(/^(?:-|(\d+)\.)\s+(.+)$/);
+        if (item) {
+          flushParagraph();
+          const nextOrdered = Boolean(item[1]);
+          if (list.length && ordered !== nextOrdered) flushList();
+          ordered = nextOrdered; list.push(item[2]); continue;
+        }
+        if (text.startsWith('>')) { flushParagraph(); flushList(); output.push(`<blockquote>${inline(text.replace(/^>\s?/, ''))}</blockquote>`); continue; }
+        paragraph.push(raw);
+      }
+      if (code !== null) output.push(`<pre><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+      flushParagraph(); flushList();
+      return output.join('\n');
+    }
+
+    function splitFrontmatter(markdown) {
+      if (!markdown.startsWith('---\n')) return { meta: {}, body: markdown };
+      const end = markdown.indexOf('\n---\n', 4);
+      if (end < 0) return { meta: {}, body: markdown };
+      const meta = {};
+      for (const line of markdown.slice(4, end).split('\n')) {
+        const match = line.match(/^([A-Za-z0-9_-]+):\s*(.*)$/);
+        if (match) meta[match[1]] = match[2];
+      }
+      return { meta, body: markdown.slice(end + 5) };
+    }
+
+    async function loadSpecification() {
+      const requested = new URLSearchParams(location.search).get('spec') || 'matrix.md';
+      if (!/^(?:matrix|DS\d{3}-[A-Za-z0-9-]+)\.md$/.test(requested)) throw new Error('Invalid specification name.');
+      document.getElementById('current-spec').textContent = requested;
+      const response = await fetch(`specs/${requested}`);
+      if (!response.ok) throw new Error(`Specification not found: ${requested}`);
+      const { meta, body } = splitFrontmatter(await response.text());
+      document.getElementById('spec-title').textContent = meta.title || body.match(/^#\s+(.+)$/m)?.[1] || requested;
+      document.getElementById('spec-meta').innerHTML = Object.keys(meta).length
+        ? `<section class="spec-meta"><div class="spec-meta__grid">${Object.entries(meta).map(([key, value]) => `<dl class="spec-meta__item"><dt>${escapeHtml(key)}</dt><dd>${escapeHtml(value)}</dd></dl>`).join('')}</div></section>`
+        : '';
+      document.getElementById('content').innerHTML = markdownToHtml(body);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => loadSpecification().catch((error) => {
+      document.getElementById('content').innerHTML = `<div class="error-panel"><h2>Unable to load specification</h2><p>${escapeHtml(error.message)}</p><p><a href="specsLoader.html?spec=matrix.md">Return to the matrix</a></p></div>`;
+    }));
+  </script>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

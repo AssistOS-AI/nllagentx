@@ -1,0 +1,3 @@
+Procedure Requirements
+
+An operator must acknowledge an active alarm before requesting authorization to open the north gate. Authorization must be recorded before the gate is opened. An emergency exception may permit an earlier opening, but the operator must record the reason for the exception. Every ordinary or exceptional opening must finish with an audit entry that identifies the operator and time.

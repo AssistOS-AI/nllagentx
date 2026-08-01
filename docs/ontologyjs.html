@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — OntologyJS in Detail</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import mermaid from './assets/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+  </script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>OntologyJS in Detail</nav>
+      <p class="kicker">Reusable semantic identities and constructors</p>
+      <h1>OntologyJS in Detail</h1>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
+      <p class="lead">OntologyJS defines what kinds of things may be represented. A sealed ontology module owns pack-qualified concepts, roles, relations, frames, lexicalizations, stable facts, laws and capabilities, then exposes constructors that LongTextJS and circuits share by identity.</p>
+<h2>Authoring rules</h2><ul><li>Reuse core or loaded identities when their meaning is exact; never redefine by similar spelling.</li><li>Declare frame roles, ranges and cardinality explicitly.</li><li>Keep source claims in LongTextJS and application judgments in circuits.</li><li>Use stable ontology facts only for reusable scoped knowledge with provenance classification.</li><li>Test construction, closure, imports, affected circuits and cross-pack identity.</li></ul>
+<h2>Program shape</h2><pre><code>const O = ontology("agent.operational-policy", "1.0.0");
+export const action = O.role(role("action").range(Core.Event));
+export const OperationalRule = O.entity(
+  entityKind("OperationalRule")
+    .subtypeOf(Core.SemanticEntity)
+    .role(requires(action, exactlyOne()))
+    .provide(capability("RuleContradictionReview"))
+);
+export default O.seal();
+
+const rule = OperationalRule(action(actionTerm));</code></pre>
+<p>Exact working ontology code generated from natural language is reproduced in each <a href="tutorials.html">agentic tutorial</a>. The live API is available with <code>node nllAgent.mjs sdk usage --surface ontology</code>.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

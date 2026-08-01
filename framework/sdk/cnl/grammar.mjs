@@ -8,12 +8,19 @@ function flatten(value) {
     if (Object.hasOwn(descriptor, "value")) return String(descriptor.value);
     if (Object.hasOwn(descriptor, "values")) return descriptor.values.map(flatten).join(" | ");
     if (value.sort?.() === "SourceSpan") return `${descriptor.sourceId}:${descriptor.start}-${descriptor.end}`;
-    return Object.entries(descriptor)
-      .filter(([key]) => !["evaluator", "implementation"].includes(key))
+    if (typeof value.identity === "function") return value.identity();
+    if (typeof value.identity === "string") return value.identity;
+    if (Object.hasOwn(descriptor, "id")) return String(descriptor.id);
+    return value.sort?.() ?? "semantic-value";
+  }
+  if (typeof value === "object") {
+    if (typeof value.identity === "function") return value.identity();
+    if (typeof value.identity === "string") return value.identity;
+    return Object.entries(value)
+      .filter(([, entry]) => typeof entry !== "function")
       .map(([key, entry]) => `${key}=${flatten(entry)}`)
       .join("; ");
   }
-  if (typeof value === "object") return Object.entries(value).map(([key, entry]) => `${key}=${flatten(entry)}`).join("; ");
   return String(value);
 }
 

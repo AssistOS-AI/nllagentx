@@ -1,0 +1,10 @@
+import { codingRun } from "../../../../../../../../framework/sdk/agent/run.mjs";
+
+export default codingRun("run-3PwL8s4A9pqXOCIY")
+  .using("codex")
+  .cwd("evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba")
+  .installSkills("nll-sdk", "nll-ontology", "nll-intent", "nll-longtext")
+  .objective("Read task.mjs, the registered source files, and the existing agent ontology/circuit catalog. Complete the longtext authoring phase for case contradictory-rules. Preserve the task instruction exactly, create executable source-grounded semantic code and focused tests, and leave unsupported meanings explicit rather than inventing evidence.")
+  .allowEdits("evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba")
+  .check("node /home/salboaie/work/nllagentx/nllAgent.mjs test task --agent-dir /home/salboaie/work/nllagentx/evaluations/agentic-nl-e2e/agents/nl-rule-review-agent --task-dir /home/salboaie/work/nllagentx/evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba --level fast")
+  .seal();

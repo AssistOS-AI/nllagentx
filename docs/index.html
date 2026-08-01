@@ -6,7 +6,7 @@
   <title>nllAgent Documentation — System Guide</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+    import mermaid from './assets/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
   </script>
 </head>
@@ -17,6 +17,7 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>System Guide</nav>
       <p class="kicker">Executable semantic programs</p>
       <h1>System Guide</h1>
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
       
 <p class="lead">nllAgent is a dependency-free Node.js workbench for authoring source-grounded semantic programs, selecting reusable semantic circuits, and retaining evidence-bearing findings and controlled-language artifacts. Its semantic languages are executable <code>.mjs</code> modules rather than serialized data formats.</p>
 <div class="callout"><strong>Specification authority.</strong> The contiguous DS set is authoritative. Start with <a href="specsLoader.html?spec=DS000-vision.md">DS000</a> and the <a href="specsLoader.html?spec=DS001-coding-style.md">coding-style contract</a>; use the <a href="specsLoader.html?spec=matrix.md">specification matrix</a> for the complete set.</div>
@@ -33,8 +34,12 @@
   Runner --> Results[Findings, CNL, trace, assurance]
   Skills[Coding skills] --> Context[Run-local context]
   Context --> Codex[Explicit coding-agent adapter]
+  Codex --> Ontology[OntologyJS]
+  Codex --> Circuits[CircuitJS]
   Codex --> Intent
-  Codex --> LongText</pre>
+  Codex --> LongText
+  Ontology --> Store
+  Circuits --> Planner</pre>
 <h2>Repository structure and ownership</h2>
 <p>The SDK defines semantic values and fluent builders. The runtime materializes one logical store, closes circuit dependencies, schedules stages, and executes concrete or declared auxiliary methods. Framework packs provide default ontology and circuit modules. Agent folders own reusable extensions; task folders own source interpretation, intent, task-local code, tests, coding runs, and retained results.</p>
 <div class="tree" role="group" aria-label="Repository layout">
@@ -45,6 +50,7 @@
   <div><strong>nll-skills/</strong><span>ten executable coding workflows</span></div>
   <div><strong>docs/specs/</strong><span>official gap-free contract set</span></div>
 </div>
+<p>For a folder-by-folder ownership map, see <a href="project-structure.html">Project folders and ownership</a>. For the natural-language-to-program lifecycle, see <a href="agentic-authoring.html">Agentic natural-language authoring</a>.</p>
 <h2>Runtime defaults</h2>
 <p>Commands use <code>node nllAgent.mjs</code>. Semantic configuration always names an agent through <code>--agent</code> or <code>--agent-dir</code>; task operations also use <code>--task</code> or <code>--task-dir</code>. The mandatory <code>core-language</code> pack supplies shared vocabulary. Profiles and explicit CLI controls select additional packs. When intent remains open, the planner executes every compatible circuit in the resolved pack set and records the selection.</p>
 <h2>Tests and documentation maintenance</h2>
