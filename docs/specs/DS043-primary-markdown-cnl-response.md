@@ -20,6 +20,10 @@ The response must contain only applicable, intent-visible semantic results. Inte
 
 Each finding must state the conclusion, status, semantic concern or rule, selected circuit, and why the decision row matched. Evidence must be exact text quoted from verified SourceSpan intervals and linked to the task source through a relative path. Evidence selection must rank passages by the failed, uncertain, or conflicting requirements and limit ordinary output verbosity while keeping all raw evidence available technically. Domain details such as failed requirements and uncertainty counts are rendered when they are human-readable; semantic hashes, SDK functions, serialized objects, and assurance path tables are prohibited from the primary response.
 
+A correct verdict with incomplete decisive evidence is not a qualitative answer. When the input explicitly denies a required justification, acknowledgement, calibration, support relation, or other predicate and that denial contributes to the result, the corresponding verified negative passage must be present in the finding evidence and quoted in the public response. The renderer must consume evidence already selected by the semantic circuit; it must not rediscover missing semantic evidence through string search.
+
+The primary document must not repeat task identifiers, generic input inventories, artifact locations, unconditional uncertainty disclaimers, or empty technical chapters. Structured requirement arrays are rendered as separate list items rather than flattened comma-separated prose. A limits section is present only for actual diagnostics, `UNKNOWN`, or a material blocked state. A next action is included only when it follows from the failed requirement or a requested generation/repair operation.
+
 Generation intents must render ordered typed content such as procedure steps before or alongside their readiness finding. Analysis intents must not expose generation or repair frames emitted by unrelated compatible circuits. Requested repair, clarification, and observation frames are filtered by intent output directives.
 
 `results/artifacts.md` indexes task.mjs, IntentJS, LongTextJS, task-local OntologyJS, task-local semantic CircuitJS, task/agent response circuits, generated SDK facades, retained coding-agent instructions and final responses, canonical CNL, executable findings, assurance, diagnostics, coverage, and traces. `report.md` is explicitly a technical execution report. Raw `assurance.mjs`, JSON-like projections, and binary traces remain available there and must not be embedded as tutorial answers.
@@ -37,6 +41,10 @@ Response: It means the answer identifies the actual rule, decision, decisive sou
 ### Question #3: May the public response say that nothing was found?
 
 Response: It may emit one `[CNL:NO-MATERIAL-RESULT]` statement when no applicable semantic result exists, but it must not list every circuit that failed to apply. Empty requests and non-applicable branches remain technical planner evidence.
+
+### Question #4: Is every semantically expected finding required in the public response?
+
+Response: No. Evaluation gold applies to the complete concrete semantic result set. The public response applies the separately validated response-composition boundary and may omit internal grounding or secondary confirmations. It must include every finding selected for public presentation and every exact decisive quotation declared by the response contract.
 
 ## Conclusion
 

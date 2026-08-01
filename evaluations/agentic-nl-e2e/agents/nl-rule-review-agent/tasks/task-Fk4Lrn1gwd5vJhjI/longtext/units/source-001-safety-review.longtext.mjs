@@ -15,12 +15,15 @@ import {
 } from "../../../../../../../../framework/sdk/longtext/index.mjs";
 import {
   Agent,
+  Evidence,
   Event,
   InformationArtifact,
   Proposition,
   SafetyConclusion,
   SupportsSafetyConclusion,
-  actor
+  actor,
+  conclusion,
+  evidence
 } from "../../sdk/ontology.generated.mjs";
 import registry from "../../source/source-map.mjs";
 
@@ -35,8 +38,12 @@ export const claimedOperatorTraining = Proposition(
   named("the operator was fully trained")
 );
 export const safetyConclusion = SafetyConclusion(actor(memoAuthor));
-export const supportingEvidencePresent = Proposition(
-  named("the memo contains evidence supporting the safety conclusion")
+export const anyDistinctSupportingEvidence = Evidence(
+  named("any distinct supporting evidence contained in the memo")
+);
+export const supportingEvidencePresent = SupportsSafetyConclusion(
+  evidence(anyDistinctSupportingEvidence),
+  conclusion(safetyConclusion)
 );
 
 export const alarmSoundingClaim = claim(alarmSounding)

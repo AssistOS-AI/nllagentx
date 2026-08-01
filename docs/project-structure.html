@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Project Folders and Ownership</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -20,6 +21,9 @@
       <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
       <p class="lead">Folder placement is part of the semantic contract. Framework code is reusable infrastructure, packs are default knowledge, an agent owns reusable local expertise, and a task owns one instruction, its sources, grounded interpretation, local code and results.</p>
 <div class="tree">
+<div><strong>AGENTS.md</strong><span>Repository-wide coding, ownership, testing and documentation instructions.</span></div>
+<div><strong>observations.md</strong><span>Uncertain or review-sensitive implementation decisions that need later discussion.</span></div>
+<div><strong>insights.md</strong><span>Observed classes of problems found by real coding-agent runs and the regression controls added for them.</span></div>
 <div><strong>design-specifications/</strong><span>Original DS-000 through DS-019, preserved without shortening.</span></div>
 <div><strong>docs/specs/</strong><span>Official contiguous DS000+ set; generated from the originals, skills and additive contracts.</span></div>
 <div><strong>framework/sdk/</strong><span>Fluent OntologyJS, IntentJS, LongTextJS, CircuitJS, CNL, agent and evaluation constructors.</span></div>
@@ -36,16 +40,20 @@
 <div><strong>tools/</strong><span>Deterministic generators and project-wide verification utilities.</span></div>
 <div><strong>docs/</strong><span>Generated HTML documentation, relative navigation, loader and static assets.</span></div>
 </div>
+<p><a href="../observations.md">Review the decision log</a> and <a href="../insights.md">inspect coding-agent validation insights</a>. Environment-managed <code>.agents/</code> content is deliberately outside the project product/build boundary and is neither edited nor published as nllAgent source.</p>
 <h2>Resolution order</h2><p>The runtime loads mandatory framework defaults, the selected profile, agent-local modules, then task-local modules. Later layers may extend or explicitly override where the contract permits, but source assertions never become stable pack facts implicitly.</p>
 <h2>Generated task anatomy</h2><pre><code>tasks/task-ID/
   task.mjs
   source/                 original files, source-map.mjs, extractors/
   intent/intent.mjs       requested concerns, outputs and selection
   longtext/               root and source-unit semantic programs
-  ontologies/ circuits/   only genuinely task-local extensions
+  ontologies/ circuits/   only genuinely task-local semantic extensions
+  cnl/                    optional task-local response circuits
   tests/                  task semantic and anchor tests
   runs/run-ID/            skills, context, instructions and Codex logs
-  results/                plan, findings, CNL, trace and assurance
+  results/response.md     primary tagged, grounded Markdown CNL answer
+  results/artifacts.md    semantic programs and technical evidence index
+  results/                plan, raw findings, canonical CNL, trace and assurance
                           adaptive cycle records when DS042 is enabled</code></pre>
 <p>The CLI accepts either names or explicit folders: <code>--agent</code>/<code>--agent-dir</code> and <code>--task</code>/<code>--task-dir</code>. Generated imports are relative to the target module and selected project root.</p>
     </article>

@@ -24,7 +24,10 @@ function targetsFor(path, source) {
   const extension = extname(path);
   const targets = [];
   if (extension === ".html") {
-    for (const match of source.matchAll(/\b(?:href|src|data-include)\s*=\s*["']([^"']+)["']/gi)) targets.push(match[1]);
+    const markup = source
+      .replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/gi, "$1</script>")
+      .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, "");
+    for (const match of markup.matchAll(/\b(?:href|src|data-include)\s*=\s*["']([^"']+)["']/gi)) targets.push(match[1]);
   }
   if (extension === ".md") {
     for (const match of source.matchAll(/!?\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))/g)) targets.push(match[1] || match[2]);
@@ -33,9 +36,12 @@ function targetsFor(path, source) {
     for (const match of source.matchAll(/url\(\s*["']?([^)\s"']+)/g)) targets.push(match[1]);
   }
   if ([".html", ".js", ".mjs"].includes(extension)) {
-    for (const match of source.matchAll(/\bimport\s+(?:[^'";]+?\s+from\s+)?["']([^"']+)["']/g)) targets.push(match[1]);
-    for (const match of source.matchAll(/\bfetch\s*\(\s*["'`]([^"'`]+)["'`]/g)) targets.push(match[1]);
-    for (const match of source.matchAll(/(?:window\.)?location(?:\.href)?\s*=\s*["']([^"']+)["']/g)) targets.push(match[1]);
+    const executable = extension === ".html"
+      ? [...source.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]).join("\n")
+      : source;
+    for (const match of executable.matchAll(/\bimport\s+(?:[^'";]+?\s+from\s+)?["']([^"']+)["']/g)) targets.push(match[1]);
+    for (const match of executable.matchAll(/\bfetch\s*\(\s*["'`]([^"'`]+)["'`]/g)) targets.push(match[1]);
+    for (const match of executable.matchAll(/(?:window\.)?location(?:\.href)?\s*=\s*["']([^"']+)["']/g)) targets.push(match[1]);
   }
   return targets;
 }
@@ -57,7 +63,8 @@ async function verifyTarget(file, target, issues) {
   if (isExternal(target)) return;
   const raw = stripTarget(target);
   if (!raw) return;
-  const base = file.includes(`${resolve(docsRoot, "partials")}/`) ? docsRoot : dirname(file);
+  const matrixViewerLink = file === resolve(docsRoot, "specs", "matrix.md") && raw === "specsLoader.html";
+  const base = file.includes(`${resolve(docsRoot, "partials")}/`) || matrixViewerLink ? docsRoot : dirname(file);
   const resolved = resolve(base, raw);
   if (!await exists(resolved)) issues.push(`${file}: ${target} resolves to missing ${resolved}`);
   if (raw === "specsLoader.html" && target.includes("?spec=")) {
@@ -76,7 +83,8 @@ async function main() {
       issues.push(`${file}: contains a machine-specific path or URL`);
     }
     for (const target of targetsFor(file, source)) await verifyTarget(file, target, issues);
-    if (extname(file) === ".html" && !source.includes("./assets/diagram-renderer.mjs")) {
+    if (extname(file) === ".html" && source.includes("<!doctype html>")
+      && !source.includes("./assets/diagram-renderer.mjs")) {
       issues.push(`${file}: missing project-owned relative diagram renderer import`);
     }
     if (file === resolve(docsRoot, "specs", "matrix.md")) {

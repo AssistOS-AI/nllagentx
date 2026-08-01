@@ -86,3 +86,4 @@ This repository owns the ten skills under `nll-skills/`, so each has a local HTM
 - `evaluations/adaptive-task-e2e/`: retained real Codex runs, generated task-local programs, acceptance cycles, and replay evidence for DS042.
 - `evaluations/`: retained isolated evaluation agents, random-ID tasks, coding runs, semantic programs, and reports.
 - `observations.md`: non-authoritative review focus linked to normative DS decisions.
+- `insights.md`: descriptive problem classes observed during real coding-agent validation and their regression controls.

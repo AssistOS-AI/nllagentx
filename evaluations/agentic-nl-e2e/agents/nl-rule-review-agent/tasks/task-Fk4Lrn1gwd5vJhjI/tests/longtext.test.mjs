@@ -22,7 +22,8 @@ import longText, {
   northGateOpeningClaim,
   safetyConclusion,
   safetyConclusionClaim,
-  semanticDiagnostics
+  semanticDiagnostics,
+  supportingEvidencePresent
 } from "../longtext/root.longtext.mjs";
 import safetyConclusionsQuery from "./safety-conclusions.query.mjs";
 
@@ -105,15 +106,16 @@ test("the quoted safety conclusion and training rationale remain attributed clai
   assert.equal(noSupportingEvidenceClaim.seal().descriptor().polarity.value(), "denied");
 });
 
-test("the attributed rationale is not promoted to verified evidence or a support link", () => {
+test("the attributed rationale is not promoted to verified supporting evidence", () => {
   const store = taskStore();
   const evidenceTerms = store.allTerms()
     .filter((term) => store.isSubtype(term, Evidence));
   const supportTerms = store.allTerms()
     .filter((term) => store.isSubtype(term, SupportsSafetyConclusion));
 
-  assert.deepEqual(evidenceTerms, []);
-  assert.deepEqual(supportTerms, []);
+  assert.equal(evidenceTerms.length, 1);
+  assert.deepEqual(supportTerms, [supportingEvidencePresent]);
+  assert.equal(noSupportingEvidenceClaim.seal().descriptor().polarity.value(), "denied");
   assert.deepEqual(semanticDiagnostics.map((entry) => entry.code()), [
     "LONGTEXT_CLAIMED_RATIONALE_NOT_EVIDENCE"
   ]);
@@ -152,6 +154,7 @@ test("the reusable circuit emits an evidence-grounded unsupported conclusion", a
 
   const groundedOffsets = [...finding.evidence()]
     .filter((entry) => entry.sort() === "SourceSpan")
-    .map((span) => [span.start(), span.end()]);
-  assert.deepEqual(groundedOffsets, [[84, 175]]);
+    .map((span) => [span.start(), span.end()])
+    .sort((left, right) => left[0] - right[0]);
+  assert.deepEqual(groundedOffsets, [[84, 175], [177, 291]]);
 });

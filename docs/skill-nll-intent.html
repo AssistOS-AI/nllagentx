@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — nll-intent Skill</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -20,11 +21,11 @@
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">Use for every new task and whenever pack selection, requested checks, outputs, assurance or fallback behavior changes.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-004</code>, <code>DS035</code>, <code>DS041</code>, <code>DS042</code>. Dependency order: <code>nll-ontology</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
+<h2>Executable workflow</h2><p>The workflow references <code>DS-004</code>, <code>DS035</code>, <code>DS041</code>, <code>DS042</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: <code>nll-ontology</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
 <pre class="mermaid">flowchart LR
   P1[discover] --> P2[author] --> P3[validate] --> P4[handoff]
-  Context[Resolved SDK, ontology, circuit, profile, source catalogs] --> P1</pre>
-<h2>Required tools</h2><ul><li><code>nllAgent source outline</code></li><li><code>nllAgent source search</code></li><li><code>nllAgent catalog ontology</code></li><li><code>nllAgent catalog circuit</code></li><li><code>nllAgent profile resolve</code></li><li><code>nllAgent intent infer-signals</code></li><li><code>nllAgent intent check</code></li><li><code>nllAgent intent explain</code></li><li><code>nllAgent plan show</code></li></ul>
+  Context[Resolved SDK, ontology, semantic circuit, response circuit, profile, source catalogs] --> P1</pre>
+<h2>Required tools</h2><ul><li><code>nllAgent source outline</code></li><li><code>nllAgent source search</code></li><li><code>nllAgent catalog ontology</code></li><li><code>nllAgent catalog circuit</code></li><li><code>nllAgent catalog response</code></li><li><code>nllAgent profile resolve</code></li><li><code>nllAgent intent infer-signals</code></li><li><code>nllAgent intent check</code></li><li><code>nllAgent intent explain</code></li><li><code>nllAgent plan show</code></li></ul>
 <h2>Canonical edit roots</h2><ul><li><code>task/intent</code></li><li><code>task/profiles</code></li></ul>
 <h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS026-nll-intent.md">its DS entry</a>, synchronized with <code>nll-skills/nll-intent/SKILL.md</code> and <code>workflow.mjs</code>.</p>

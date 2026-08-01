@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — CLI Reference</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -57,6 +58,7 @@ node nllAgent.mjs run \
 <h2>Execution and selection</h2>
 <pre><code>node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
 node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation --format json
 node nllAgent.mjs plan --agent reviewer --task task-ID --explain-plan
 node nllAgent.mjs generate --agent reviewer --task task-ID --output PolicySpecificationPlan
 node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/open-events.mjs</code></pre>
@@ -77,9 +79,10 @@ node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/ope
 <tr><td><code>--authoring-cycles</code></td><td>Maximum adaptive Codex review cycles, an integer from 1 through 10; default 3.</td></tr>
 <tr><td><code>--adaptive-allow-unknown</code></td><td>Permit unknown-only output to satisfy the adaptive material-output gate for intentionally indeterminate tasks.</td></tr>
 <tr><td><code>--assurance</code></td><td><code>none</code>, <code>abstract</code>, <code>symbolic</code>, or <code>all</code>; adaptive authoring defaults to <code>all</code>.</td></tr>
+<tr><td><code>--format response|json</code></td><td><code>response</code> is the default for run/analyze/generate and prints the grounded Markdown CNL; <code>json</code> prints a machine projection containing its path.</td></tr>
 </tbody></table>
 <h2>Inspection tools</h2>
-<p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> are the agent-facing discovery commands declared by the installed skill workflows.</p>
+<p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>catalog response</code> enumerates default, agent and task response circuits; <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> expose the remaining live contracts.</p>
 <h2>Exit status</h2><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td>0</td><td>Tool completed and requested outputs were written.</td></tr><tr><td>2</td><td>CLI usage error.</td></tr><tr><td>3</td><td>Import, validation, execution, or I/O failure.</td></tr><tr><td>4</td><td>Explicit coding-agent process failed.</td></tr></tbody></table>
     </article>
   </main>

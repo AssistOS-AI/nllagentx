@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Tutorial: Agent, Task, and Concrete Run</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -40,11 +41,16 @@ node nllAgent.mjs run \
   --agent-dir examples/validation-agent --task task-symbolic-validation</code></pre>
 <p>The concrete facility circuit returned <code>ORDER_OK</code> with status <code>SATISFIED</code> and two exact source-span identities. Broad fallback circuits whose required task terms were absent returned <code>NOT_APPLICABLE</code>; no blocking diagnostic was produced.</p>
 <h2>4. Inspect results</h2>
-<pre><code>node nllAgent.mjs trace explain \
+<pre><code># The run command already prints results/response.md by default.
+node nllAgent.mjs run \
+  --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs catalog response \
+  --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs trace explain \
   --trace examples/validation-agent/tasks/task-symbolic-validation/results/trace.bin
 node nllAgent.mjs cnl parse \
   --file examples/validation-agent/tasks/task-symbolic-validation/results/findings.cnl</code></pre>
-<p>For multiple CNL frames, inspect <code>observations.cnl</code> or import <code>findings.mjs</code>; the single-frame parser intentionally accepts one canonical frame at a time.</p>
+<p><code>response.md</code> is the human answer. For technical inspection, <code>artifacts.md</code> links canonical frames, executable findings, response-circuit trace and assurance. The single-frame parser intentionally accepts one canonical frame at a time.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>

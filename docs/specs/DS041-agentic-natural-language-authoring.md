@@ -32,12 +32,21 @@ The primary case output is `results/response.md`: tagged, human-readable Markdow
 response circuits according to IntentJS. Raw findings, executable result modules, assurance projections, logs,
 and traces are separate technical evidence. Evaluation acceptance must verify response tags, expected material
 results, exact source quotations, absence of non-applicable results, and model-free response replay in addition
-to semantic finding keys.
+to semantic finding keys. Semantic gold is checked against the full concrete finding set, while the public response
+contract is checked against the exact findings selected by response circuits; internal grounding confirmations are
+not forced back into the answer. A case may declare decisive source passages that must be quoted, including explicit
+negative evidence used by a violation.
 
 Before a later suite invocation replaces the canonical report set, the runner must archive the previous executable
 agent-authoring and task-result records. Archived records continue to reference their original random-ID task and
 run folders. Evaluation reruns must not erase earlier coding-agent attempts, generated programs, logs, failures, or
 semantic results.
+
+The evaluator command is fail-closed: any failed case produces a non-zero command result even when report generation
+completed. `evaluate --replay-retained` may re-execute the exact random-ID tasks from the preceding real authoring
+record without invoking Codex. It must preserve the real adapter provenance, regenerate semantic/response/replay
+metrics against the current runtime, reject simultaneous `--invoke-agent`, and label the report as retained replay
+rather than a new coding-agent run.
 
 ### Acceptance and iteration
 
@@ -64,6 +73,10 @@ Response: No. It may expose stable text, units, spans, digests, and non-semantic
 ### Question #4: What proves that an evaluation is real?
 
 Response: Retained subprocess evidence, generated canonical code absent before the run, phase-specific validation, concrete and auxiliary execution artifacts, expected semantic outcomes, and model-free replay together prove the complete path. Hand-authored fixtures remain useful unit tests but are not authoring evaluations.
+
+### Question #5: Why have a retained replay mode if ordinary task replay already exists?
+
+Response: Ordinary replay validates one task. Retained suite replay reuses the exact real-authoring cohort and strict per-case oracles, regenerates aggregate reports against current runtime code, and proves explicitly that no new coding agent was invoked.
 
 ## Conclusion
 

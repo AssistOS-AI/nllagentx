@@ -18,6 +18,10 @@ VERY_LONG_LINE_THRESHOLD=300
 # Extensions to scan (space-separated, without dots)
 EXTENSIONS="${FILE_EXTENSIONS:-js mjs sys2 md html css json sh}"
 
+is_environment_owned() {
+  [[ "$1" == .agents/* ]]
+}
+
 # Color definitions
 if [[ -t 1 ]]; then
   COLOR_RED=$(tput setaf 1 2>/dev/null || true)
@@ -160,7 +164,7 @@ echo
 files_to_process=()
 if git rev-parse --is-inside-work-tree &>/dev/null; then
   while IFS= read -r file; do
-    [[ -f "$file" ]] && files_to_process+=("$file")
+    [[ -f "$file" ]] && ! is_environment_owned "$file" && files_to_process+=("$file")
   done < <(for ext in $EXTENSIONS; do git ls-files "*.${ext}"; git ls-files --others --exclude-standard "*.${ext}"; done | sort -u)
 else
   find_expr=()
@@ -171,7 +175,7 @@ else
   done
   while IFS= read -r -d '' file; do
     files_to_process+=("$file")
-  done < <(find . -path "*/node_modules" -prune -o -type f \( "${find_expr[@]}" \) -print0)
+  done < <(find . -path "*/node_modules" -prune -o -path "./.agents" -prune -o -type f \( "${find_expr[@]}" \) -print0)
 fi
 
 if (( ${#files_to_process[@]} == 0 )); then

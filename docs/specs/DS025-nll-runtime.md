@@ -43,6 +43,7 @@ Codex works directly on canonical files in YOLO/direct-editing mode. There is no
 ## Required tools before or during work
 
 - `nllAgent sdk check`
+- `nllAgent catalog response`
 - `nllAgent ontology check`
 - `nllAgent longtext execute`
 - `nllAgent circuit plan`

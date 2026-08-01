@@ -18,7 +18,7 @@ A review must identify every affected DS, implementation area, test surface, gen
 
 Initial preserved specifications must remain byte-for-byte included in their official DS wrappers. Additive contracts may be strengthened or corrected, but a generator must remain their reproducible source. A behavior-changing review must update code, focused tests, exhaustive test expectations, CLI help, HTML documentation, tutorials, README or AGENTS guidance, and observations requiring human review in the same change set.
 
-The final audit must reread affected DS files in numeric order, verify contiguous numbering, run the original-specification fidelity check, and compare documented examples with retained real execution artifacts. An unresolved multi-option question must remain visible and unimplemented until a choice is selected.
+The final audit must reread affected DS files in numeric order, run `node tools/verify-spec-fidelity.mjs` to verify contiguous numbering and byte-for-byte original inclusion, and compare documented examples with retained real execution artifacts. An unresolved multi-option question must remain visible and unimplemented until a choice is selected.
 
 ## Decisions & Questions
 

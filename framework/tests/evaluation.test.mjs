@@ -76,6 +76,24 @@ test("evaluation acceptance treats qualitative Markdown CNL as the primary respo
   assert.deepEqual(evaluationResponseFailures({ response, expected: ["MISSING_ACK:VIOLATED"], sourceText: source }), []);
   assert.deepEqual(
     evaluationResponseFailures({
+      response,
+      expected: ["MISSING_ACK:VIOLATED"],
+      sourceText: source,
+      requiredEvidence: [source]
+    }),
+    []
+  );
+  assert.deepEqual(
+    evaluationResponseFailures({
+      response,
+      expected: ["MISSING_ACK:VIOLATED"],
+      sourceText: `${source}\nA second decisive fact.`,
+      requiredEvidence: ["A second decisive fact."]
+    }),
+    ["primary response omits required source evidence: A second decisive fact."]
+  );
+  assert.deepEqual(
+    evaluationResponseFailures({
       response: `${response}\n[CNL:FINDING] [CODE:OTHER_NOT_APPLICABLE] [STATUS:NOT_APPLICABLE]`,
       expected: ["MISSING_ACK:VIOLATED"],
       sourceText: source

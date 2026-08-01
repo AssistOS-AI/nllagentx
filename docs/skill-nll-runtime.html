@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — nll-runtime Skill</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -17,14 +18,14 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>nll-runtime Skill</nav>
       <p class="kicker">Coding workflow contract</p>
       <h1>nll-runtime Skill</h1>
-      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="runtime.html">Runtime</a></nav>
+      <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="response-circuits.html">Response circuits</a><a href="runtime.html">Runtime</a></nav>
       
 <p class="lead">Use when implementing SemanticStore, transactions, indexes, query planning, scheduler, capability planning, traces, caches or analysis-method engines.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-003</code>. Dependency order: <code>nll-sdk</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
+<h2>Executable workflow</h2><p>The workflow references <code>DS-003</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: <code>nll-sdk</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
 <pre class="mermaid">flowchart LR
   P1[discover] --> P2[author] --> P3[validate] --> P4[handoff]
-  Context[Resolved SDK, ontology, circuit, profile, source catalogs] --> P1</pre>
-<h2>Required tools</h2><ul><li><code>nllAgent sdk check</code></li><li><code>nllAgent ontology check</code></li><li><code>nllAgent longtext execute</code></li><li><code>nllAgent circuit plan</code></li><li><code>nllAgent circuit run</code></li><li><code>nllAgent circuit abstract</code></li><li><code>nllAgent circuit symbolic</code></li><li><code>nllAgent trace slice</code></li><li><code>nllAgent test framework</code></li></ul>
+  Context[Resolved SDK, ontology, semantic circuit, response circuit, profile, source catalogs] --> P1</pre>
+<h2>Required tools</h2><ul><li><code>nllAgent catalog response</code></li><li><code>nllAgent sdk check</code></li><li><code>nllAgent ontology check</code></li><li><code>nllAgent longtext execute</code></li><li><code>nllAgent circuit plan</code></li><li><code>nllAgent circuit run</code></li><li><code>nllAgent circuit abstract</code></li><li><code>nllAgent circuit symbolic</code></li><li><code>nllAgent trace slice</code></li><li><code>nllAgent test framework</code></li></ul>
 <h2>Canonical edit roots</h2><ul><li><code>framework/runtime</code></li><li><code>framework/sdk/analysis</code></li></ul>
 <h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS025-nll-runtime.md">its DS entry</a>, synchronized with <code>nll-skills/nll-runtime/SKILL.md</code> and <code>workflow.mjs</code>.</p>

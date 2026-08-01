@@ -13,7 +13,7 @@ Execution:
   analyze ... --author-adaptive [--authoring-cycles 1..10] [--assurance none|abstract|symbolic|all]
               [--adaptive-allow-unknown]
   test framework|packs|agent|task|all [--level fast|standard|exhaustive]
-  evaluate --suite <name-or-suite.mjs> [--invoke-agent] [--model <id>]
+  evaluate --suite <name-or-suite.mjs> [--invoke-agent|--replay-retained] [--model <id>]
 
 Inspection:
   context build|show        files index          catalog sdk|ontology|circuit|response

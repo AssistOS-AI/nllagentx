@@ -2,6 +2,7 @@ export {
   default,
   alarmSounding,
   alarmSoundingClaim,
+  anyDistinctSupportingEvidence,
   claimedOperatorTraining,
   claimedOperatorTrainingClaim,
   memoAuthor,

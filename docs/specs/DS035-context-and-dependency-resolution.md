@@ -18,6 +18,8 @@ Every semantic command must resolve an agent from `--agent <name-or-path>` or `-
 
 Runtime resolution must load framework defaults, the selected profile, agent-local ontologies/circuits, and task-local ontologies/circuits/IntentJS/LongTextJS in documented precedence. The context builder must ingest task sources, resolve the selected skill dependency graph, install run-local skill folders, identify exact DS filenames, and generate compact catalogs from live SDK descriptors and resolved ontology/circuit objects. Catalogs are informational and must not replace canonical modules.
 
+A long-running authoring or evaluation process must observe changes to transitive agent/task modules made by a coding phase in the same process. Fresh import applies to the entire local semantic dependency graph below the resolved agent ownership root, not only to its entry module. Framework SDK/runtime modules retain stable process identities so constructors and `instanceof` boundaries are not duplicated. Freshness keys must be derived from local file metadata and covered by a regression that rewrites an entry module and one imported dependency between two resolutions.
+
 Skill workflows may name preserved original contracts with hyphenated references such as `DS-003` and additive official contracts with compact references such as `DS039`. The context resolver must distinguish both namespaces, expand original domain ranges only for the packs loaded in the active profile, and include every official cross-cutting DS explicitly declared by the resolved skill chain.
 
 The agent folder owns reusable ontologies, circuits, methods, profiles, lexicons, CNL, tests, tasks, and agent-level coding runs. The task folder owns source maps, intent, longtext units and root, task-local ontologies/circuits, tests, runs, and retained results. A source interpretation must not be promoted to default knowledge without an explicit reusable contract and tests.
@@ -41,6 +43,10 @@ Response: Framework SDK modules and pack descriptors remain canonical. Skills de
 ### Question #3: Why are original and official DS references both supported?
 
 Response: The original twenty files must remain intact and use their established hyphenated IDs, while cross-cutting implementation decisions live in the gap-free official series. Explicitly different reference syntax avoids accidental renumbering and lets each skill request only the contracts it actually needs.
+
+### Question #4: Why version transitive local modules but not framework modules?
+
+Response: Coding phases edit the agent/task dependency graph while an evaluator remains alive, so every local dependency must be fresh. Duplicating framework constructors would instead split semantic class identity inside one runtime. The module hook therefore versions only files below the resolved ownership root.
 
 ## Conclusion
 

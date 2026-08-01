@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Artifacts and Retained Results</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -22,6 +23,9 @@
 <p class="lead">Every important intermediate and final result is a file owned by an agent run, task result, or evaluation suite.</p>
 <h2>Task results</h2>
 <table><thead><tr><th>Artifact</th><th>Purpose</th></tr></thead><tbody>
+<tr><td><code>response.md</code></td><td>primary tagged, grounded, human-readable Markdown CNL answer</td></tr>
+<tr><td><code>artifacts.md</code></td><td>relative links to semantic programs, Codex runs, and technical evidence</td></tr>
+<tr><td><code>response-circuits.mjs</code></td><td>technical response-policy selection and stage trace</td></tr>
 <tr><td><code>execution-plan.md</code></td><td>profile, loaded packs, selected/rejected circuits, and blocked capabilities</td></tr>
 <tr><td><code>findings.mjs</code></td><td>executable finding structures reconstructed through the SDK</td></tr>
 <tr><td><code>findings.cnl</code></td><td>canonical evidence-bearing finding frames</td></tr>
@@ -31,11 +35,11 @@
 <tr><td><code>diagnostics.md</code></td><td>typed planning and execution failures</td></tr>
 <tr><td><code>trace.bin</code></td><td>Node V8 binary serialization of semantic trace projections</td></tr>
 <tr><td><code>assurance.mjs</code></td><td>executable abstract/symbolic auxiliary results</td></tr>
-<tr><td><code>report.md</code></td><td>task-level outcome index</td></tr>
+<tr><td><code>report.md</code></td><td>technical task-level execution summary</td></tr>
 </tbody></table>
 <h2>Coding-run context</h2><p>A run directory contains <code>INSTRUCTIONS.md</code>, executable <code>run.mjs</code>, installed skill folders, context catalogs, checks, scratch space, and process logs. Exact design-specification paths and the project CLI invocation are resolved for the selected working directory.</p>
 <h2>Source artifacts</h2><p><code>source/source-map.mjs</code> registers decoded text, extractor metadata, and stable units. Its generated import path points to the selected project's SDK even for an explicit agent directory. UTF-8 formats and ordinary unencrypted PDF text streams have built-in extraction. A task can add or override a decoder with <code>source/extractors/&lt;extension&gt;.extractor.mjs</code>; unsupported filters, scans, encryption, or formats retain typed diagnostics rather than fabricated text. DS037 defines decoded-offset provenance.</p>
-<h2>No semantic JSON</h2><p>Findings, gold expectations, source maps, run declarations, suite declarations, and catalogs use executable modules or human-readable Markdown/CNL. The repository retains existing JSON only where Codex/plugin integration requires a manifest; those files do not encode semantic programs.</p>
+<h2>No semantic JSON</h2><p>Findings, gold expectations, source maps, run declarations, suite declarations, and catalogs use executable modules or human-readable Markdown/CNL. Environment-managed Codex/plugin configuration is outside the project artifact model and is not a build or runtime dependency.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>

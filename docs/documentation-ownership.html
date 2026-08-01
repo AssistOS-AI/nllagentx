@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — Documentation ownership</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module">
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
+  </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Documentation ownership</nav>
+      <p class="kicker">Project and environment boundary</p>
+      <h1>Documentation ownership</h1>
+      <nav class="section-nav" aria-label="Reference pages"><span>Reference</span><a href="specsLoader.html?spec=matrix.md">Specification matrix</a><a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">Agentic authoring contract</a><a href="specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md">Adaptive authoring contract</a><a href="specsLoader.html?spec=DS043-primary-markdown-cnl-response.md">Markdown CNL response</a><a href="specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md">Response circuit contract</a><a href="documentation-ownership.html">Documentation ownership</a><a href="specification-review.html">Specification review</a><a href="documentation-generation.html">Documentation generation</a><a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">Source boundary</a><a href="specsLoader.html?spec=DS001-coding-style.md">Coding style</a></nav>
+      
+<p class="lead">All published documentation, templates, assets, generators, and verifiers are project-owned. Environment-managed agent skills may guide maintenance but are not product source or runtime capabilities.</p>
+<h2>Self-contained generation</h2><p>The generators read <code>design-specifications/</code>, <code>nll-skills/</code>, project code, retained evaluations, and project-owned files under <code>tools/</code>. They do not read environment-managed skill directories, home folders, a CDN, or a fixed deployment path.</p>
+<pre class="mermaid">flowchart LR
+  Project[Project-owned sources] --> Specs[DS000 through DS044]
+  Project --> HTML[Detailed HTML pages]
+  Evaluations[Accepted evaluations] --> Tutorials[Real tutorials]
+  Specs --> Verify[Project-owned verification]
+  HTML --> Verify
+  Tutorials --> Verify</pre>
+<p>See <a href="specsLoader.html?spec=DS032-documentation-and-specification-ownership.md">DS032</a>.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

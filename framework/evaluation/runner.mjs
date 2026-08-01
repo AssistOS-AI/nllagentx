@@ -1,5 +1,5 @@
 import { basename, extname, relative, resolve } from "node:path";
-import { copyFile, mkdir, readFile, readdir } from "node:fs/promises";
+import { copyFile, mkdir, readFile, readdir, rm } from "node:fs/promises";
 import { aggregateMetrics, classificationMetrics } from "../sdk/evaluation/metrics.mjs";
 import { initializeAgentAt, createTask } from "../tools/workspace.mjs";
 import { executeTask, runAbstract, runSymbolic, verifyTaskAnchors } from "../tools/executor.mjs";
@@ -93,14 +93,27 @@ export function evaluationExpectationFailures({
   ]);
 }
 
-export function evaluationResponseFailures({ response, expected = [], sourceText = "" }) {
+export function evaluationResponseFailures({
+  response,
+  expected = [],
+  sourceText = "",
+  requiredEvidence = []
+}) {
   const materialExpected = expected.filter((value) => !value.endsWith(":NOT_APPLICABLE"));
-  return responseContractFailures({
+  const failures = [...responseContractFailures({
     response,
     expectedFindings: materialExpected,
     sourceTexts: [sourceText],
     requireQuotedEvidence: materialExpected.length > 0
-  });
+  })];
+  for (const quote of requiredEvidence) {
+    if (!sourceText.includes(quote)) {
+      failures.push(`required response evidence is not an exact source substring: ${quote}`);
+    } else if (!response.includes(`> ${quote}`)) {
+      failures.push(`primary response omits required source evidence: ${quote}`);
+    }
+  }
+  return Object.freeze(failures);
 }
 
 function inferredTaskAuthoring(suite) {
@@ -140,6 +153,15 @@ async function archiveCurrentReports(reportsRoot) {
     const source = resolve(reportsRoot, name);
     if (await exists(source)) await copyFile(source, resolve(archiveRoot, name));
   }
+  const failuresRoot = resolve(reportsRoot, "failures");
+  if (await exists(failuresRoot)) {
+    const archivedFailuresRoot = resolve(archiveRoot, "failures");
+    await mkdir(archivedFailuresRoot, { recursive: true });
+    for (const source of await listFiles(failuresRoot)) {
+      await copyFile(source, resolve(archivedFailuresRoot, basename(source)));
+    }
+    await rm(failuresRoot, { recursive: true, force: true });
+  }
   await atomicWrite(
     resolve(archiveRoot, "README.md"),
     "# Archived evaluation iteration\n\nThese reports are an immutable retained view of the previous suite invocation. "
@@ -148,17 +170,38 @@ async function archiveCurrentReports(reportsRoot) {
   return archiveRoot;
 }
 
-export async function runEvaluationSuite({ projectRoot, suitePath, invokeAgent = false, model = null, adapterFactory = createCodingAgentAdapter }) {
+export async function runEvaluationSuite({
+  projectRoot,
+  suitePath,
+  invokeAgent = false,
+  replayRetained = false,
+  model = null,
+  adapterFactory = createCodingAgentAdapter
+}) {
+  if (invokeAgent && replayRetained) {
+    throw new Error("EVALUATION_AUTHORING_REPLAY_CONFLICT: choose --invoke-agent or --replay-retained");
+  }
   const suiteRoot = resolve(suitePath, ".."); const suite = (await importFresh(suitePath)).default;
   const evaluationRoot = resolve(projectRoot, "evaluations", suite.id);
   const agentName = suite.agent; const agentRoot = resolve(evaluationRoot, "agents", agentName);
   const reportsRoot = resolve(evaluationRoot, "reports");
+  const retainedResultsPath = resolve(reportsRoot, "task-results.mjs");
+  const retainedAgentAuthoringPath = resolve(reportsRoot, "agent-authoring.mjs");
+  if (replayRetained && !(await exists(retainedResultsPath))) {
+    throw new Error(`EVALUATION_RETAINED_RESULTS_MISSING: ${retainedResultsPath}`);
+  }
+  const retainedResults = replayRetained
+    ? (await importFresh(retainedResultsPath)).default
+    : [];
+  const retainedAgentAuthoring = replayRetained && await exists(retainedAgentAuthoringPath)
+    ? (await importFresh(retainedAgentAuthoringPath)).default
+    : [];
   await archiveCurrentReports(reportsRoot);
   const codingAdapter = invokeAgent ? adapterFactory(suite.agentAdapter ?? "codex") : null;
   await mkdir(resolve(reportsRoot, "failures"), { recursive: true });
   if (!(await exists(agentRoot))) await initializeAgentAt(projectRoot, agentRoot, agentName, { profile: suite.profileValues[0] ?? "general-broad", packs: ["core-language"] });
   await installAgentBrief(suiteRoot, agentRoot, suite.agentBriefPath);
-  let agentAuthoring = [];
+  let agentAuthoring = [...retainedAgentAuthoring];
   if (invokeAgent && suite.agentAuthoringValues.length) {
     try {
       agentAuthoring = await authorEvaluationAgent({
@@ -174,10 +217,39 @@ export async function runEvaluationSuite({ projectRoot, suitePath, invokeAgent =
   const results = []; const modes = new Set(suite.modeValues.map((entry) => entry.value));
   const profiles = modes.has("pack-ablation") ? suite.profileValues : [suite.profileValues[0] ?? "general-broad"];
   const taskPhases = inferredTaskAuthoring(suite);
-  for (const sourceCase of await corpusCases(suiteRoot, suite)) for (const profile of profiles) {
-    const caseSpec = { ...sourceCase, profile, resultId: profiles.length > 1 ? `${sourceCase.id}@${profile}` : sourceCase.id };
-    const task = await createTask(agentRoot, { projectRoot, sourcePath: caseSpec.source, title: caseSpec.title ?? caseSpec.id, instruction: caseSpec.instruction, profile });
-    let authoring = [];
+  const sourceCases = await corpusCases(suiteRoot, suite);
+  const sourceCaseMap = new Map(sourceCases.map((sourceCase) => [sourceCase.id, sourceCase]));
+  const workItems = replayRetained
+    ? retainedResults.map((retained) => {
+      const sourceCase = sourceCaseMap.get(retained.sourceCaseId);
+      if (!sourceCase) throw new Error(`EVALUATION_RETAINED_CASE_UNKNOWN: ${retained.sourceCaseId}`);
+      const profile = retained.profile ?? profiles[0];
+      return Object.freeze({
+        caseSpec: Object.freeze({ ...sourceCase, profile, resultId: retained.caseId }),
+        task: Object.freeze({ id: retained.taskId, root: resolve(projectRoot, retained.taskPath) }),
+        retained
+      });
+    })
+    : sourceCases.flatMap((sourceCase) => profiles.map((profile) => Object.freeze({
+      caseSpec: Object.freeze({
+        ...sourceCase,
+        profile,
+        resultId: profiles.length > 1 ? `${sourceCase.id}@${profile}` : sourceCase.id
+      }),
+      task: null,
+      retained: null
+    })));
+  for (const item of workItems) {
+    const { caseSpec } = item;
+    const profile = caseSpec.profile;
+    const task = item.task ?? await createTask(agentRoot, {
+      projectRoot,
+      sourcePath: caseSpec.source,
+      title: caseSpec.title ?? caseSpec.id,
+      instruction: caseSpec.instruction,
+      profile
+    });
+    let authoring = [...(item.retained?.authoring ?? [])];
     try {
       if (invokeAgent) authoring = await authorEvaluationTask({ projectRoot, agentRoot, taskRoot: task.root, profileId: profile, phases: taskPhases, model, caseSpec, adapter: codingAdapter });
       const started = process.hrtime.bigint(); const execution = await executeTask({ projectRoot, agentRoot, taskRoot: task.root, profileId: profile });
@@ -195,8 +267,11 @@ export async function runEvaluationSuite({ projectRoot, suitePath, invokeAgent =
       });
       const responseFailures = evaluationResponseFailures({
         response: execution.response,
-        expected: expected ?? [],
-        sourceText: await readFile(caseSpec.source, "utf8")
+        expected: execution.composition.entries.map((entry) => (
+          `${entry.finding.code()}:${entry.finding.status()}`
+        )),
+        sourceText: await readFile(caseSpec.source, "utf8"),
+        requiredEvidence: caseSpec.expectedResponseEvidence ?? []
       });
       const expectationFailures = [...semanticExpectationFailures, ...responseFailures];
       const assurance = [];
@@ -266,7 +341,7 @@ export async function runEvaluationSuite({ projectRoot, suitePath, invokeAgent =
     const reportTarget = relative(reportsRoot, resolve(projectRoot, result.taskPath, "results", "response.md")).split("\\").join("/");
     return `| ${result.caseId} | [\`${result.taskId}\`](${reportTarget}) | ${result.status} | ${result.findings?.length ?? 0} | ${result.generatedFrames ?? 0} | ${result.metrics.f1 === undefined ? "not gold-scored" : result.metrics.f1.toFixed(3)} |`;
   }).join("\n");
-  await atomicWrite(resolve(reportsRoot, "summary.md"), `# Evaluation suite ${suite.id}\n\nModes: ${suite.modeValues.map((entry) => `\`${entry.value}\``).join(", ")}. Coding agent invoked: ${invokeAgent ? "yes" : "no"}. Agent authoring phases: ${suite.agentAuthoringValues.map((phase) => `\`${phase}\``).join(", ") || "none"}. Task authoring phases: ${taskPhases.map((phase) => `\`${phase}\``).join(", ") || "none"}.\n\n| Case | Primary Markdown CNL response | Status | Findings | Frames | F1 |\n| --- | --- | --- | ---: | ---: | ---: |\n${taskTable}\n\n## Aggregate metrics\n\n${Object.entries(aggregate).map(([name, value]) => `- ${name}: ${value.toFixed(4)}`).join("\n") || "No numeric metrics."}\n\nThe linked task artifact is the primary human-facing response. See \`authoring.md\` for every Codex phase, \`assurance.md\` for auxiliary debug evidence, and \`artifacts.md\` for all retained files.\n`);
+  await atomicWrite(resolve(reportsRoot, "summary.md"), `# Evaluation suite ${suite.id}\n\nModes: ${suite.modeValues.map((entry) => `\`${entry.value}\``).join(", ")}. Coding agent invoked this iteration: ${invokeAgent ? "yes" : "no"}. Retained real authoring replayed: ${replayRetained ? "yes" : "no"}. Agent authoring phases: ${suite.agentAuthoringValues.map((phase) => `\`${phase}\``).join(", ") || "none"}. Task authoring phases: ${taskPhases.map((phase) => `\`${phase}\``).join(", ") || "none"}.\n\n| Case | Primary Markdown CNL response | Status | Findings | Frames | F1 |\n| --- | --- | --- | ---: | ---: | ---: |\n${taskTable}\n\n## Aggregate metrics\n\n${Object.entries(aggregate).map(([name, value]) => `- ${name}: ${value.toFixed(4)}`).join("\n") || "No numeric metrics."}\n\nThe linked task artifact is the primary human-facing response. See \`authoring.md\` for every retained Codex phase, \`assurance.md\` for auxiliary debug evidence, and \`artifacts.md\` for all retained files.\n`);
   const runRow = (run) => `| ${run.scope} | ${run.phase} | ${run.adapter ?? suite.agentAdapter ?? "not invoked"} | ${run.exitCode} | [run](${relative(reportsRoot, resolve(projectRoot, run.runPath)).split("\\").join("/")}/INSTRUCTIONS.md) | [final response](${relative(reportsRoot, resolve(projectRoot, run.finalResponsePath)).split("\\").join("/")}) | ${run.created.length} | ${run.modified.length} |`;
   const authoringSections = results.map((result) => `## ${result.caseId}\n\nTask: \`${result.taskPath}\`.\n\n${result.authoring?.map(runRow).join("\n") || "No task coding-agent phase was retained."}`).join("\n\n");
   await atomicWrite(resolve(reportsRoot, "authoring.md"), `# Coding-agent authoring evidence\n\nEvery row is a real CodingAgentAdapter process with retained instructions, installed skills, context, stdout, stderr, and final response.\n\n| Scope | Phase | Adapter | Exit | Instructions | Final response | Created | Modified |\n| --- | --- | --- | ---: | --- | --- | ---: | ---: |\n${agentAuthoring.map(runRow).join("\n") || "| agent | none | not invoked | 0 | — | — | 0 | 0 |"}\n\n${authoringSections}\n`);

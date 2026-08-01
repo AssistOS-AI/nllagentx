@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Architecture and Execution Model</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -45,6 +46,14 @@
 <p>Module specifiers generated for agents and tasks are relative to the target file and the explicit project root. This allows an agent directory to live outside the default <code>agents/</code> directory while using the same framework SDK.</p>
 <h2>Concrete execution and assurance</h2>
 <p><code>executeTask()</code> loads ontologies, commits LongTextJS through a transaction, plans capability closure, and schedules each selected circuit. Findings and frames are derived from actual stage values. If both the intent/profile and circuit declare auxiliary support, abstract preflight and symbolic decision coverage are also retained in <code>results/assurance.mjs</code> and <code>assurance.md</code>.</p>
+<h2>Concrete planning algorithm</h2><table><thead><tr><th>Planner input</th><th>Operation</th><th>Deterministic rule</th><th>Retained result</th></tr></thead><tbody>
+<tr><td>Loaded pack/profile/agent/task circuits</td><td>Index providers by capability and semantic identity.</td><td>Task same-identity declarations override agent, which override framework; unrelated providers coexist.</td><td>Resolved circuit catalog.</td></tr>
+<tr><td>Intent concerns, domains, exclusions and fallback</td><td>Build the root provider demand.</td><td>Explicit directives precede profile and source signals; fallback never loads an excluded pack.</td><td>Requested and rejected checks.</td></tr>
+<tr><td>Provider requirements/provisions/cost</td><td>Close transitive capability dependencies.</td><td>Lowest declared cost then lexical semantic identity; cycles and missing providers are typed failures.</td><td>Capability graph and diagnostics.</td></tr>
+<tr><td>Circuit stage reads/writes</td><td>Build a stage DAG and execute ready nodes.</td><td>Stable topological ordering; no undeclared data dependency or implicit global mutation.</td><td>Execution trace, findings and typed frames.</td></tr>
+<tr><td>Semantic result plus IntentJS presentation</td><td>Plan response circuits over immutable truth output.</td><td>Validated read/write stages may select and organize but cannot create truth or evidence.</td><td>Response-circuit trace and <code>response.md</code>.</td></tr>
+</tbody></table>
+<p>The effective “super-circuit” is this retained composition graph. It remains decomposed into independently tested providers and response stages; no adaptive run flattens it into opaque generated source.</p>
 <h2>Failure semantics</h2>
 <p>Process exit status describes tool success. Semantic outcomes remain findings such as <code>UNKNOWN</code>, <code>CONFLICT</code>, <code>BLOCKED_ONTOLOGY</code>, or <code>BLOCKED_COVERAGE</code>. Source decoding failures retain typed diagnostics without pretending that binary extraction succeeded.</p>
     </article>

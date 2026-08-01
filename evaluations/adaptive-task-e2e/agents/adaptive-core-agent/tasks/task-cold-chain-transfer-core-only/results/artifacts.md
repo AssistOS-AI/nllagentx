@@ -2,7 +2,7 @@
 
 ## Semantic programs
 
-These executable modules define the task, intent, LongTextJS grounding, task-local ontology, task-local circuits, and generated SDK facade when present.
+These executable modules define the task, intent, LongTextJS grounding, task-local ontology, semantic and response circuits, and generated SDK facade when present.
 
 - [circuits/cold-chain-release-support.mjs](../circuits/cold-chain-release-support.mjs)
 - [circuits/cold-chain-release.circuit.mjs](../circuits/cold-chain-release.circuit.mjs)
@@ -15,21 +15,39 @@ These executable modules define the task, intent, LongTextJS grounding, task-loc
 
 ## Coding-agent authoring evidence
 
+- [runs/run-_5VvSq_gCXQM3nHK/INSTRUCTIONS.md](../runs/run-_5VvSq_gCXQM3nHK/INSTRUCTIONS.md)
+- [runs/run-_5VvSq_gCXQM3nHK/logs/codex.final.md](../runs/run-_5VvSq_gCXQM3nHK/logs/codex.final.md)
+- [runs/run-_5VvSq_gCXQM3nHK/logs/process.md](../runs/run-_5VvSq_gCXQM3nHK/logs/process.md)
 - [runs/run-1KBvvHZrjYvddoKU/INSTRUCTIONS.md](../runs/run-1KBvvHZrjYvddoKU/INSTRUCTIONS.md)
 - [runs/run-1KBvvHZrjYvddoKU/logs/codex.final.md](../runs/run-1KBvvHZrjYvddoKU/logs/codex.final.md)
 - [runs/run-1KBvvHZrjYvddoKU/logs/process.md](../runs/run-1KBvvHZrjYvddoKU/logs/process.md)
+- [runs/run-4hvH9gHbGn60fQPD/INSTRUCTIONS.md](../runs/run-4hvH9gHbGn60fQPD/INSTRUCTIONS.md)
+- [runs/run-4hvH9gHbGn60fQPD/logs/codex.final.md](../runs/run-4hvH9gHbGn60fQPD/logs/codex.final.md)
+- [runs/run-4hvH9gHbGn60fQPD/logs/process.md](../runs/run-4hvH9gHbGn60fQPD/logs/process.md)
+- [runs/run-aP4r9qVeFplPue52/INSTRUCTIONS.md](../runs/run-aP4r9qVeFplPue52/INSTRUCTIONS.md)
+- [runs/run-aP4r9qVeFplPue52/logs/codex.final.md](../runs/run-aP4r9qVeFplPue52/logs/codex.final.md)
+- [runs/run-aP4r9qVeFplPue52/logs/process.md](../runs/run-aP4r9qVeFplPue52/logs/process.md)
 - [runs/run-Fjy2bszt2jMKFLT2/INSTRUCTIONS.md](../runs/run-Fjy2bszt2jMKFLT2/INSTRUCTIONS.md)
 - [runs/run-Fjy2bszt2jMKFLT2/logs/codex.final.md](../runs/run-Fjy2bszt2jMKFLT2/logs/codex.final.md)
 - [runs/run-Fjy2bszt2jMKFLT2/logs/process.md](../runs/run-Fjy2bszt2jMKFLT2/logs/process.md)
 - [runs/run-GDH574H9x4p66GB7/INSTRUCTIONS.md](../runs/run-GDH574H9x4p66GB7/INSTRUCTIONS.md)
 - [runs/run-GDH574H9x4p66GB7/logs/codex.final.md](../runs/run-GDH574H9x4p66GB7/logs/codex.final.md)
 - [runs/run-GDH574H9x4p66GB7/logs/process.md](../runs/run-GDH574H9x4p66GB7/logs/process.md)
+- [runs/run-gTqQpKTtEIkFGY_W/INSTRUCTIONS.md](../runs/run-gTqQpKTtEIkFGY_W/INSTRUCTIONS.md)
+- [runs/run-gTqQpKTtEIkFGY_W/logs/codex.final.md](../runs/run-gTqQpKTtEIkFGY_W/logs/codex.final.md)
+- [runs/run-gTqQpKTtEIkFGY_W/logs/process.md](../runs/run-gTqQpKTtEIkFGY_W/logs/process.md)
+- [runs/run-iRZcu2zOapXEdF9-/INSTRUCTIONS.md](../runs/run-iRZcu2zOapXEdF9-/INSTRUCTIONS.md)
+- [runs/run-iRZcu2zOapXEdF9-/logs/codex.final.md](../runs/run-iRZcu2zOapXEdF9-/logs/codex.final.md)
+- [runs/run-iRZcu2zOapXEdF9-/logs/process.md](../runs/run-iRZcu2zOapXEdF9-/logs/process.md)
 - [runs/run-JG6l_vqaIyOcf5W2/INSTRUCTIONS.md](../runs/run-JG6l_vqaIyOcf5W2/INSTRUCTIONS.md)
 - [runs/run-JG6l_vqaIyOcf5W2/logs/codex.final.md](../runs/run-JG6l_vqaIyOcf5W2/logs/codex.final.md)
 - [runs/run-JG6l_vqaIyOcf5W2/logs/process.md](../runs/run-JG6l_vqaIyOcf5W2/logs/process.md)
 - [runs/run-R3a5EGYjk0HC0zCd/INSTRUCTIONS.md](../runs/run-R3a5EGYjk0HC0zCd/INSTRUCTIONS.md)
 - [runs/run-R3a5EGYjk0HC0zCd/logs/codex.final.md](../runs/run-R3a5EGYjk0HC0zCd/logs/codex.final.md)
 - [runs/run-R3a5EGYjk0HC0zCd/logs/process.md](../runs/run-R3a5EGYjk0HC0zCd/logs/process.md)
+- [runs/run-XFtwlv7HejMEW9jc/INSTRUCTIONS.md](../runs/run-XFtwlv7HejMEW9jc/INSTRUCTIONS.md)
+- [runs/run-XFtwlv7HejMEW9jc/logs/codex.final.md](../runs/run-XFtwlv7HejMEW9jc/logs/codex.final.md)
+- [runs/run-XFtwlv7HejMEW9jc/logs/process.md](../runs/run-XFtwlv7HejMEW9jc/logs/process.md)
 
 ## Technical execution evidence
 

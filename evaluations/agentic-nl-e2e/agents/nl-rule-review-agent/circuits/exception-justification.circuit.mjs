@@ -158,7 +158,12 @@ function evaluateExceptionJustification({ store }) {
         ]
       });
     } else if (hasClosedCoverage(store, JustificationRecord, pairClaims)) {
-      results.push({ ...pair, outcome: REVIEW_OUTCOMES.FALSE, records: [], claims: pairClaims });
+      results.push({
+        ...pair,
+        outcome: REVIEW_OUTCOMES.FALSE,
+        records: [],
+        claims: [...pairClaims, ...deniedRecords.map(({ claim }) => claim)]
+      });
     } else {
       results.push({ ...pair, outcome: REVIEW_OUTCOMES.UNKNOWN, records: [], claims: pairClaims });
     }

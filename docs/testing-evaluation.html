@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Testing and Evaluation</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -32,8 +33,10 @@ node nllAgent.mjs test all --level exhaustive</code></pre>
 <pre><code>node nllAgent.mjs evaluate --suite school-smoke
 node nllAgent.mjs evaluate --suite school-smoke --invoke-agent
 node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent
+node nllAgent.mjs evaluate --suite agentic-nl-e2e --replay-retained
 node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODEL</code></pre>
 <p>The infrastructure-only school smoke run creates one isolated random-ID task per declared profile, completes deterministic execution and replay, compares the profile ablation, and writes aggregate anchor validity, replay equivalence, and elapsed-time metrics. It is not evidence that a reusable agent was learned from natural language. The <code>agentic-nl-e2e</code> suite retains a natural-language agent brief, runs real architect/ontology/circuit Codex phases, creates four tasks, runs real intent/longtext phases, checks expected findings or generation frames, and proves model-free replay.</p>
+<p><code>--replay-retained</code> reuses those exact random-ID tasks and their retained real Codex provenance, but invokes no coding agent. It re-executes current semantic and response code, regenerates reports, and fails non-zero if any strict case, exact quotation, response contract, or replay digest fails. It is mutually exclusive with <code>--invoke-agent</code>.</p>
 <p>The DS042 adaptive validation starts with a core-only agent and a cold-chain task that demonstrably lacks task intent, ontology, LongText, circuits, tests, runs, and results. The public <code>analyze --author-adaptive</code> command must generate the missing executable programs through Codex, pass concrete plus abstract and symbolic acceptance, complete mandatory review, and then replay through ordinary <code>run</code>. Its full retained evidence is reproduced in <a href="tutorial-adaptive-cold-chain.html">the adaptive tutorial</a>.</p>
 <pre class="mermaid">sequenceDiagram
   participant Suite
@@ -47,7 +50,7 @@ node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODE
   Agent->>Codex: task intent and longtext contexts
   Codex-->>Agent: grounded task programs and tests
   Agent->>Runtime: deterministic execution and assurance
-  Runtime-->>Suite: findings, CNL, trace, metrics
+  Runtime-->>Suite: primary response.md plus technical findings, trace and metrics
   Suite->>Runtime: ordinary replay without Codex
   Suite->>Suite: Markdown and executable .mjs reports</pre>
 <h2>Retained reports</h2><p>Evaluation reports distinguish completed and failed cases and keep failure stacks under <code>reports/failures/</code>. Authoring reports link each real subprocess to instructions, installed skills, context, stdout, stderr, final response and created/modified code. Gold expectations may be executable <code>.gold.mjs</code> modules. Precision, recall, F1, anchor validity, replay equivalence, runtime, generated frames and assurance artifacts remain tied to task IDs.</p>

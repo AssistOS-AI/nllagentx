@@ -152,7 +152,8 @@ test("analysis response quotes both conflicting rules and suppresses non-applica
     /\[CNL:FINDING\] \[CODE:RULE_CONTRADICTION\] \[STATUS:CONFLICT\].*\[MATERIAL\]/
   );
   assert.match(rendered.response, /one requires it while the other forbids it/i);
-  assert.match(rendered.response, /Conflicting requirements: Effects .* must be compatible\./i);
+  assert.match(rendered.response, /Conflicting requirement.*Effects .* must be compatible\./is);
+  assert.doesNotMatch(rendered.response, /## Input basis|## Artifacts|No blocking diagnostic/);
   assert.match(rendered.response, /\*\*Rule evaluated:\*\* Incompatible rule effects/);
   assert.ok(rendered.response.includes(`> ${firstRuleText}`));
   assert.ok(rendered.response.includes(`> ${secondRuleText}`));

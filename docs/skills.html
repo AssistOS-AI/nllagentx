@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Skill Catalog</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -19,15 +20,15 @@
       <h1>Skill Catalog</h1>
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
-<p class="lead">The repository contains ten nllAgent authoring skills, the self-contained article-build skill, and two documentation/specification maintenance skills. Each locally owned skill has a dedicated HTML chapter and official DS contract.</p>
-<ul class="catalog-list"><li><a href="skill-nll-architect.html"><code>nll-architect</code></a></li><li><a href="skill-nll-orchestrator.html"><code>nll-orchestrator</code></a></li><li><a href="skill-nll-sdk.html"><code>nll-sdk</code></a></li><li><a href="skill-nll-runtime.html"><code>nll-runtime</code></a></li><li><a href="skill-nll-intent.html"><code>nll-intent</code></a></li><li><a href="skill-nll-ontology.html"><code>nll-ontology</code></a></li><li><a href="skill-nll-longtext.html"><code>nll-longtext</code></a></li><li><a href="skill-nll-circuit.html"><code>nll-circuit</code></a></li><li><a href="skill-nll-test.html"><code>nll-test</code></a></li><li><a href="skill-nll-evaluate.html"><code>nll-evaluate</code></a></li><li><a href="skill-article-build.html"><code>article-build</code></a></li><li><a href="skill-gamp-specs.html"><code>gamp-specs</code></a></li><li><a href="skill-review-specs.html"><code>review-specs</code></a></li></ul>
+<p class="lead">The repository contains ten project-owned nllAgent authoring skills. Each skill has a dedicated HTML chapter, executable workflow and official DS contract. Environment-managed skills are not copied, published or required by this project.</p>
+<ul class="catalog-list"><li><a href="skill-nll-architect.html"><code>nll-architect</code></a></li><li><a href="skill-nll-orchestrator.html"><code>nll-orchestrator</code></a></li><li><a href="skill-nll-sdk.html"><code>nll-sdk</code></a></li><li><a href="skill-nll-runtime.html"><code>nll-runtime</code></a></li><li><a href="skill-nll-intent.html"><code>nll-intent</code></a></li><li><a href="skill-nll-ontology.html"><code>nll-ontology</code></a></li><li><a href="skill-nll-longtext.html"><code>nll-longtext</code></a></li><li><a href="skill-nll-circuit.html"><code>nll-circuit</code></a></li><li><a href="skill-nll-test.html"><code>nll-test</code></a></li><li><a href="skill-nll-evaluate.html"><code>nll-evaluate</code></a></li></ul>
 <h2>Resolution model</h2><pre class="mermaid">flowchart LR
   Requested[Requested phase skill] --> Loader[Skill loader]
   Loader --> Dependencies[Transitive workflow dependencies]
   Dependencies --> Installed[Run-local skill folders]
   Installed --> Catalogs[Declared context catalogs]
   Catalogs --> CodingAgent[Coding agent reads and edits canonical files]</pre>
-<p>The adjacent <code>workflow.mjs</code> is machine-resolvable and the <code>SKILL.md</code> is agent-facing. Context is generated from live SDK descriptors and resolved ontologies/circuits. Skills do not search hidden folders and do not copy the framework theory into task artifacts.</p>
+<p>The adjacent <code>workflow.mjs</code> is machine-resolvable and the <code>SKILL.md</code> is agent-facing. Context is generated from live SDK descriptors and resolved ontologies, semantic circuits and response circuits. Skills do not search hidden folders and do not copy the framework theory into task artifacts.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>

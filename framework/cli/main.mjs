@@ -293,7 +293,20 @@ async function evaluateCommand(projectRoot, options) {
   const suiteName = requiredOption(options, "suite"); const candidates = [resolve(suiteName), resolve(projectRoot, "evaluations", suiteName, "suite.mjs"), resolve(projectRoot, "examples", "evaluations", suiteName, "suite.mjs")];
   let selected = null; for (const candidate of candidates) if (await exists(candidate)) { selected = candidate; break; }
   if (!selected) throw new Error(`EVALUATION_SUITE_NOT_FOUND: ${suiteName}`);
-  const result = await runEvaluationSuite({ projectRoot, suitePath: selected, invokeAgent: Boolean(options["invoke-agent"]), model: options.model ?? null });
+  const result = await runEvaluationSuite({
+    projectRoot,
+    suitePath: selected,
+    invokeAgent: Boolean(options["invoke-agent"]),
+    replayRetained: Boolean(options["replay-retained"]),
+    model: options.model ?? null
+  });
+  const failed = result.results.filter((entry) => entry.status !== "completed");
+  if (failed.length > 0) {
+    throw new Error(
+      `EVALUATION_SUITE_FAILED: ${failed.length}/${result.results.length} task(s) failed; `
+      + `see ${resolve(result.evaluationRoot, "reports", "summary.md")}`
+    );
+  }
   return formatted({ suite: result.suite.id, evaluationRoot: result.evaluationRoot, tasks: result.results.length, completed: result.results.filter((entry) => entry.status === "completed").length, aggregate: result.aggregate });
 }
 

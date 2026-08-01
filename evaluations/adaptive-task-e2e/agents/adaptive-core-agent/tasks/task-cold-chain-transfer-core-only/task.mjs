@@ -16,5 +16,9 @@ export default semanticTask("task-cold-chain-transfer-core-only")
     "executable semantic results that can be replayed without another model call."
   ))
   .profile(taskProfile("adaptive-core-only"))
-  .output(requestedOutput("findings"), requestedOutput("cnl-observations"))
+  .output(
+    requestedOutput("findings"),
+    requestedOutput("cnl-observations"),
+    requestedOutput("markdown-cnl")
+  )
   .seal();

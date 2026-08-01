@@ -10,10 +10,19 @@ import {
   inferDomainsFromSource,
   intent,
   interpretationRobust,
+  markdownCnl,
   sourceGrounded,
   symbolicDecisionCoverage,
   taskScope
 } from "../../../../../../../framework/sdk/intent/index.mjs";
+import {
+  countResultGroups,
+  emitStableCnlTags,
+  evidenceLed,
+  explainMatchedRules,
+  groupResultsBy,
+  quoteSourceEvidence
+} from "../../../../../../../framework/sdk/cnl/index.mjs";
 import task from "../task.mjs";
 
 export const coldChainTransferPolicy = () => new IntentFragment(
@@ -33,7 +42,15 @@ export default intent(task.id)
     abstractPreflight(),
     symbolicDecisionCoverage()
   )
-  .outputs(findings(), cnlObservations())
+  .outputs(findings(), cnlObservations(), markdownCnl())
+  .present(
+    evidenceLed(),
+    groupResultsBy("status-family"),
+    explainMatchedRules(),
+    quoteSourceEvidence(),
+    countResultGroups(),
+    emitStableCnlTags()
+  )
   .whenUnclear(allCompatible())
   .provenance(...task.instructions)
   .seal();

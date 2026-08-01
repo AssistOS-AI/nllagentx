@@ -157,5 +157,5 @@ test("the reusable review circuit reports the missing record without inventing a
     .filter((entry) => entry.sort() === "SourceSpan")
     .map((span) => [span.start(), span.end()])
     .sort((left, right) => left[0] - right[0]);
-  assert.deepEqual(groundedOffsets, [[46, 144], [157, 245]]);
+  assert.deepEqual(groundedOffsets, [[46, 144], [157, 245], [284, 349]]);
 });

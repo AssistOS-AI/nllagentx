@@ -37,7 +37,12 @@ function statusExplanation(status, subject) {
   return clauses[status] ?? `The result for “${subject}” is ${String(status).toLocaleLowerCase("en")}.`;
 }
 
-function recommendation(status, subject) {
+function recommendation(finding, subject) {
+  const status = finding.status();
+  const failedRequirements = finding.descriptor().details?.failedRequirements ?? [];
+  if (status === "VIOLATED" && failedRequirements.length > 0) {
+    return `Address the failed requirement: ${failedRequirements[0]}`;
+  }
   if (status === "VIOLATED") return `Correct the violation and add explicit source support that addresses “${subject}”.`;
   if (status === "CONFLICT") return `Resolve the conflicting statements or add an explicit priority, scope, or exception rule for “${subject}”.`;
   if (status === "UNKNOWN") return `Provide the missing facts or close the relevant source coverage before treating “${subject}” as decided.`;
@@ -150,11 +155,29 @@ function simpleDetail(value) {
 
 function renderDetails(finding) {
   const details = finding.descriptor().details ?? {};
+  const requirementGroups = [
+    ["failedRequirements", "Failed requirement"],
+    ["conflictingRequirements", "Conflicting requirement"],
+    ["uncertainRequirements", "Unresolved requirement"],
+    ["satisfiedRequirements", "Confirmed requirement"]
+  ].filter(([name]) => Array.isArray(details[name]) && details[name].length > 0);
   const rows = Object.entries(details)
+    .filter(([name]) => !name.endsWith("Requirements"))
     .map(([name, value]) => [titleFromCode(name), simpleDetail(value)])
     .filter(([, value]) => value !== null);
-  if (rows.length === 0) return "";
-  return `\n\nObserved facts:\n\n${rows.map(([name, value]) => `- ${name}: ${value}`).join("\n")}`;
+  const sections = [];
+  if (requirementGroups.length > 0) {
+    const requirements = requirementGroups.flatMap(([name, label]) => {
+      const values = details[name];
+      const heading = values.length === 1 ? label : `${label}s`;
+      return [`- **${heading}:**`, ...values.map((value) => `  - ${value}`)];
+    });
+    sections.push(`**Why this result**\n\n${requirements.join("\n")}`);
+  }
+  if (rows.length > 0) {
+    sections.push(`**Assessment details**\n\n${rows.map(([name, value]) => `- ${name}: ${value}`).join("\n")}`);
+  }
+  return sections.length > 0 ? `\n\n${sections.join("\n\n")}` : "";
 }
 
 function conditionPhrase(rule) {
@@ -174,7 +197,7 @@ function renderRule(rule) {
   const decision = condition
     ? `The circuit emitted this result because ${condition}.`
     : "The selected circuit emitted this result from its semantic assessment.";
-  return `**Rule evaluated:** ${titleFromCode(rule.concern)}  \n**Circuit:** \`${rule.circuit}\`  \n**Decision:** ${decision}`;
+  return `- **Rule evaluated:** ${titleFromCode(rule.concern)}\n- **Circuit:** \`${rule.circuit}\`\n- **Decision:** ${decision}`;
 }
 
 function renderFinding(entry, store, registry, { group, style, features }) {
@@ -188,7 +211,7 @@ function renderFinding(entry, store, registry, { group, style, features }) {
   const citations = evidenceSpans(finding, store)
     .map((span) => sourceCitation(span, registry))
     .filter(Boolean);
-  const next = recommendation(finding.status(), subject);
+  const next = recommendation(finding, subject);
   const marker = features.has("stable-tags")
     ? `[CNL:FINDING] [CODE:${finding.code()}] [STATUS:${finding.status()}] [GROUP:${group}] [${tags.has("material") ? "MATERIAL" : "SUPPORTING"}]`
     : "";
@@ -306,10 +329,6 @@ ${runRows}
 }
 
 export async function renderTaskResponse({ runtime, store, composition, diagnostics, sourceRegistry }) {
-  const sourceRows = sourceRegistry.all().map((source) => {
-    const target = source.path ? `[${source.id}](../${source.path})` : source.id;
-    return `- ${target}: ${source.text.length} decoded characters.`;
-  });
   const frameSection = renderFrames(composition.generatedFrames);
   const groups = composition.groups.map((group) => {
     const heading = titleFromCode(group.key);
@@ -326,33 +345,18 @@ export async function renderTaskResponse({ runtime, store, composition, diagnost
   });
   const answer = groups.length > 0
     ? groups.join("\n\n")
-    : "[CNL:NO-MATERIAL-RESULT]\n\nNo applicable semantic finding was produced; non-applicable circuit results were omitted.";
+    : "[CNL:NO-MATERIAL-RESULT]\n\nNo material finding matched the requested intent; non-applicable results were omitted.";
   const uncertainty = diagnostics.length > 0
-    ? diagnostics.map((entry) => `- ${entry.code ?? "DIAGNOSTIC"}: ${entry.message ?? entry.capability ?? entry.stage ?? "See technical trace."}`).join("\n")
+    ? `## Limits\n\n${diagnostics.map((entry) => `- ${entry.code ?? "DIAGNOSTIC"}: ${entry.message ?? entry.capability ?? entry.stage ?? "See technical trace."}`).join("\n")}`
     : composition.entries.some((entry) => entry.finding.status() === "UNKNOWN")
-      ? "At least one conclusion remains unknown; the relevant finding explains what evidence is missing."
-      : "No blocking diagnostic was emitted. This statement concerns execution completeness, not the truth of every possible claim outside the selected intent.";
-  return `# nllAgent response
-
-[CNL:DOCUMENT] [STYLE:${composition.style}] [GROUPING:${composition.grouping}] [RESULTS:${composition.entries.length}]
-
-Task: \`${runtime.task.id}\`  
-Intent: ${runtime.intent?.id ? `\`${runtime.intent.id}\`` : "default compatible analysis"}
-
-${composition.style === "procedural" && frameSection ? `${frameSection}\n\n` : ""}## Answer
-
-${answer}
-
-${composition.style !== "procedural" && frameSection ? `${frameSection}\n\n` : ""}## Input basis
-
-${sourceRows.join("\n") || "No decoded source was available."}
-
-## Limits and uncertainty
-
-${uncertainty}
-
-## Artifacts
-
-This tagged Markdown response is the primary human-facing CNL result. Executable semantic programs and technical evidence are indexed separately in [\`artifacts.md\`](artifacts.md); raw assurance objects and traces are not part of the answer above.
-`;
+      ? "## Limits\n\nAt least one conclusion remains unknown; the finding above states the missing evidence."
+      : "";
+  const sections = [
+    `# nllAgent response\n\n[CNL:DOCUMENT] [STYLE:${composition.style}] [GROUPING:${composition.grouping}] [RESULTS:${composition.entries.length}]`,
+    composition.style === "procedural" ? frameSection : "",
+    `## Answer\n\n${answer}`,
+    composition.style !== "procedural" ? frameSection : "",
+    uncertainty
+  ].filter(Boolean);
+  return `${sections.join("\n\n")}\n`;
 }

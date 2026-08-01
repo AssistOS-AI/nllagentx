@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Adaptive Analysis Loop</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -25,8 +26,9 @@
   Intent --> Ontology[Codex: ontology sufficiency audit]
   Ontology --> LongText[Codex: source-grounded LongTextJS]
   LongText --> Circuit[Codex: circuit sufficiency audit]
-  Circuit --> Compose[Planner composes inherited plus task-local circuits]
-  Compose --> Validate[Tests, anchors, providers, concrete, abstract, symbolic]
+  Circuit --> Response[Codex: response-policy sufficiency audit]
+  Response --> Compose[Planner and response circuits compose inherited plus task-local behavior]
+  Compose --> Validate[Tests, anchors, providers, concrete, Markdown CNL, abstract, symbolic]
   Validate --> Review[Mandatory Codex multi-skill review]
   Review -->|failures remain and cycles available| Compose
   Review -->|accepted| Replay[Model-free replay]</pre>
@@ -43,8 +45,8 @@ node evaluations/adaptive-task-e2e/validate.mjs</code></pre>
 <tr><td><code>--assurance none|abstract|symbolic|all</code></td><td>Auxiliary acceptance required from every selected non-core circuit; adaptive default is <code>all</code>.</td></tr>
 <tr><td><code>--adaptive-allow-unknown</code></td><td>Allows unknown-only concrete output to be material when indeterminacy is the requested correct result.</td></tr>
 </tbody></table>
-<h2>What may change</h2><p>The task may gain executable <code>intent/</code>, <code>ontologies/</code>, <code>longtext/</code>, <code>circuits/</code>, and <code>tests/</code> modules plus retained <code>runs/</code> and <code>results/</code>. Framework and reusable agent code remain inherited and unchanged. A proven task extension can be proposed for later promotion, but adaptive execution never promotes it silently.</p>
-<h2>Acceptance boundary</h2><p>Ontology diagnostics, exact source anchors, requested capability providers, focused tests, blocking diagnostics, material non-core concrete findings or frames, abstract convergence, non-empty non-truncated symbolic paths, an equivalent second model-free execution, and mandatory review are all checked. Reaching the cycle limit is a typed failure, not a partial success.</p>
+<h2>What may change</h2><p>The task may gain executable <code>intent/</code>, <code>ontologies/</code>, <code>longtext/</code>, <code>circuits/</code>, <code>cnl/</code>, and <code>tests/</code> modules plus retained <code>runs/</code> and <code>results/</code>. Framework and reusable agent code remain inherited and unchanged. A proven task extension can be proposed for later promotion, but adaptive execution never promotes it silently.</p>
+<h2>Acceptance boundary</h2><p>Ontology diagnostics, exact source anchors, requested capability providers, focused tests, blocking diagnostics, material non-core concrete findings or frames, qualitative tagged Markdown CNL with exact quotations, abstract convergence, non-empty non-truncated symbolic paths, an equivalent second model-free execution including the response digest, and mandatory review are all checked. Reaching the cycle limit is a typed failure, not a partial success.</p>
 <p>See <a href="tutorial-adaptive-cold-chain.html">the complete real cold-chain run</a> and <a href="specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md">DS042</a>.</p>
     </article>
   </main>

@@ -1,9 +1,9 @@
 import { relative, resolve } from "node:path";
 import { createHash } from "node:crypto";
 import { checkOntologies } from "./ontology-tools.mjs";
-import { atomicWrite, jsString, listFiles } from "./filesystem.mjs";
+import { atomicWrite, exists, jsString, listFiles } from "./filesystem.mjs";
 import { executeTask, verifyTaskAnchors } from "./executor.mjs";
-import { resolveRuntime } from "./module-loader.mjs";
+import { importFresh, resolveRuntime } from "./module-loader.mjs";
 import { runTests } from "./test-runner.mjs";
 import { loadSourceRegistry } from "./source-tools.mjs";
 import { responseContractFailures } from "../runtime/response/contract.mjs";
@@ -28,6 +28,9 @@ function intentContractFailures(intent, assurance) {
   }
   if (!intent.outputs.some((entry) => entry.value === "markdown-cnl")) {
     failures.push("IntentJS does not request the primary Markdown CNL response");
+  }
+  if (!Array.isArray(intent.presentation) || intent.presentation.length === 0) {
+    failures.push("IntentJS declares no executable CNL presentation policy");
   }
   const declaredAssurance = new Set(intent.assurances.map((entry) => entry.value));
   if (!declaredAssurance.has("concrete-execution")) {
@@ -268,7 +271,8 @@ async function captureInitialState({
   runtime,
   assurance,
   maxReviewCycles,
-  resolutionFailure = null
+  resolutionFailure = null,
+  artifactName = "adaptive-initial-state"
 }) {
   const semanticFiles = [];
   for (const folder of ["intent", "ontologies", "longtext", "circuits", "cnl", "tests"]) {
@@ -286,13 +290,17 @@ async function captureInitialState({
     maxReviewCycles
   });
   await atomicWrite(
-    resolve(taskRoot, "results", "adaptive-initial-state.mjs"),
+    resolve(taskRoot, "results", `${artifactName}.mjs`),
     `export default ${render(state)};\n`
   );
   const initialReport = [
-    "# Adaptive initial state",
+    artifactName === "adaptive-initial-state"
+      ? "# Adaptive initial state"
+      : "# Adaptive resume state",
     "",
-    "Captured before coding-agent authoring.",
+    artifactName === "adaptive-initial-state"
+      ? "Captured before the first coding-agent authoring phase."
+      : "Captured before this cumulative coding-agent repair iteration.",
     "",
     `- Task semantic files: ${semanticFiles.length
       ? semanticFiles.map((path) => `\`${path}\``).join(", ")
@@ -304,7 +312,7 @@ async function captureInitialState({
     `- Maximum review cycles: ${maxReviewCycles}.`
   ].join("\n");
   await atomicWrite(
-    resolve(taskRoot, "results", "adaptive-initial-state.md"),
+    resolve(taskRoot, "results", `${artifactName}.md`),
     `${initialReport}\n`
   );
   return state;
@@ -341,8 +349,12 @@ export async function runAdaptiveAuthoring({
   allowUnknown = false,
   assurance = "all"
 }) {
-  const phases = [];
-  const authoringRuns = [];
+  const priorRecordPath = resolve(taskRoot, "results", "adaptive-authoring.mjs");
+  const priorRecord = await exists(priorRecordPath)
+    ? (await importFresh(priorRecordPath)).default
+    : null;
+  const phases = [...(priorRecord?.phases ?? [])];
+  const authoringRuns = [...(priorRecord?.authoringRuns ?? [])];
   async function invokePhase(phase, goal, diagnosticsPath = null) {
     const evidence = await authorPhase(phase, goal, diagnosticsPath);
     phases.push(phase);
@@ -363,15 +375,22 @@ export async function runAdaptiveAuthoring({
       taskRoot: null
     });
   }
-  const initialState = await captureInitialState({
+  const resumedLifecycle = Boolean(
+    priorRecord?.initialState?.capturedBeforeAuthoring
+    && Array.isArray(priorRecord?.authoringRuns)
+    && priorRecord.authoringRuns.length > 0
+  );
+  const capturedState = await captureInitialState({
     taskRoot,
     runtime,
     assurance,
     maxReviewCycles,
-    resolutionFailure
+    resolutionFailure,
+    artifactName: resumedLifecycle ? "adaptive-resume-state" : "adaptive-initial-state"
   });
-  const hasIntentFile = initialState.taskSemanticFiles.some((path) => path.startsWith("intent/"));
-  const hasLongTextFile = initialState.taskSemanticFiles.some((path) => path.startsWith("longtext/"));
+  const initialState = resumedLifecycle ? priorRecord.initialState : capturedState;
+  const hasIntentFile = capturedState.taskSemanticFiles.some((path) => path.startsWith("intent/"));
+  const hasLongTextFile = capturedState.taskSemanticFiles.some((path) => path.startsWith("longtext/"));
   if (!hasIntentFile) {
     await invokePhase("intent", adaptiveGoals.intent);
   }
@@ -381,11 +400,16 @@ export async function runAdaptiveAuthoring({
   }
   await invokePhase("circuit", adaptiveGoals.circuit);
 
-  const cycles = [];
+  const cycles = [...(priorRecord?.cycles ?? [])];
+  const reviewOffset = cycles.reduce(
+    (maximum, cycle) => Math.max(maximum, Number(cycle.reviewIndex ?? cycle.cycle ?? 0)),
+    0
+  );
   let assessment = await assessAdaptiveTask({
     projectRoot, agentRoot, taskRoot, executionOptions, allowUnknown, assurance
   });
-  for (let reviewIndex = 1; reviewIndex <= maxReviewCycles; reviewIndex += 1) {
+  for (let cycle = 1; cycle <= maxReviewCycles; cycle += 1) {
+    const reviewIndex = reviewOffset + cycle;
     const projection = assessmentProjection(assessment, reviewIndex);
     cycles.push(projection);
     const diagnosticsPath = await writeAssessment(taskRoot, projection);
@@ -408,6 +432,7 @@ export async function runAdaptiveAuthoring({
         phases: Object.freeze(phases),
         authoringRuns: Object.freeze(authoringRuns),
         initialState,
+        resumeState: resumedLifecycle ? capturedState : null,
         cycles: Object.freeze(cycles),
         assurance,
         accepted: true
@@ -452,7 +477,10 @@ export async function runAdaptiveAuthoring({
       return Object.freeze({ execution: assessment.execution, record });
     }
   }
-  const finalProjection = assessmentProjection(assessment, maxReviewCycles + 1);
+  const finalProjection = assessmentProjection(
+    assessment,
+    reviewOffset + maxReviewCycles + 1
+  );
   cycles.push(finalProjection);
   const diagnosticsPath = await writeAssessment(taskRoot, finalProjection);
   const failedRecord = Object.freeze({
@@ -460,6 +488,7 @@ export async function runAdaptiveAuthoring({
     phases,
     authoringRuns,
     initialState,
+    resumeState: resumedLifecycle ? capturedState : null,
     cycles,
     assurance,
     accepted: false

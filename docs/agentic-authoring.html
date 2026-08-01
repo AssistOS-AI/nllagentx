@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — Agentic Natural-Language Authoring</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -28,7 +29,9 @@
   TaskCodex --> TaskPrograms[Task intent, grounding, tests]
   AgentPrograms --> Runtime[Deterministic planner and store]
   TaskPrograms --> Runtime
-  Runtime --> Output[Findings, CNL, traces, assurance]
+  Runtime --> Semantic[Findings and typed CNL frames]
+  Semantic --> Response[Intent-selected response circuits]
+  Response --> Output[Grounded Markdown CNL plus separate technical evidence]
   Output --> Replay[Model-free replay]</pre>
 <h2>What the framework does</h2><p>It creates folders, decodes source bytes into stable units and spans, resolves project and agent dependencies, builds compact catalogs, installs the selected skill chain, starts the coding-agent adapter, retains logs and before/after artifact paths, and runs deterministic acceptance checks.</p>
 <h2>What the framework does not do</h2><p>It does not infer ontology concepts, source claims, IntentJS policy, circuit logic, findings, or generated answers during ingestion. Those are coding-agent authoring decisions. The durable boundary is executable <code>.mjs</code> code, never a JSON approximation or an uninspectable completion.</p>

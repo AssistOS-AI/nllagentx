@@ -185,3 +185,48 @@ Review focus: a task-local response circuit is justified only by an actual prese
 Decision: the repository does not edit, copy, publish or depend on environment-managed Codex skills. The `nll-skills/` directory is the project-owned executable skill set used by coding runs. DS032, DS033 and DS040 describe project-owned documentation/specification responsibilities rather than external maintenance packages.
 
 Review focus: if an external tool is useful during maintenance, its effect must still be reproducible through checked-in project code before it becomes part of the build or runtime contract.
+
+## 24. Same-process local module freshness
+
+Decision: agent/task `.mjs` modules and their transitive local imports are versioned from nanosecond modification
+time plus file size when imported through the long-running authoring/evaluation process. Framework modules remain
+unversioned so SDK constructor and runtime class identity stays singular. A regression rewrites both the entry and
+its dependency and verifies that the second import observes the new named export.
+
+Review focus: metadata versioning is deterministic for the current local filesystems. If generated semantic code is
+later stored on a filesystem that exposes only coarse timestamps, consider adding a content digest to the version
+key; do not indiscriminately version framework modules because duplicate class identities break runtime boundaries.
+
+## 25. Semantic oracle and public-response oracle are separate
+
+Decision: complete evaluation gold is compared to every concrete finding. The Markdown CNL contract is compared
+only to the findings selected by validated response circuits, plus exact case-declared decisive quotations. Internal
+grounding confirmations and non-applicable results may therefore remain technical without creating false response
+failures. Evaluation exits non-zero for any failed case, and retained replay revalidates the exact real-authoring
+cohort without claiming a new Codex invocation.
+
+Review focus: every new suite should decide deliberately whether its semantic gold is complete and which source
+passages are decisive for public explanation. Do not infer public visibility merely from membership in semantic gold.
+
+## 26. Cumulative adaptive lifecycle evidence
+
+Decision: resuming an accepted historical adaptive task preserves the original empty-state proof and cumulative
+Codex phase/run evidence. The state immediately before the resumed repair is recorded separately in
+`adaptive-resume-state.mjs`/`.md`, and new cycle indices continue after retained cycles. The latest review repaired
+the missing Markdown CNL output/presentation policy while the original natural-language authoring evidence remained
+unchanged.
+
+Review focus: cumulative records currently retain historical cycles that were accepted under the acceptance contract
+available at that time. The final cycle must satisfy the current contract. If contract-version comparison becomes a
+reporting requirement, add an explicit acceptance-contract identity rather than rewriting historical cycle decisions.
+
+## 27. Tutorial artifact explorer delivery
+
+Decision: each retained tutorial embeds escaped Input, Intermediate and Output files into inert HTML templates. One
+shared viewer materializes only the selected file, with the first natural-language input open by default. This keeps
+all content exact and allows the generated documentation to work under an arbitrary relative hosting prefix without
+fetching project-parent paths.
+
+Review focus: exact retained code and outputs make tutorial pages intentionally large. If browser size becomes a
+material distribution problem, define a project-owned content-addressed documentation bundle and relative fetch
+contract; do not replace real files with summaries or absolute workspace URLs.

@@ -127,15 +127,83 @@ function predefinedValueTable(surface, escapeHtml) {
 
 function categoryFor(surface, name) {
   for (const [category, patterns] of Object.entries(categoryNames[surface])) {
-    if (patterns.some((pattern) => name === pattern || name.includes(pattern))) return category;
+    if (patterns.some((pattern) => {
+      const candidate = name.toLocaleLowerCase("en");
+      const token = pattern.toLocaleLowerCase("en");
+      return candidate === token || (token.length >= 5 && (candidate.startsWith(token) || candidate.endsWith(token)));
+    })) return category;
   }
   return "Supporting constructor";
 }
 
+function parametersOf(value) {
+  if (typeof value !== "function") return "";
+  const source = Function.prototype.toString.call(value);
+  const start = source.indexOf("(");
+  if (start >= 0) {
+    let depth = 1;
+    let quote = null;
+    let escaped = false;
+    for (let index = start + 1; index < source.length; index += 1) {
+      const character = source[index];
+      if (quote) {
+        if (escaped) escaped = false;
+        else if (character === "\\") escaped = true;
+        else if (character === quote) quote = null;
+        continue;
+      }
+      if (["\"", "'", "`"].includes(character)) quote = character;
+      else if (character === "(") depth += 1;
+      else if (character === ")") {
+        depth -= 1;
+        if (depth === 0) return source.slice(start + 1, index).replace(/\s+/g, " ").trim();
+      }
+    }
+  }
+  const arrow = source.match(/^\s*([^=()\s]+)\s*=>/);
+  return arrow?.[1] ?? "";
+}
+
 function callShape(name, value) {
   if (typeof value === "function" && /^class\s/.test(Function.prototype.toString.call(value))) return `class ${name}`;
-  if (typeof value === "function") return `${name}(${value.length ? Array.from({ length: value.length }, (_, index) => `arg${index + 1}`).join(", ") : "…"})`;
+  if (typeof value === "function") return `${name}(${parametersOf(value) || "…"})`;
   return name;
+}
+
+function resultTypeFor(surface, name, value, category) {
+  if (typeof value !== "function") return Array.isArray(value) ? "immutable value catalog" : "exported constant";
+  if (/Builder$/.test(name)) return `${name} instance`;
+  if (/^[A-Z].*(?:Model|Module|Frame|Finding|Claim|SourceSpan|SourceUnit)$/.test(name)) return `${name} instance`;
+  const byCategory = {
+    "Ontology kinds": "KindBuilder → sealed concept definition",
+    "Roles and relations": "role/cardinality/relation semantic value",
+    "Knowledge declarations": "ontology-owned declaration",
+    "Pack composition": "sealed module, pack, tier, or reference",
+    "Operation modes": "IntentFragment",
+    "Text targets": "IntentFragment",
+    "Domain selection": "ProfileDirective or IntentFragment",
+    "Concerns and outputs": "IntentFragment",
+    "Evidence and assurance": "IntentFragment or AssuranceRequest",
+    "Fallback and profiles": "Intent/Profile directive",
+    "Source and grounding": "source registry/unit/span or grounding",
+    "Claims and polarity": "ClaimBuilder or claim facet",
+    "Context and interpretation": "context/interpretation semantic value",
+    "Collections and alternatives": "typed semantic collection",
+    "Identity and relations": "SemanticRelation",
+    "Coverage and time": "coverage or temporal value",
+    "Query and conditions": "QueryNode or PredicateCondition",
+    "Query algebra": "composed QueryNode",
+    "Decisions and results": "decision/result/finding semantic value",
+    "Stages and emissions": "stage or typed emission declaration",
+    "Composition and ports": "capability/port/composition value",
+    Assurance: "AssuranceRequest",
+    "Frames and builders": "CNLFrame or CNLFrameBuilder",
+    "Slots and provenance": "typed CNL slot/provenance value",
+    "Canonical grammar": "canonical text, parsed frame, or comparison",
+    "Response directives": "ResponseDirective",
+    "Response circuits": "ResponseStage or ResponseCircuit model/builder"
+  };
+  return byCategory[category] ?? `${surface} semantic value or builder`;
 }
 
 function descriptionFor(surface, name, category) {
@@ -212,11 +280,12 @@ function builderTables(namespace, escapeHtml) {
     if (methods.length === 0) continue;
     const rows = methods.map((method) => {
       const value = Builder.prototype[method];
-      const shape = `${method}(${typeof value === "function" && value.length ? Array.from({ length: value.length }, (_, index) => `arg${index + 1}`).join(", ") : "…"})`;
+      const shape = `${method}(${parametersOf(value) || "…"})`;
       const description = methodDescriptions[method] ?? `Apply the ${method.replace(/([a-z])([A-Z])/g, "$1 $2").toLocaleLowerCase("en")} declaration and return the fluent builder or sealed value defined by this DSL.`;
-      return `<tr><td><code>${escapeHtml(shape)}</code></td><td>${escapeHtml(description)}</td></tr>`;
+      const result = method === "seal" || method === "commit" ? "immutable sealed semantic model" : "same fluent builder unless documented otherwise";
+      return `<tr><td><code>${escapeHtml(shape)}</code></td><td>${escapeHtml(result)}</td><td>${escapeHtml(description)}</td></tr>`;
     }).join("");
-    sections.push(`<h3>${escapeHtml(name)} methods</h3><div class="table-wrap"><table><thead><tr><th>Method</th><th>Effect and invariant</th></tr></thead><tbody>${rows}</tbody></table></div>`);
+    sections.push(`<h3>${escapeHtml(name)} methods</h3><div class="table-wrap"><table><thead><tr><th>Method and parameters</th><th>Return/chain result</th><th>Effect and invariant</th></tr></thead><tbody>${rows}</tbody></table></div>`);
   }
   return sections.join("");
 }
@@ -225,10 +294,10 @@ export function dslReference(surface, escapeHtml) {
   const namespace = surfaces[surface];
   const rows = Object.entries(namespace).sort(([left], [right]) => left.localeCompare(right)).map(([name, value]) => {
     const category = categoryFor(surface, name);
-    return `<tr><td><code>${escapeHtml(name)}</code></td><td>${escapeHtml(category)}</td><td><code>${escapeHtml(callShape(name, value))}</code></td><td>${escapeHtml(descriptionFor(surface, name, category))}</td></tr>`;
+    return `<tr><td><code>${escapeHtml(name)}</code></td><td>${escapeHtml(category)}</td><td><code>${escapeHtml(callShape(name, value))}</code></td><td>${escapeHtml(resultTypeFor(surface, name, value, category))}</td><td>${escapeHtml(descriptionFor(surface, name, category))}</td></tr>`;
   }).join("");
   return `${predefinedValueTable(surface, escapeHtml)}<h2>Complete live export inventory (${Object.keys(namespace).length})</h2>
 <p>This table is generated from the imported local SDK namespace. A renamed or removed export therefore changes this page on the next documentation build.</p>
-<div class="table-wrap"><table><thead><tr><th>Construction</th><th>Category</th><th>Call shape</th><th>Semantic effect</th></tr></thead><tbody>${rows}</tbody></table></div>
+<div class="table-wrap"><table><thead><tr><th>Construction</th><th>Category</th><th>Call shape and parameters</th><th>Result type</th><th>Semantic effect</th></tr></thead><tbody>${rows}</tbody></table></div>
 <h2>Fluent builder methods</h2>${builderTables(namespace, escapeHtml)}`;
 }

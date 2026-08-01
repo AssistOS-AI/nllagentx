@@ -2,9 +2,6 @@
 
 [CNL:DOCUMENT] [STYLE:procedural] [GROUPING:status-family] [RESULTS:1]
 
-Task: `task-ukqENI41EY_4UDEz`  
-Intent: `task-ukqENI41EY_4UDEz`
-
 ## Generated procedure
 
 1. Acknowledge the request and applicable rules.
@@ -24,9 +21,9 @@ Intent: `task-ukqENI41EY_4UDEz`
 **Status:** SATISFIED
 The grounded request and input rules are sufficient to generate the required ordered operational procedure.
 
-**Rule evaluated:** Ordered operational procedure generation  
-**Circuit:** `nl-rule-review.OperationalProcedureGeneration`  
-**Decision:** The circuit emitted this result because Ordered operational procedure generation evaluated as supported.
+- **Rule evaluated:** Ordered operational procedure generation
+- **Circuit:** `nl-rule-review.OperationalProcedureGeneration`
+- **Decision:** The circuit emitted this result because Ordered operational procedure generation evaluated as supported.
 
 **Evidence from the input**
 
@@ -49,15 +46,3 @@ The grounded request and input rules are sufficient to generate the required ord
 > Every ordinary or exceptional opening must finish with an audit entry that identifies the operator and time.
 >
 > — [source-001](../source/source-001.txt), characters 296–404
-
-## Input basis
-
-- [source-001](../source/source-001.txt): 405 decoded characters.
-
-## Limits and uncertainty
-
-No blocking diagnostic was emitted. This statement concerns execution completeness, not the truth of every possible claim outside the selected intent.
-
-## Artifacts
-
-This tagged Markdown response is the primary human-facing CNL result. Executable semantic programs and technical evidence are indexed separately in [`artifacts.md`](artifacts.md); raw assurance objects and traces are not part of the answer above.

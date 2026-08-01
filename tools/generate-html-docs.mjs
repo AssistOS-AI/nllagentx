@@ -5,6 +5,7 @@ import { pathToFileURL } from "node:url";
 import { buildAgenticDocumentationPages } from "./docs-agentic-pages.mjs";
 import { documentationHeader, documentationSectionNavigation } from "./docs-navigation.mjs";
 import { documentationStyles } from "./docs-styles.mjs";
+import { frameworkPacks } from "../framework/packs/index.mjs";
 
 const root = resolve(import.meta.dirname, ".."); const docs = resolve(root, "docs");
 await mkdir(resolve(docs, "partials"), { recursive: true }); await mkdir(resolve(docs, "assets"), { recursive: true });
@@ -12,7 +13,8 @@ await mkdir(resolve(docs, "partials"), { recursive: true }); await mkdir(resolve
 const diagrams = `<script type="module">
     import diagrams from './assets/diagram-renderer.mjs';
     diagrams.initialize({ startOnLoad: true });
-  </script>`;
+  </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>`;
 const escapeHtml = (value) => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 const code = (value) => `<code>${escapeHtml(value)}</code>`;
 function shell(title, kicker, content) {
@@ -40,6 +42,32 @@ function shell(title, kicker, content) {
   <script src="partials-loader.js"></script>
 </body>
 </html>`;
+}
+
+function semanticName(value) {
+  return value?.name ?? value?.identity ?? value?.id ?? String(value);
+}
+
+function packKnowledgeHtml() {
+  return frameworkPacks.map((pack) => {
+    const ontologyRows = pack.ontologies.map((ontology) => {
+      const concepts = ontology.concepts.map((concept) => `${concept.name} (${concept.sort})`).join(", ");
+      const roles = ontology.roles.map(semanticName).join(", ") || "none";
+      const relations = ontology.relations.map(semanticName).join(", ") || "none";
+      const reusableKnowledge = [
+        ...ontology.facts.map((fact) => `fact: ${semanticName(fact)}`),
+        ...ontology.laws.map((law) => `law: ${semanticName(law)}`)
+      ].join(", ") || "none";
+      return `<tr><td><code>${escapeHtml(ontology.identity)}</code></td><td>${escapeHtml(concepts)}</td><td>${escapeHtml(roles)}</td><td>${escapeHtml(relations)}</td><td>${escapeHtml(reusableKnowledge)}</td></tr>`;
+    }).join("");
+    const circuitRows = pack.circuits.map((circuit) => `<tr><td><code>${escapeHtml(circuit.identity)}</code></td><td>${escapeHtml(circuit.concerns.join(", ") || "general")}</td><td>${escapeHtml(circuit.requirements.map(semanticName).join(", ") || "none")}</td><td>${escapeHtml(circuit.provisions.map(semanticName).join(", ") || "none")}</td><td>${escapeHtml(circuit.statuses.join(", "))}</td><td>${escapeHtml(circuit.assurances.map(semanticName).join(", ") || "concrete only")}</td></tr>`).join("");
+    const signals = pack.signals.map((signal) => `${signal.kind}: ${signal.values.join(", ")}`).join("; ");
+    return `<details class="knowledge-pack"><summary><code>${escapeHtml(pack.id)}</code> — ${pack.ontologies.length} ontology modules, ${pack.circuits.length} circuits</summary>
+<p><strong>Identity:</strong> <code>${escapeHtml(pack.identity)}</code>. <strong>Tier:</strong> <code>${escapeHtml(pack.tier)}</code>. <strong>Knowledge level:</strong> <code>${escapeHtml(pack.knowledgeLevel)}</code>.</p>
+<p><strong>Selection signals:</strong> ${escapeHtml(signals || "none")}. <strong>Pack capabilities:</strong> ${escapeHtml(pack.capabilities.map(semanticName).join(", ") || "none")}. <strong>Requirements:</strong> ${escapeHtml(pack.requirements.map(semanticName).join(", ") || "none")}. <strong>Incompatibilities:</strong> ${escapeHtml(pack.incompatibilities.map(semanticName).join(", ") || "none")}.</p>
+<h3>Predefined ontology knowledge</h3><div class="table-wrap"><table><thead><tr><th>Module</th><th>Concepts and sorts</th><th>Roles</th><th>Relations</th><th>Stable facts/laws</th></tr></thead><tbody>${ontologyRows}</tbody></table></div>
+<h3>Executable circuit knowledge</h3><div class="table-wrap"><table><thead><tr><th>Circuit</th><th>Concern</th><th>Semantic requirements</th><th>Capabilities/guarantees</th><th>Possible statuses</th><th>Auxiliary assurance</th></tr></thead><tbody>${circuitRows}</tbody></table></div></details>`;
+  }).join("\n");
 }
 
 const pages = new Map();
@@ -112,6 +140,14 @@ pages.set("architecture.html", shell("Architecture and Execution Model", "Bounda
 <p>Module specifiers generated for agents and tasks are relative to the target file and the explicit project root. This allows an agent directory to live outside the default <code>agents/</code> directory while using the same framework SDK.</p>
 <h2>Concrete execution and assurance</h2>
 <p><code>executeTask()</code> loads ontologies, commits LongTextJS through a transaction, plans capability closure, and schedules each selected circuit. Findings and frames are derived from actual stage values. If both the intent/profile and circuit declare auxiliary support, abstract preflight and symbolic decision coverage are also retained in <code>results/assurance.mjs</code> and <code>assurance.md</code>.</p>
+<h2>Concrete planning algorithm</h2><table><thead><tr><th>Planner input</th><th>Operation</th><th>Deterministic rule</th><th>Retained result</th></tr></thead><tbody>
+<tr><td>Loaded pack/profile/agent/task circuits</td><td>Index providers by capability and semantic identity.</td><td>Task same-identity declarations override agent, which override framework; unrelated providers coexist.</td><td>Resolved circuit catalog.</td></tr>
+<tr><td>Intent concerns, domains, exclusions and fallback</td><td>Build the root provider demand.</td><td>Explicit directives precede profile and source signals; fallback never loads an excluded pack.</td><td>Requested and rejected checks.</td></tr>
+<tr><td>Provider requirements/provisions/cost</td><td>Close transitive capability dependencies.</td><td>Lowest declared cost then lexical semantic identity; cycles and missing providers are typed failures.</td><td>Capability graph and diagnostics.</td></tr>
+<tr><td>Circuit stage reads/writes</td><td>Build a stage DAG and execute ready nodes.</td><td>Stable topological ordering; no undeclared data dependency or implicit global mutation.</td><td>Execution trace, findings and typed frames.</td></tr>
+<tr><td>Semantic result plus IntentJS presentation</td><td>Plan response circuits over immutable truth output.</td><td>Validated read/write stages may select and organize but cannot create truth or evidence.</td><td>Response-circuit trace and <code>response.md</code>.</td></tr>
+</tbody></table>
+<p>The effective “super-circuit” is this retained composition graph. It remains decomposed into independently tested providers and response stages; no adaptive run flattens it into opaque generated source.</p>
 <h2>Failure semantics</h2>
 <p>Process exit status describes tool success. Semantic outcomes remain findings such as <code>UNKNOWN</code>, <code>CONFLICT</code>, <code>BLOCKED_ONTOLOGY</code>, or <code>BLOCKED_COVERAGE</code>. Source decoding failures retain typed diagnostics without pretending that binary extraction succeeded.</p>`));
 
@@ -290,6 +326,9 @@ pages.set("packs.html", shell("Ontology and Circuit Packs", "Default knowledge w
 <p class="lead">Fourteen executable packs are registered: the mandatory core-language vocabulary plus thirteen knowledge packs corresponding to the preserved domain specifications.</p>
 <h2>Pack inventory</h2>
 <p><code>core-language</code>, <code>core-commonsense</code>, <code>world-basic</code>, <code>math-basic</code>, <code>physics-basic</code>, <code>chemistry-basic</code>, <code>biology-basic</code>, <code>psychology-basic</code>, <code>anthropology-basic</code>, <code>sociology-basic</code>, <code>logic-basic</code>, <code>reasoning-errors</code>, <code>law-basic</code>, and <code>social-interaction</code> are exported by <code>framework/packs/index.mjs</code>.</p>
+<h2>Complete predefined knowledge by domain</h2>
+<p>The following inventory is generated from every live pack, ontology module, circuit, signal and capability. It distinguishes reusable ontology vocabulary and stable knowledge from executable review/generation behavior; task source claims are never listed as predefined facts.</p>
+${packKnowledgeHtml()}
 <h2>Pack contract</h2><p>Each domain pack seals ontology modules, consistency or analysis circuits, a generation circuit, lexical and semantic intent signals, capability declarations, tier, knowledge level, and tests. Domain ontology modules reuse the core-language role constructors, preventing cross-pack role identity drift. Pack facts remain distinguishable from task claims through their source class.</p>
 <p>Every concept and event frame is assigned explicitly in <code>tools/domain-module-allocations.mjs</code>. Generation fails on a missing or unknown module, missing or unknown symbol, or duplicate assignment; positional distribution is prohibited because module ownership is part of the pack-qualified identity. See <a href="specsLoader.html?spec=DS038-domain-pack-generation-and-module-ownership.md">DS038</a>.</p>
 <pre class="mermaid">flowchart LR
@@ -317,8 +356,10 @@ node nllAgent.mjs test all --level exhaustive</code></pre>
 <pre><code>node nllAgent.mjs evaluate --suite school-smoke
 node nllAgent.mjs evaluate --suite school-smoke --invoke-agent
 node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent
+node nllAgent.mjs evaluate --suite agentic-nl-e2e --replay-retained
 node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODEL</code></pre>
 <p>The infrastructure-only school smoke run creates one isolated random-ID task per declared profile, completes deterministic execution and replay, compares the profile ablation, and writes aggregate anchor validity, replay equivalence, and elapsed-time metrics. It is not evidence that a reusable agent was learned from natural language. The <code>agentic-nl-e2e</code> suite retains a natural-language agent brief, runs real architect/ontology/circuit Codex phases, creates four tasks, runs real intent/longtext phases, checks expected findings or generation frames, and proves model-free replay.</p>
+<p><code>--replay-retained</code> reuses those exact random-ID tasks and their retained real Codex provenance, but invokes no coding agent. It re-executes current semantic and response code, regenerates reports, and fails non-zero if any strict case, exact quotation, response contract, or replay digest fails. It is mutually exclusive with <code>--invoke-agent</code>.</p>
 <p>The DS042 adaptive validation starts with a core-only agent and a cold-chain task that demonstrably lacks task intent, ontology, LongText, circuits, tests, runs, and results. The public <code>analyze --author-adaptive</code> command must generate the missing executable programs through Codex, pass concrete plus abstract and symbolic acceptance, complete mandatory review, and then replay through ordinary <code>run</code>. Its full retained evidence is reproduced in <a href="tutorial-adaptive-cold-chain.html">the adaptive tutorial</a>.</p>
 <pre class="mermaid">sequenceDiagram
   participant Suite
@@ -488,6 +529,10 @@ await writeFile(resolve(docs, "partials-loader.js"), `document.addEventListener(
 await writeFile(
   resolve(docs, "assets", "diagram-renderer.mjs"),
   await readFile(resolve(root, "tools", "docs-assets", "diagram-renderer.mjs"), "utf8")
+);
+await writeFile(
+  resolve(docs, "assets", "artifact-browser.mjs"),
+  await readFile(resolve(root, "tools", "docs-assets", "artifact-browser.mjs"), "utf8")
 );
 await writeFile(
   resolve(docs, "specsLoader.html"),

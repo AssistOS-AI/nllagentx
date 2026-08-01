@@ -47,6 +47,7 @@ Codex works directly on canonical files in YOLO/direct-editing mode. There is no
 ## Required tools before or during work
 
 - `nllAgent catalog circuit`
+- `nllAgent catalog response`
 - `nllAgent catalog ontology`
 - `nllAgent sdk usage`
 - `nllAgent longtext query`

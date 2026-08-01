@@ -132,7 +132,7 @@ function evaluateSafetyEvidence({ store }) {
         safetyConclusion,
         outcome: REVIEW_OUTCOMES.FALSE,
         supports: [],
-        claims: conclusionClaims
+        claims: [...conclusionClaims, ...deniedSupports.map(({ claim }) => claim)]
       });
     } else {
       results.push({

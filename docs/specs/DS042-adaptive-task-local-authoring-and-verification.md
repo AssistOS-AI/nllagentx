@@ -58,6 +58,10 @@ for finding-bearing analysis, and exclude raw executable projections and non-app
 model-free execution must reproduce the selected circuits, finding keys, generated-frame identities, assurance
 selection, and SHA-256 digest of `response.md` before the cycle can be accepted.
 
+Intent acceptance must require an executable CNL presentation policy in addition to requesting `markdown-cnl`.
+The policy must make selection, grouping, evidence, matched-rule explanation, tags, and style visible to response
+composition; a bare output name is not a qualitative answer contract.
+
 The tool writes a cycle-specific diagnostic bundle containing failures, selected circuits, findings, generated
 frame counts, public response-result count and digest, abstract convergence, symbolic path counts, and truncation status. Codex then runs the review skill
 chain with access to IntentJS, OntologyJS, LongTextJS, CircuitJS, runtime, and test guidance. It may repair only the
@@ -77,6 +81,12 @@ summary. The task also retains the primary `response.md`, its semantic-program m
 response-circuit trace. `adaptive-replay.mjs` records the accepted model-free replay projection including the
 Markdown CNL digest, and ordinary `run` can then
 replay the accepted task without Codex.
+
+When adaptive authoring resumes an earlier retained lifecycle, it must preserve the first pre-authoring inventory
+and cumulative real Codex phase/run evidence. It writes a separate `adaptive-resume-state.mjs` plus Markdown view
+for the state observed before the new repair iteration, appends new cycles with non-colliding indices, and validates
+the final record against the original absence proof. Resumption must not rewrite a previously non-empty task as if
+it had started empty.
 
 ## Decisions & Questions
 
@@ -105,6 +115,12 @@ concrete/abstract/symbolic evidence. It should make no changes when the task is 
 Response: Only when the operator selects `--adaptive-allow-unknown`. The default treats unknown-only output as a
 signal that semantic authoring or evidence coverage remains incomplete, while the explicit option supports tasks
 whose correct outcome is genuinely indeterminate.
+
+### Question #5: Why preserve both initial and resume state?
+
+Response: The initial inventory proves what Codex had to author from natural language. A later repair necessarily
+starts from generated programs. Recording that later state separately preserves both claims and prevents cumulative
+validation from fabricating a new empty starting point.
 
 ## Conclusion
 

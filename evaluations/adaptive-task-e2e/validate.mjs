@@ -116,8 +116,8 @@ if (!execution.response.includes("[CNL:DOCUMENT]") || !execution.response.includ
 if (/Object\.freeze|nll\.source-span|NOT_APPLICABLE/.test(execution.response)) {
   failures.push("primary response leaks raw executable data or a non-applicable branch");
 }
-if (!/expired calibration certificate/i.test(execution.response)
-  || !/no acknowledgement by Vale Laboratory/i.test(execution.response)) {
+if (!execution.response.includes("The calibration certificate for TH-9 expired on 13 July 2026.")
+  || !execution.response.includes("The record contains no acknowledgement by Vale Laboratory.")) {
   failures.push("primary response does not explain the decisive source evidence");
 }
 validateAssurance(execution, nonCoreCircuits, failures);

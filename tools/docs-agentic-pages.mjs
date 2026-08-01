@@ -1,7 +1,8 @@
 import { readFile, readdir } from "node:fs/promises";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import {
+  artifactBrowser,
   codeBlock,
   exists,
   filesBelow,
@@ -18,6 +19,14 @@ import {
   evaluationId
 } from "./docs-evaluation-cases.mjs";
 import { dslReference } from "./docs-dsl-reference.mjs";
+
+function artifact(path, displayRoot) {
+  return Object.freeze({ path, displayRoot });
+}
+
+function artifacts(paths, displayRoot) {
+  return paths.map((path) => artifact(path, displayRoot));
+}
 
 async function loadResults(projectRoot) {
   const path = resolve(projectRoot, "evaluations", evaluationId, "reports", "task-results.mjs");
@@ -122,6 +131,9 @@ function adaptiveCyclesTable(record, escapeHtml) {
 
 async function adaptiveTutorialContent(record, projectRoot, escapeHtml) {
   const taskRoot = resolve(projectRoot, adaptiveTaskRelativePath);
+  const evaluationRoot = resolve(projectRoot, "evaluations/adaptive-task-e2e");
+  const agentRoot = resolve(projectRoot, adaptiveAgentRelativePath);
+  const resultRoot = resolve(taskRoot, "results");
   if (!record?.accepted) {
     throw new Error("Adaptive tutorial generation requires a retained, accepted DS042 evaluation result");
   }
@@ -163,8 +175,21 @@ async function adaptiveTutorialContent(record, projectRoot, escapeHtml) {
     .filter((path) => path.includes("adaptive-authoring-cycle-")));
   const initialCommand = `node nllAgent.mjs analyze \\\n  --agent-dir ${adaptiveAgentRelativePath} \\\n  --task-dir ${adaptiveTaskRelativePath} \\\n  --author-adaptive --authoring-cycles 3 --assurance all`;
   const replayCommand = `node nllAgent.mjs run \\\n  --agent-dir ${adaptiveAgentRelativePath} \\\n  --task-dir ${adaptiveTaskRelativePath} --assurance all`;
+  const primaryResponse = resolve(taskRoot, "results", "response.md");
+  const artifactStages = await artifactBrowser({
+    Input: [
+      ...artifacts(initialFiles.slice(0, 2), evaluationRoot),
+      ...artifacts(initialFiles.slice(2, 4), agentRoot),
+      ...artifacts(initialFiles.slice(4), taskRoot)
+    ],
+    Intermediate: artifacts(semanticFiles, taskRoot),
+    Output: artifacts([primaryResponse, ...new Set(resultFiles)], resultRoot)
+  }, projectRoot, escapeHtml);
   return `<p class="lead">This page is generated from the accepted DS042 task. The starting inventory proves that no task intent, ontology, LongText, semantic/response circuit, test, run, or result existed. The public CLI invoked Codex for each semantic phase, composed the generated task provider and response policy with inherited core knowledge, and accepted it only after deterministic review.</p>
 <div class="callout"><strong>Observed adaptive acceptance.</strong> Accepted <code>${record.accepted}</code>; phases <code>${escapeHtml(record.phases.join(" → "))}</code>; deterministic assessments <code>${record.cycles.length}</code>; auxiliary requirement <code>${escapeHtml(record.assurance)}</code>.</div>
+<h2>Artifact explorer: input, intermediate programs, and output</h2>
+<p>Select a stage and then a retained file. Labels are relative to the owning evaluation, agent, task, or result folder; the complete repository-relative path remains available as metadata. Only the selected file is materialized, the first input is open by default, and long lines wrap inside the available viewport.</p>
+${artifactStages}
 <h2>1. Exact starting state, agent, task, and natural-language source</h2>
 ${await sourceFilesHtml(initialFiles, projectRoot, escapeHtml)}
 <h2>2. Public CLI command that invoked Codex</h2>
@@ -178,7 +203,7 @@ ${adaptiveAuthoringEvidence(record, escapeHtml)}
 ${adaptiveCyclesTable(record, escapeHtml)}
 <p>Each rejected assessment feeds its exact failures into the next review bundle. Acceptance cannot remove tests or lower the requested assurance.</p>
 <h2>6. Primary human-facing Markdown CNL response</h2>
-${await sourceFilesHtml([resolve(taskRoot, "results", "response.md")], projectRoot, escapeHtml)}
+${await sourceFilesHtml([primaryResponse], projectRoot, escapeHtml)}
 <p>This is the prompt-like output. It contains only material, intent-visible results, the evaluated rule, failed and uncertain requirements, and ranked exact input quotations.</p>
 <h2>7. Independent evaluation oracle and observed result</h2>
 <p>The evaluator rejects generic grounding or a vague verdict. It requires newly authored task ontology and circuit code, successful real Codex phases, a non-core violation, cited evidence for the expired calibration and missing receiving acknowledgement, complete abstract and symbolic passes, and replay equivalence.</p>
@@ -196,6 +221,8 @@ async function tutorialContent(definition, result, projectRoot, escapeHtml) {
     throw new Error(`Tutorial generation requires a retained result for ${definition.id}`);
   }
   const taskRoot = resolve(projectRoot, result.taskPath);
+  const agentRoot = resolve(projectRoot, agentRelativePath);
+  const resultRoot = resolve(taskRoot, "results");
   const sourcePath = resolve(projectRoot, result.sourcePath);
   const intentFiles = await filesBelow(resolve(taskRoot, "intent"), ".mjs");
   const longTextFiles = await filesBelow(resolve(taskRoot, "longtext"), ".mjs");
@@ -212,9 +239,22 @@ async function tutorialContent(definition, result, projectRoot, escapeHtml) {
   const command = `node nllAgent.mjs run \\\n  --agent-dir ${agentRelativePath} \\\n  --task-dir ${result.taskPath}`;
   const expected = result.expectedFindings?.join(", ") || definition.expectation;
   const observed = result.findings?.join(", ") || "none";
+  const artifactStages = await artifactBrowser({
+    Input: [artifact(sourcePath, dirname(sourcePath)), artifact(taskModulePath, taskRoot)],
+    Intermediate: [
+      ...artifacts(intentFiles, taskRoot),
+      ...artifacts(longTextFiles, taskRoot),
+      ...artifacts(ontologyFiles, agentRoot),
+      ...(await exists(circuitPath) ? [artifact(circuitPath, agentRoot)] : [])
+    ],
+    Output: artifacts([primaryResponse, ...outputPaths], resultRoot)
+  }, projectRoot, escapeHtml);
   return `
 <p class="lead">This page is generated from the retained successful task, not from a hand-written fixture. It shows the exact natural-language evidence, task declaration, Codex-authored semantic programs, deterministic command, and retained outputs.</p>
 <div class="callout"><strong>Observed acceptance.</strong> Status <code>${escapeHtml(result.status)}</code>; expected <code>${escapeHtml(expected)}</code>; observed <code>${escapeHtml(observed)}</code>; generated frames <code>${result.generatedFrames ?? 0}</code>; ordinary replay equivalence <code>${result.metrics?.replayEquivalent ?? "not recorded"}</code>.</div>
+<h2>Artifact explorer: input, intermediate programs, and output</h2>
+<p>Select a stage and then a retained file. Labels are relative to the source, agent, task, or result folder instead of repeating the retained evaluation prefix. The complete repository-relative path remains available as metadata. Only the selected file is materialized, the first natural-language input is open by default, and long lines wrap inside the available viewport.</p>
+${artifactStages}
 <h2>1. Natural-language source analyzed</h2>
 <p>Retained at <code>${escapeHtml(result.sourcePath)}</code>.</p>
 ${codeBlock(await readFile(sourcePath, "utf8"), escapeHtml)}
@@ -311,6 +351,9 @@ function staticPages() {
       kicker: "Where code, knowledge, tasks and evidence live",
       content: `<p class="lead">Folder placement is part of the semantic contract. Framework code is reusable infrastructure, packs are default knowledge, an agent owns reusable local expertise, and a task owns one instruction, its sources, grounded interpretation, local code and results.</p>
 <div class="tree">
+<div><strong>AGENTS.md</strong><span>Repository-wide coding, ownership, testing and documentation instructions.</span></div>
+<div><strong>observations.md</strong><span>Uncertain or review-sensitive implementation decisions that need later discussion.</span></div>
+<div><strong>insights.md</strong><span>Observed classes of problems found by real coding-agent runs and the regression controls added for them.</span></div>
 <div><strong>design-specifications/</strong><span>Original DS-000 through DS-019, preserved without shortening.</span></div>
 <div><strong>docs/specs/</strong><span>Official contiguous DS000+ set; generated from the originals, skills and additive contracts.</span></div>
 <div><strong>framework/sdk/</strong><span>Fluent OntologyJS, IntentJS, LongTextJS, CircuitJS, CNL, agent and evaluation constructors.</span></div>
@@ -327,6 +370,7 @@ function staticPages() {
 <div><strong>tools/</strong><span>Deterministic generators and project-wide verification utilities.</span></div>
 <div><strong>docs/</strong><span>Generated HTML documentation, relative navigation, loader and static assets.</span></div>
 </div>
+<p><a href="../observations.md">Review the decision log</a> and <a href="../insights.md">inspect coding-agent validation insights</a>. Environment-managed <code>.agents/</code> content is deliberately outside the project product/build boundary and is neither edited nor published as nllAgent source.</p>
 <h2>Resolution order</h2><p>The runtime loads mandatory framework defaults, the selected profile, agent-local modules, then task-local modules. Later layers may extend or explicitly override where the contract permits, but source assertions never become stable pack facts implicitly.</p>
 <h2>Generated task anatomy</h2><pre><code>tasks/task-ID/
   task.mjs
@@ -476,6 +520,21 @@ ${dslReference("longtext", escapeHtml)}`
       kicker: "Reusable analysis, generation and assurance",
       content: `<p class="lead">CircuitJS defines executable semantic behavior over the logical store. A circuit declares capability requirements and provisions, semantic reads and outputs, then composes queries, normalization, decisions, procedural algorithms, evidence-bearing findings, typed CNL frames and optional assurance interpretations.</p>
 <h2>Stages and contracts</h2><table><thead><tr><th>Stage</th><th>Responsibility</th></tr></thead><tbody><tr><td>Query</td><td>Select typed semantic structures and retain bindings, contexts and evidence.</td></tr><tr><td>Normalize</td><td>Canonicalize values without erasing provenance or alternatives.</td></tr><tr><td>Reason/decide</td><td>Apply decision tables or a declared analysis method with explicit unknown/conflict behavior.</td></tr><tr><td>Emit</td><td>Create findings or CNL frames with stable codes, statuses and evidence identities.</td></tr><tr><td>Assure</td><td>Expose abstract or symbolic interpretations only where declared.</td></tr></tbody></table>
+<h2>How a circuit is planned and executed</h2><table><thead><tr><th>Step</th><th>Runtime operation</th><th>Inspectable evidence</th></tr></thead><tbody>
+<tr><td>1. Registry</td><td>Every loaded framework, agent and task circuit registers each provided capability, semantic requirement, cost and stable identity.</td><td><code>catalog circuits</code> and <code>context/CIRCUIT_CATALOG.md</code>.</td></tr>
+<tr><td>2. Selection</td><td>Explicit concerns and exclusions win; otherwise the declared fallback considers all compatible providers inside the already loaded packs.</td><td><code>results/execution-plan.md</code> records selected, rejected and blocked providers.</td></tr>
+<tr><td>3. Capability closure</td><td>The planner recursively selects providers for required capabilities, orders equal-cost providers by identity, rejects cycles and reports a missing provider.</td><td><code>PLAN_NO_PROVIDER</code> or <code>PLAN_CAPABILITY_CYCLE</code> diagnostics retain the unresolved edge.</td></tr>
+<tr><td>4. Stage dependency graph</td><td>Declared reads/writes and query references form a deterministic DAG. A stage runs only after every referenced value exists.</td><td>The binary trace and trace summary retain stage order, inputs, outputs and timing.</td></tr>
+<tr><td>5. Concrete truth</td><td>Queries bind actual SemanticStore values; decisions/procedures emit typed findings or frames. This is the only truth-bearing interpretation.</td><td><code>findings.mjs</code>, canonical <code>*.cnl</code> and exact source evidence identities.</td></tr>
+<tr><td>6. Auxiliary assurance</td><td>Abstract preflight propagates declared finite domains; symbolic coverage explores decision conditions. Neither replaces concrete output.</td><td><code>assurance.mjs</code> and <code>assurance.md</code>, including convergence, path completeness and truncation.</td></tr>
+</tbody></table>
+<h2>Strong composition patterns</h2><table><thead><tr><th>Pattern</th><th>Construction</th><th>Use and boundary</th></tr></thead><tbody>
+<tr><td>Capability pipeline</td><td><code>requireCapability</code>, <code>provideCapability</code>, <code>connect</code>, <code>composeByCapability</code></td><td>Builds reusable multi-circuit dependencies without importing a provider by filename.</td></tr>
+<tr><td>Relational analysis</td><td><code>match</code>, <code>join</code>, <code>where</code>, <code>groupBy</code>, <code>aggregate</code>, <code>closure</code></td><td>Executes indexed typed queries while preserving bindings and deterministic ordering.</td></tr>
+<tr><td>Four-valued decision</td><td><code>decisionTable</code> with satisfied, violated, unknown and conflict rows</td><td>Makes incomplete and inconsistent evidence explicit; coverage gates any conclusion based on absence.</td></tr>
+<tr><td>Procedural kernel</td><td><code>proceduralStage().reads().writes().run().abstract().symbolic()</code></td><td>Hosts algorithms that do not fit declarative queries while declaring all semantic and assurance interfaces.</td></tr>
+<tr><td>Typed generation</td><td><code>emitCNLFrame</code>, <code>emitCollection</code>, <code>generationPlan</code></td><td>Produces semantic frames for later composition; it does not smuggle a preformatted prose answer into a finding.</td></tr>
+</tbody></table>
 <h2>Program shape</h2><pre><code>const actionValue = variable(Core.Event, "action");
 const conditionValue = variable(Core.Proposition, "condition");
 const effectValue = variable(RuleEffect, "effect");
@@ -510,6 +569,15 @@ ${dslReference("circuit", escapeHtml)}`
   Group --> Evidence[Rule and source evidence enrichment]
   Evidence --> Markdown[Tagged Markdown CNL response]
   Findings --> Technical[Separate executable and debug artifacts]</pre>
+<h2>Response super-circuit execution</h2><table><thead><tr><th>Ordered phase</th><th>Input</th><th>Output/invariant</th></tr></thead><tbody>
+<tr><td>Applicability</td><td>Resolved IntentJS, selected semantic findings and generated frames</td><td>Only response circuits whose executable predicate applies enter the plan.</td></tr>
+<tr><td>Material selection</td><td>Finding status, tags, circuit identity and IntentJS include/exclude directives</td><td>Internal grounding and <code>NOT_APPLICABLE</code> are suppressed; no semantic status is changed.</td></tr>
+<tr><td>Grouping/counting</td><td>Selected entries and <code>groupResultsBy</code></td><td>Stable non-empty groups plus exact counts; empty requests produce one no-material marker.</td></tr>
+<tr><td>Evidence enrichment</td><td>Finding evidence identities, source registry, rule/details fields</td><td>Only digest-verified exact spans are quotable; failed requirements and decisive negative evidence remain visible.</td></tr>
+<tr><td>Generated-frame selection</td><td>Typed procedure, clarification, repair or plan frames</td><td>Frames relevant to the requested operation are ordered and rendered before or beside findings according to style.</td></tr>
+<tr><td>Layout/render</td><td>Composed response model and IntentJS style directives</td><td>Tagged human-readable Markdown CNL; executable/debug modules remain separate artifacts.</td></tr>
+</tbody></table>
+<p>Framework, agent and task response modules are ordered deterministically by identity and priority. A local module may extend the stage chain or deliberately replace the same semantic identity; unrelated policies compose. The composer validates stage reads/writes before running and rejects missing inputs or duplicate incompatible writes.</p>
 <h2>IntentJS example</h2><pre><code>import { intent, analyze, markdownCnl } from "./framework/sdk/intent/index.mjs";
 import { evidenceLed, groupResultsBy, quoteSourceEvidence } from "./framework/sdk/cnl/index.mjs";
 

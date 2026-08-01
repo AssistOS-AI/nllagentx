@@ -6,9 +6,10 @@
   <title>nllAgent Documentation — System Guide</title>
   <link rel="stylesheet" href="styles.css">
   <script type="module">
-    import mermaid from './assets/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+    import diagrams from './assets/diagram-renderer.mjs';
+    diagrams.initialize({ startOnLoad: true });
   </script>
+  <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -31,11 +32,15 @@
   Resolver --> Planner[Capability planner]
   Store --> Planner
   Planner --> Runner[Circuit runner]
-  Runner --> Results[Findings, CNL, trace, assurance]
+  Runner --> SemanticResults[Findings and typed CNL frames]
+  SemanticResults --> ResponseCircuits[Intent-selected response circuits]
+  ResponseCircuits --> Results[Grounded response.md]
+  SemanticResults --> Technical[Trace, assurance, diagnostics]
   Skills[Coding skills] --> Context[Run-local context]
   Context --> Codex[Explicit coding-agent adapter]
   Codex --> Ontology[OntologyJS]
-  Codex --> Circuits[CircuitJS]
+  Codex --> Circuits[Semantic CircuitJS]
+  Codex --> ResponseCircuits
   Codex --> Intent
   Codex --> LongText
   Ontology --> Store
