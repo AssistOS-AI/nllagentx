@@ -1,0 +1,132 @@
+# Project Map
+
+## evaluations/agentic-nl-e2e/agents/nl-rule-review-agent
+
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/agent.mjs`: 9 lines — import { semanticAgent, usePack, useProfile, useSkillPolicy, codingAgent } from "../../../../framework/sdk/agent/agent.m
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/architecture-plan.mjs`: 368 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs`: 269 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/procedure-plan.circuit.mjs`: 312 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/review-support.mjs`: 198 lines — import { TRUE, FALSE, UNKNOWN, CONFLICT } from "../../../../../framework/sdk/core/logic.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/rule-contradiction.circuit.mjs`: 209 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/safety-evidence.circuit.mjs`: 249 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs`: 130 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/profiles/minimal-core.profile.mjs`: 19 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/README.md`: 13 lines — # nl-rule-review-agent
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/source/agent-brief.md`: 36 lines — # Natural-language brief for the rule-review agent
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/intent/intent.mjs`: 55 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/longtext/root.longtext.mjs`: 15 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/longtext/units/source-001-policy.longtext.mjs`: 114 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/source/source-001.txt`: 8 lines — North Gate Alarm Policy
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/tests/intent.test.mjs`: 73 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/tests/longtext.test.mjs`: 128 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task--gGzZzD3bFKbd-Pc/tests/operational-rules.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/longtext/root.longtext.mjs`: 17 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/longtext/units/source-001-safety-review.longtext.mjs`: 111 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/source/source-001.txt`: 6 lines — Safety Review Memo
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/tests/longtext.test.mjs`: 158 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-0g-oRJ4yTQO7FWVQ/tests/safety-conclusions.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/longtext/root.longtext.mjs`: 15 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/longtext/units/source-001-policy.longtext.mjs`: 114 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/source/source-001.txt`: 8 lines — North Gate Alarm Policy
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/tests/longtext.test.mjs`: 128 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-8FzS_rlGDHv7AfH9/tests/operational-rules.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI/source/source-001.txt`: 6 lines — Safety Review Memo
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/longtext/root.longtext.mjs`: 15 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/longtext/units/source-001-policy.longtext.mjs`: 114 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/source/source-001.txt`: 8 lines — North Gate Alarm Policy
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/tests/longtext.test.mjs`: 128 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-IWMI6MFh9xiHG2Ba/tests/operational-rules.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/longtext/root.longtext.mjs`: 12 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/longtext/units/source-001-emergency-access.longtext.mjs`: 83 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/source/source-001.txt`: 6 lines — Emergency Access Policy and Log
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/tests/emergency-invocations.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-JwstBAp9Xoh5Ea5i/tests/longtext.test.mjs`: 133 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/longtext/root.longtext.mjs`: 27 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/longtext/units/source-001-procedure-requirements.longtext.mjs`: 178 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/source/source-001.txt`: 4 lines — Procedure Requirements
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/tests/longtext.test.mjs`: 178 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-o4WLD_kMXKh82gDE/tests/operational-rules.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/longtext/root.longtext.mjs`: 27 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/longtext/units/source-001-procedure-requirements.longtext.mjs`: 178 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/source/source-001.txt`: 4 lines — Procedure Requirements
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/tests/longtext.test.mjs`: 178 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-OdEYKCfza1g-k2ly/tests/operational-rules.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs`: 55 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs`: 12 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs`: 83 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/source/source-001.txt`: 6 lines — Emergency Access Policy and Log
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/tests/emergency-invocations.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/tests/intent.test.mjs`: 73 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/tests/longtext.test.mjs`: 162 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/longtext/root.longtext.mjs`: 12 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/longtext/units/source-001-emergency-access.longtext.mjs`: 83 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/source/source-001.txt`: 6 lines — Emergency Access Policy and Log
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/tests/emergency-invocations.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-WoxQsPCh54QjxO7I/tests/longtext.test.mjs`: 133 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/intent/intent.mjs`: 38 lines — import {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/longtext/root.longtext.mjs`: 17 lines — export {
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/longtext/units/source-001-safety-review.longtext.mjs`: 111 lines — import { diagnostic } from "../../../../../../../../framework/sdk/core/diagnostics.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/sdk/ontology.generated.mjs`: 86 lines — import ontology0 from "../../../../../../../framework/packs/core-language/ontologies/core.ontology.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/source/source-001.txt`: 6 lines — Safety Review Memo
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/tests/intent.test.mjs`: 56 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/tests/longtext.test.mjs`: 158 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-zQAAFU5S1FJeyoXp/tests/safety-conclusions.query.mjs`: 5 lines — import { variable } from "../../../../../../../framework/sdk/circuit/query.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tests/architecture-plan.test.mjs`: 92 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tests/circuits.test.mjs`: 501 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tests/cnl.test.mjs`: 141 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tests/ontology.test.mjs`: 206 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tests/response.test.mjs`: 235 lines — import test from "node:test";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/work-plan.mjs`: 92 lines — import { codingRun } from "../../../../framework/sdk/agent/index.mjs";
+
+## evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI
+
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI/source/source-001.txt`: 6 lines — Safety Review Memo
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI/source/source-map.mjs`: 9 lines — import { SourceRegistry, SourceUnit } from "../../../../../../../framework/sdk/longtext/source.mjs";
+- `evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-Fk4Lrn1gwd5vJhjI/task.mjs`: 10 lines — import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from "../../../../../../framework/sdk
+

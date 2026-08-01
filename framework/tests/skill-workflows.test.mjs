@@ -8,7 +8,7 @@ const implemented = new Map([
   ["task", new Set(["create", "show", "sources", "clean-runs"])],
   ["code", new Set(["architect", "intent", "ontology", "longtext", "circuit", "sdk", "review"])],
   ["context", new Set(["build", "show"])], ["files", new Set(["index"])],
-  ["catalog", new Set(["sdk", "ontology", "circuit"])], ["sdk", new Set(["check", "usage"])],
+  ["catalog", new Set(["sdk", "ontology", "circuit", "response"])], ["sdk", new Set(["check", "usage"])],
   ["profile", new Set(["resolve"])],
   ["source", new Set(["ingest", "outline", "show", "search", "span", "verify-anchors"])],
   ["ontology", new Set(["check", "build", "show", "affected"])],

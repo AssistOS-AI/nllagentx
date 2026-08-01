@@ -259,6 +259,7 @@ node nllAgent.mjs run \\
 <h2>Execution and selection</h2>
 <pre><code>node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
 node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation --format json
 node nllAgent.mjs plan --agent reviewer --task task-ID --explain-plan
 node nllAgent.mjs generate --agent reviewer --task task-ID --output PolicySpecificationPlan
 node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/open-events.mjs</code></pre>
@@ -279,9 +280,10 @@ node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/ope
 <tr><td><code>--authoring-cycles</code></td><td>Maximum adaptive Codex review cycles, an integer from 1 through 10; default 3.</td></tr>
 <tr><td><code>--adaptive-allow-unknown</code></td><td>Permit unknown-only output to satisfy the adaptive material-output gate for intentionally indeterminate tasks.</td></tr>
 <tr><td><code>--assurance</code></td><td><code>none</code>, <code>abstract</code>, <code>symbolic</code>, or <code>all</code>; adaptive authoring defaults to <code>all</code>.</td></tr>
+<tr><td><code>--format response|json</code></td><td><code>response</code> is the default for run/analyze/generate and prints the grounded Markdown CNL; <code>json</code> prints a machine projection containing its path.</td></tr>
 </tbody></table>
 <h2>Inspection tools</h2>
-<p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> are the agent-facing discovery commands declared by the installed skill workflows.</p>
+<p>The CLI implements <code>context</code>, <code>files</code>, <code>catalog</code>, <code>sdk</code>, <code>profile</code>, <code>source</code>, <code>ontology</code>, <code>longtext</code>, <code>intent</code>, <code>circuit</code>, <code>trace</code>, <code>cnl</code>, and <code>review</code> families. Each reads the same resolved modules used by execution. <code>catalog response</code> enumerates default, agent and task response circuits; <code>sdk check</code>, <code>sdk usage --surface &lt;id&gt;</code>, and <code>plan show</code> expose the remaining live contracts.</p>
 <h2>Exit status</h2><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td>0</td><td>Tool completed and requested outputs were written.</td></tr><tr><td>2</td><td>CLI usage error.</td></tr><tr><td>3</td><td>Import, validation, execution, or I/O failure.</td></tr><tr><td>4</td><td>Explicit coding-agent process failed.</td></tr></tbody></table>`));
 
 pages.set("packs.html", shell("Ontology and Circuit Packs", "Default knowledge without hidden facts", `
@@ -330,7 +332,7 @@ node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODE
   Agent->>Codex: task intent and longtext contexts
   Codex-->>Agent: grounded task programs and tests
   Agent->>Runtime: deterministic execution and assurance
-  Runtime-->>Suite: findings, CNL, trace, metrics
+  Runtime-->>Suite: primary response.md plus technical findings, trace and metrics
   Suite->>Runtime: ordinary replay without Codex
   Suite->>Suite: Markdown and executable .mjs reports</pre>
 <h2>Retained reports</h2><p>Evaluation reports distinguish completed and failed cases and keep failure stacks under <code>reports/failures/</code>. Authoring reports link each real subprocess to instructions, installed skills, context, stdout, stderr, final response and created/modified code. Gold expectations may be executable <code>.gold.mjs</code> modules. Precision, recall, F1, anchor validity, replay equivalence, runtime, generated frames and assurance artifacts remain tied to task IDs.</p>`));
@@ -357,11 +359,16 @@ node nllAgent.mjs run \\
   --agent-dir examples/validation-agent --task task-symbolic-validation</code></pre>
 <p>The concrete facility circuit returned <code>ORDER_OK</code> with status <code>SATISFIED</code> and two exact source-span identities. Broad fallback circuits whose required task terms were absent returned <code>NOT_APPLICABLE</code>; no blocking diagnostic was produced.</p>
 <h2>4. Inspect results</h2>
-<pre><code>node nllAgent.mjs trace explain \\
+<pre><code># The run command already prints results/response.md by default.
+node nllAgent.mjs run \\
+  --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs catalog response \\
+  --agent-dir examples/validation-agent --task task-symbolic-validation
+node nllAgent.mjs trace explain \\
   --trace examples/validation-agent/tasks/task-symbolic-validation/results/trace.bin
 node nllAgent.mjs cnl parse \\
   --file examples/validation-agent/tasks/task-symbolic-validation/results/findings.cnl</code></pre>
-<p>For multiple CNL frames, inspect <code>observations.cnl</code> or import <code>findings.mjs</code>; the single-frame parser intentionally accepts one canonical frame at a time.</p>`));
+<p><code>response.md</code> is the human answer. For technical inspection, <code>artifacts.md</code> links canonical frames, executable findings, response-circuit trace and assurance. The single-frame parser intentionally accepts one canonical frame at a time.</p>`));
 
 pages.set("tutorial-symbolic.html", shell("Tutorial: Abstract and Symbolic Validation", "Auxiliary circuit interpretations", `
 <p class="lead">Concrete execution is mandatory. Abstract and symbolic methods add assurance where a circuit explicitly declares support.</p>

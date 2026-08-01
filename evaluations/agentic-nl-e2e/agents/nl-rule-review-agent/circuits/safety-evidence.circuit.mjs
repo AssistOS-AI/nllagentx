@@ -23,10 +23,19 @@ import {
   hasClosedCoverage,
   identityOf,
   interpretationsCompatible,
+  requirementDetails,
   reviewDecisionTable,
   roleValues,
   termsOf
 } from "./review-support.mjs";
+
+const REQUIREMENTS = Object.freeze({
+  conclusion: "The safety conclusion must be source-grounded.",
+  support: "A distinct source-grounded evidence link must support the safety conclusion.",
+  distinct: "The safety conclusion itself must not be treated as its supporting evidence.",
+  consistent: "The conclusion and its support must not be both asserted and denied.",
+  coverage: "Safety-support coverage must be closed before absence is treated as a violation."
+});
 
 function supportTerms(store, safetyConclusion) {
   return termsOf(store, SupportsSafetyConclusion)
@@ -37,10 +46,16 @@ function supportTerms(store, safetyConclusion) {
 function evaluateSafetyEvidence({ store }) {
   const conclusions = termsOf(store, SafetyConclusion);
   if (conclusions.length === 0) {
-    return assessment(REVIEW_OUTCOMES.FALSE, [], { conclusions: [] }, null, {
-      code: "SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE",
-      status: "NOT_APPLICABLE"
-    });
+    return assessment(
+      REVIEW_OUTCOMES.FALSE,
+      [],
+      requirementDetails({ conclusions: [] }),
+      null,
+      {
+        code: "SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE",
+        status: "NOT_APPLICABLE"
+      }
+    );
   }
 
   const results = [];
@@ -145,15 +160,43 @@ function evaluateSafetyEvidence({ store }) {
     ...supportEvidence
   ];
   const claims = decisive.flatMap(({ claims: resultClaims }) => resultClaims);
+  const detailGroups = outcome === REVIEW_OUTCOMES.TRUE
+    ? {
+      satisfiedRequirements: [
+        REQUIREMENTS.conclusion,
+        REQUIREMENTS.support,
+        REQUIREMENTS.distinct,
+        REQUIREMENTS.consistent
+      ]
+    }
+    : outcome === REVIEW_OUTCOMES.FALSE
+      ? {
+        failedRequirements: [REQUIREMENTS.support],
+        satisfiedRequirements: [
+          REQUIREMENTS.conclusion,
+          REQUIREMENTS.distinct,
+          REQUIREMENTS.coverage
+        ]
+      }
+      : outcome === REVIEW_OUTCOMES.CONFLICT
+        ? { conflictingRequirements: [REQUIREMENTS.consistent] }
+        : {
+          uncertainRequirements: claims.length > 0
+            ? [REQUIREMENTS.support, REQUIREMENTS.coverage]
+            : [REQUIREMENTS.conclusion, REQUIREMENTS.support],
+          satisfiedRequirements: claims.length > 0
+            ? [REQUIREMENTS.conclusion, REQUIREMENTS.distinct]
+            : []
+        };
   return assessment(
     outcome,
     evidenceFor(store, terms, claims),
-    {
+    requirementDetails({
       checkedConclusions: conclusions.length,
       decisiveConclusions: decisive.map(({ safetyConclusion }) => identityOf(safetyConclusion)),
       supportLinks: supports.map(identityOf),
       supportingEvidence: supportEvidence.map(identityOf)
-    },
+    }, detailGroups),
     commonInterpretation(claims)
   );
 }
@@ -165,10 +208,26 @@ const assess = proceduralStage("nl-rule-review.safety-evidence.assess")
   .run(evaluateSafetyEvidence);
 
 const decide = reviewDecisionTable("nl-rule-review.safety-evidence.decide", assess, {
-  true: { code: "SAFETY_CONCLUSION_SUPPORTED", status: "SATISFIED" },
-  false: { code: "UNSUPPORTED_SAFETY_CONCLUSION", status: "VIOLATED" },
-  unknown: { code: "SAFETY_CONCLUSION_EVIDENCE_UNKNOWN", status: "UNKNOWN" },
-  conflict: { code: "SAFETY_CONCLUSION_EVIDENCE_CONFLICT", status: "CONFLICT" }
+  true: {
+    code: "SAFETY_CONCLUSION_SUPPORTED",
+    status: "SATISFIED",
+    message: "The stated safety conclusion has distinct source-grounded supporting evidence."
+  },
+  false: {
+    code: "UNSUPPORTED_SAFETY_CONCLUSION",
+    status: "VIOLATED",
+    message: "The source states a safety conclusion but provides no distinct supporting evidence for it."
+  },
+  unknown: {
+    code: "SAFETY_CONCLUSION_EVIDENCE_UNKNOWN",
+    status: "UNKNOWN",
+    message: "The available source evidence cannot determine whether the safety conclusion has distinct support."
+  },
+  conflict: {
+    code: "SAFETY_CONCLUSION_EVIDENCE_CONFLICT",
+    status: "CONFLICT",
+    message: "Compatible source claims both assert and deny the safety conclusion or its supporting evidence."
+  }
 });
 
 export default circuit("nl-rule-review.SafetyConclusionEvidenceReview", "1.0.0")

@@ -1,10 +1,42 @@
-import { pathToFileURL } from "node:url";
-import { basename, resolve } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { existsSync, statSync } from "node:fs";
+import { registerHooks } from "node:module";
+import { basename, dirname, parse, resolve, sep } from "node:path";
 import { listFiles, exists } from "./filesystem.mjs";
 import { frameworkPackMap, frameworkPacks } from "../packs/index.mjs";
 import { CapabilityRegistry } from "../runtime/planner/registry.mjs";
 
+const freshModuleRoots = new Set();
+
+function owningModuleRoot(path) {
+  let current = dirname(resolve(path));
+  const boundary = parse(current).root;
+  while (current !== boundary) {
+    if (existsSync(resolve(current, "agent.mjs"))) return current;
+    current = dirname(current);
+  }
+  return dirname(resolve(path));
+}
+
+function isInside(path, root) {
+  return path === root || path.startsWith(`${root}${sep}`);
+}
+
+registerHooks({
+  resolve(specifier, context, nextResolve) {
+    const resolved = nextResolve(specifier, context);
+    if (!resolved.url.startsWith("file:") || !resolved.url.split("?")[0].endsWith(".mjs")) return resolved;
+    const path = fileURLToPath(resolved.url);
+    if (![...freshModuleRoots].some((root) => isInside(path, root))) return resolved;
+    const stat = statSync(path, { bigint: true });
+    const url = new URL(resolved.url);
+    url.searchParams.set("nllDependencyVersion", `${stat.mtimeNs}-${stat.size}`);
+    return { ...resolved, url: url.href };
+  }
+});
+
 export async function importFresh(path) {
+  freshModuleRoots.add(owningModuleRoot(path));
   const url = pathToFileURL(resolve(path));
   url.searchParams.set("nllFresh", `${Date.now()}-${Math.random()}`);
   return import(url.href);

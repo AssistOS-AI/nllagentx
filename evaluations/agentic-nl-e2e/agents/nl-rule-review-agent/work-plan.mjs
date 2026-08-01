@@ -23,9 +23,11 @@ export const circuitPhase = codingRun("nl-rule-review-agent.circuit")
   .objective(
     "Implement the four circuit contracts in architecture-plan.mjs over SemanticStore terms and claims. " +
     "Require evidence and closed coverage for negative absence conclusions, preserve interpretation contexts, " +
-    "and emit a provenance-retaining typed CNL procedure plan."
+    "and emit a provenance-retaining typed CNL procedure plan. Every finding must include a qualitative " +
+    "message, human-readable requirement details, and evidence that reaches exact verified source spans."
   )
   .allowEdits(
+    "circuits/review-support.mjs",
     "circuits/rule-contradiction.circuit.mjs",
     "circuits/exception-justification.circuit.mjs",
     "circuits/safety-evidence.circuit.mjs",
@@ -45,12 +47,15 @@ export const testPhase = codingRun("nl-rule-review-agent.test")
   .installSkills("nll-test")
   .objective(
     "Complete deterministic store-and-runner tests for conflict, satisfied, violated, UNKNOWN, " +
-    "NOT_APPLICABLE, evidence identity, interpretation context, coverage, and CNL round-trip boundaries."
+    "NOT_APPLICABLE, evidence identity, interpretation context, coverage, and CNL round-trip boundaries. " +
+    "Verify qualitative messages, structured requirement details, exact Markdown quotations, default " +
+    "response filtering/grouping/tags/rule explanations, and technical-artifact separation."
   )
   .allowEdits(
     "tests/ontology.test.mjs",
     "tests/circuits.test.mjs",
-    "tests/cnl.test.mjs"
+    "tests/cnl.test.mjs",
+    "tests/response.test.mjs"
   )
   .check("node ../../../../nllAgent.mjs test agent --agent-dir . --level fast")
   .seal();
@@ -61,7 +66,9 @@ export const taskAuthoringHandoff = codingRun("nl-rule-review-agent.task-authori
   .installSkills("nll-intent", "nll-longtext")
   .objective(
     "For each task, preserve task.mjs instructions, select the narrow agent capability, and materialize " +
-    "only source-grounded rules, records, evidence links, alternatives, anchors, and coverage."
+    "only source-grounded rules, records, evidence links, alternatives, anchors, and coverage. Request " +
+    "markdown-cnl and declare evidence-led or procedural response directives with exact quotation, stable " +
+    "tags, matched-rule explanation, grouping, and counts."
   )
   .allowEdits(
     "tasks/<task-id>/intent/intent.mjs",

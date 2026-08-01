@@ -83,7 +83,15 @@ async function validateAgentPhase({ projectRoot, agentRoot, profileId, phase }) 
 
 async function validateTaskPhase({ projectRoot, agentRoot, taskRoot, profileId, phase }) {
   const runtime = await resolveRuntime({ projectRoot, agentRoot, taskRoot, profileId });
-  if (phase === "intent" && !runtime.intent) throw new Error("EVALUATION_TASK_INTENT_REQUIRED");
+  if (phase === "intent") {
+    if (!runtime.intent) throw new Error("EVALUATION_TASK_INTENT_REQUIRED");
+    if (!runtime.intent.outputs.some((entry) => entry.value === "markdown-cnl")) {
+      throw new Error("EVALUATION_TASK_MARKDOWN_CNL_OUTPUT_REQUIRED");
+    }
+    if (runtime.intent.presentation.length === 0) {
+      throw new Error("EVALUATION_TASK_RESPONSE_PRESENTATION_REQUIRED");
+    }
+  }
   if (phase === "ontology") {
     const local = await matchingFiles(resolve(taskRoot, "ontologies"), ".ontology.mjs");
     if (local.length === 0) throw new Error("EVALUATION_TASK_ONTOLOGY_REQUIRED");
@@ -113,9 +121,9 @@ async function validateTaskPhase({ projectRoot, agentRoot, taskRoot, profileId, 
 
 function phaseGoal({ scope, phase, caseSpec = null }) {
   if (scope === "agent") {
-    return `Read source/agent-brief.md and complete the ${phase} authoring phase for this evaluation agent. Edit canonical agent files directly, use the installed skill and live SDK catalogs, create the required executable .mjs artifacts and focused tests, and do not replace semantics with JSON.`;
+    return `Read source/agent-brief.md and complete the ${phase} authoring phase for this evaluation agent. Edit canonical agent files directly, use the installed skill and live SDK, ontology, semantic-circuit and response-circuit catalogs, create the required executable .mjs artifacts and focused tests, and do not replace semantics with JSON. Findings must carry qualitative messages, structured requirement details and exact evidence usable by the primary Markdown CNL response.`;
   }
-  return `Read task.mjs, the registered source files, and the existing agent ontology/circuit catalog. Complete the ${phase} authoring phase for case ${caseSpec.id}. Preserve the task instruction exactly, create executable source-grounded semantic code and focused tests, and leave unsupported meanings explicit rather than inventing evidence.`;
+  return `Read task.mjs, the registered source files, and the existing agent ontology, semantic-circuit and response-circuit catalogs. Complete the ${phase} authoring phase for case ${caseSpec.id}. Preserve the task instruction exactly, create executable source-grounded semantic code and focused tests, and leave unsupported meanings explicit rather than inventing evidence. IntentJS must request markdownCnl() and declare an appropriate .present(...) policy; ground the decisive source passages needed for a concise qualitative response.`;
 }
 
 async function authorPhases({ projectRoot, agentRoot, taskRoot = null, profileId, phases, model, caseSpec = null, adapter = createCodingAgentAdapter("codex") }) {

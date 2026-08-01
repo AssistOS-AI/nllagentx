@@ -115,9 +115,9 @@ function adaptiveCyclesTable(record, escapeHtml) {
     const findings = (cycle.findings ?? []).join(", ") || "none";
     const failures = (cycle.failures ?? []).join("; ") || "none";
     const assurances = (cycle.assurances ?? []).map((entry) => `${entry.circuit}: ${entry.method}`).join("; ") || "none";
-    return `<tr><td>${cycle.cycle ?? "—"}</td><td>${cycle.accepted ? "accepted" : "review required"}</td><td>${escapeHtml(findings)}</td><td>${escapeHtml(failures)}</td><td>${escapeHtml(assurances)}</td></tr>`;
+    return `<tr><td>${cycle.reviewIndex ?? cycle.cycle ?? "—"}</td><td>${cycle.accepted ? "accepted" : "review required"}</td><td>${escapeHtml(findings)}</td><td>${cycle.responseResults ?? "not recorded"}</td><td><code>${escapeHtml(cycle.responseDigest ?? "not recorded")}</code></td><td>${escapeHtml(failures)}</td><td>${escapeHtml(assurances)}</td></tr>`;
   }).join("");
-  return `<table><thead><tr><th>Cycle</th><th>Decision</th><th>Material findings</th><th>Failures sent to review</th><th>Auxiliary evidence</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th>Cycle</th><th>Decision</th><th>Material findings</th><th>Public results</th><th>Response digest</th><th>Failures sent to review</th><th>Auxiliary evidence</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 async function adaptiveTutorialContent(record, projectRoot, escapeHtml) {
@@ -139,6 +139,7 @@ async function adaptiveTutorialContent(record, projectRoot, escapeHtml) {
     ["ontologies", ".ontology.mjs"],
     ["longtext", ".mjs"],
     ["circuits", ".mjs"],
+    ["cnl", ".response.circuit.mjs"],
     ["tests", ".test.mjs"]
   ]) semanticFiles.push(...await filesBelow(resolve(taskRoot, folder), suffix));
   const generatedOntologyFacade = resolve(taskRoot, "sdk", "ontology.generated.mjs");
@@ -162,14 +163,14 @@ async function adaptiveTutorialContent(record, projectRoot, escapeHtml) {
     .filter((path) => path.includes("adaptive-authoring-cycle-")));
   const initialCommand = `node nllAgent.mjs analyze \\\n  --agent-dir ${adaptiveAgentRelativePath} \\\n  --task-dir ${adaptiveTaskRelativePath} \\\n  --author-adaptive --authoring-cycles 3 --assurance all`;
   const replayCommand = `node nllAgent.mjs run \\\n  --agent-dir ${adaptiveAgentRelativePath} \\\n  --task-dir ${adaptiveTaskRelativePath} --assurance all`;
-  return `<p class="lead">This page is generated from the accepted DS042 task. The starting inventory proves that no task intent, ontology, LongText, circuit, test, run, or result existed. The public CLI invoked Codex for each semantic phase, composed the generated task provider with inherited core knowledge, and accepted it only after deterministic review.</p>
+  return `<p class="lead">This page is generated from the accepted DS042 task. The starting inventory proves that no task intent, ontology, LongText, semantic/response circuit, test, run, or result existed. The public CLI invoked Codex for each semantic phase, composed the generated task provider and response policy with inherited core knowledge, and accepted it only after deterministic review.</p>
 <div class="callout"><strong>Observed adaptive acceptance.</strong> Accepted <code>${record.accepted}</code>; phases <code>${escapeHtml(record.phases.join(" → "))}</code>; deterministic assessments <code>${record.cycles.length}</code>; auxiliary requirement <code>${escapeHtml(record.assurance)}</code>.</div>
 <h2>1. Exact starting state, agent, task, and natural-language source</h2>
 ${await sourceFilesHtml(initialFiles, projectRoot, escapeHtml)}
 <h2>2. Public CLI command that invoked Codex</h2>
 ${codeBlock(initialCommand, escapeHtml, "shell")}
 <p>The agent owns only core language. All missing semantics are discovered from the source and retained under this task; the CLI does not run a hidden extractor or copy a prepared semantic fixture.</p>
-<h2>3. Complete generated IntentJS, OntologyJS, LongTextJS, CircuitJS, and tests</h2>
+<h2>3. Complete generated IntentJS, OntologyJS, LongTextJS, semantic/response CircuitJS, and tests</h2>
 ${await sourceFilesHtml(semanticFiles, projectRoot, escapeHtml)}
 <h2>4. Every real Codex phase and process log</h2>
 ${adaptiveAuthoringEvidence(record, escapeHtml)}
@@ -332,7 +333,8 @@ function staticPages() {
   source/                 original files, source-map.mjs, extractors/
   intent/intent.mjs       requested concerns, outputs and selection
   longtext/               root and source-unit semantic programs
-  ontologies/ circuits/   only genuinely task-local extensions
+  ontologies/ circuits/   only genuinely task-local semantic extensions
+  cnl/                    optional task-local response circuits
   tests/                  task semantic and anchor tests
   runs/run-ID/            skills, context, instructions and Codex logs
   results/response.md     primary tagged, grounded Markdown CNL answer
@@ -352,8 +354,9 @@ function staticPages() {
   Intent --> Ontology[Codex: ontology sufficiency audit]
   Ontology --> LongText[Codex: source-grounded LongTextJS]
   LongText --> Circuit[Codex: circuit sufficiency audit]
-  Circuit --> Compose[Planner composes inherited plus task-local circuits]
-  Compose --> Validate[Tests, anchors, providers, concrete, abstract, symbolic]
+  Circuit --> Response[Codex: response-policy sufficiency audit]
+  Response --> Compose[Planner and response circuits compose inherited plus task-local behavior]
+  Compose --> Validate[Tests, anchors, providers, concrete, Markdown CNL, abstract, symbolic]
   Validate --> Review[Mandatory Codex multi-skill review]
   Review -->|failures remain and cycles available| Compose
   Review -->|accepted| Replay[Model-free replay]</pre>
@@ -370,8 +373,8 @@ node evaluations/adaptive-task-e2e/validate.mjs</code></pre>
 <tr><td><code>--assurance none|abstract|symbolic|all</code></td><td>Auxiliary acceptance required from every selected non-core circuit; adaptive default is <code>all</code>.</td></tr>
 <tr><td><code>--adaptive-allow-unknown</code></td><td>Allows unknown-only concrete output to be material when indeterminacy is the requested correct result.</td></tr>
 </tbody></table>
-<h2>What may change</h2><p>The task may gain executable <code>intent/</code>, <code>ontologies/</code>, <code>longtext/</code>, <code>circuits/</code>, and <code>tests/</code> modules plus retained <code>runs/</code> and <code>results/</code>. Framework and reusable agent code remain inherited and unchanged. A proven task extension can be proposed for later promotion, but adaptive execution never promotes it silently.</p>
-<h2>Acceptance boundary</h2><p>Ontology diagnostics, exact source anchors, requested capability providers, focused tests, blocking diagnostics, material non-core concrete findings or frames, abstract convergence, non-empty non-truncated symbolic paths, an equivalent second model-free execution, and mandatory review are all checked. Reaching the cycle limit is a typed failure, not a partial success.</p>
+<h2>What may change</h2><p>The task may gain executable <code>intent/</code>, <code>ontologies/</code>, <code>longtext/</code>, <code>circuits/</code>, <code>cnl/</code>, and <code>tests/</code> modules plus retained <code>runs/</code> and <code>results/</code>. Framework and reusable agent code remain inherited and unchanged. A proven task extension can be proposed for later promotion, but adaptive execution never promotes it silently.</p>
+<h2>Acceptance boundary</h2><p>Ontology diagnostics, exact source anchors, requested capability providers, focused tests, blocking diagnostics, material non-core concrete findings or frames, qualitative tagged Markdown CNL with exact quotations, abstract convergence, non-empty non-truncated symbolic paths, an equivalent second model-free execution including the response digest, and mandatory review are all checked. Reaching the cycle limit is a typed failure, not a partial success.</p>
 <p>See <a href="tutorial-adaptive-cold-chain.html">the complete real cold-chain run</a> and <a href="specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md">DS042</a>.</p>`
     },
     {
@@ -507,13 +510,19 @@ ${dslReference("circuit", escapeHtml)}`
   Group --> Evidence[Rule and source evidence enrichment]
   Evidence --> Markdown[Tagged Markdown CNL response]
   Findings --> Technical[Separate executable and debug artifacts]</pre>
-<h2>IntentJS example</h2><pre><code>import { intent, analyze } from "./framework/sdk/intent/index.mjs";
+<h2>IntentJS example</h2><pre><code>import { intent, analyze, markdownCnl } from "./framework/sdk/intent/index.mjs";
 import { evidenceLed, groupResultsBy, quoteSourceEvidence } from "./framework/sdk/cnl/index.mjs";
 
 export default intent("policy-review")
   .mode(analyze())
+  .outputs(markdownCnl())
   .present(evidenceLed(), groupResultsBy("status-family"), quoteSourceEvidence())
   .seal();</code></pre>
+<h2>Resolution and override points</h2><table><thead><tr><th>Layer</th><th>Executable path</th><th>Use</th></tr></thead><tbody>
+<tr><td>Framework</td><td><code>framework/runtime/response/default-circuits.mjs</code></td><td>Material selection, default style, grouping/counting and generated-frame selection.</td></tr>
+<tr><td>Agent</td><td><code>agent/cnl/*.response.circuit.mjs</code></td><td>Reusable audience or domain presentation policy.</td></tr>
+<tr><td>Task</td><td><code>task/cnl/*.response.circuit.mjs</code></td><td>Source-specific extension or explicit same-identity override.</td></tr>
+</tbody></table>
 <h2>Stable Markdown CNL markers</h2><table><thead><tr><th>Marker</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>[CNL:DOCUMENT]</code></td><td>Declares style, grouping and selected result count.</td></tr>
 <tr><td><code>[CNL:GROUP]</code></td><td>Declares a non-empty semantic group and exact count.</td></tr>

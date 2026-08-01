@@ -11,7 +11,7 @@ import { CodexAdapter } from "../tools/coding-agent.mjs";
 import { executeTask, prepareExecution, runCircuit, runAbstract, runSymbolic, executeQueryModule, verifyTaskAnchors } from "../tools/executor.mjs";
 import { runTests } from "../tools/test-runner.mjs";
 import { ingestTaskSources, loadSourceRegistry, sourceOutline, showSource, searchSource, sourceFileInfo } from "../tools/source-tools.mjs";
-import { sdkCatalog, ontologyCatalog, circuitCatalog, profileResolutionCatalog, projectMap } from "../tools/catalogs.mjs";
+import { sdkCatalog, ontologyCatalog, circuitCatalog, responseCircuitCatalog, profileResolutionCatalog, projectMap } from "../tools/catalogs.mjs";
 import { checkOntologies, generateOntologyFacade } from "../tools/ontology-tools.mjs";
 import { atomicWrite, exists } from "../tools/filesystem.mjs";
 import { renderCanonicalCNL, parseCanonicalCNL, frameProjection } from "../sdk/cnl/grammar.mjs";
@@ -19,6 +19,7 @@ import { runEvaluationSuite } from "../evaluation/runner.mjs";
 import { explainPlan } from "../runtime/planner/explain.mjs";
 import { checkSdkSurfaces, sdkUsage } from "../sdk/public-api.mjs";
 import { runAdaptiveAuthoring } from "../tools/adaptive-authoring.mjs";
+import { defaultResponseCircuits } from "../runtime/response/default-circuits.mjs";
 
 function projection(value, seen = new Set()) {
   if (value === null || value === undefined || ["string", "number", "boolean"].includes(typeof value)) return value;
@@ -36,6 +37,9 @@ function projection(value, seen = new Set()) {
 function formatted(value) { return typeof value === "string" ? value : `${JSON.stringify(projection(value), null, 2)}\n`; }
 function id(value) { return value?.id ?? (typeof value?.identity === "function" ? value.identity() : value?.identity) ?? String(value); }
 function selectionOptions(options) { return { profileId: options.profile, allCompatible: Boolean(options["all-compatible"]), domains: optionList(options, "domain"), excludeDomains: optionList(options, "exclude-domain"), checks: optionList(options, "check"), excludeChecks: optionList(options, "exclude-check"), only: Boolean(options.only), intentText: typeof options.intent === "string" ? options.intent : null }; }
+function resolvedResponseCircuits(runtime) {
+  return [...new Map([...defaultResponseCircuits, ...runtime.responseCircuits].map((circuit) => [circuit.identity, circuit])).values()];
+}
 
 async function roots(projectRoot, options, { task = false, agent = true, allowMissingAgent = false, allowMissingTask = false } = {}) {
   const agentRoot = agent ? await resolveAgentRoot(projectRoot, options, { allowMissing: allowMissingAgent }) : null;
@@ -105,7 +109,7 @@ async function agentCommand(projectRoot, action, options) {
   if (action === "show") return formatted(agent);
   const runtime = await resolveRuntime({ projectRoot, agentRoot, ...selectionOptions(options) });
   if (action === "check") { const diagnostics = await checkOntologies(runtime.ontologies); return formatted({ valid: diagnostics.length === 0, agent: agent.id, profile: runtime.profile.id, packs: runtime.packs.map(id), diagnostics }); }
-  if (action === "catalog") return `${profileResolutionCatalog(runtime)}\n${ontologyCatalog(runtime.ontologies)}\n${circuitCatalog(runtime.circuits)}`;
+  if (action === "catalog") return `${profileResolutionCatalog(runtime)}\n${ontologyCatalog(runtime.ontologies)}\n${circuitCatalog(runtime.circuits)}\n${responseCircuitCatalog(resolvedResponseCircuits(runtime))}`;
   throw new Error(`USAGE_UNKNOWN_AGENT_ACTION: ${action}`);
 }
 
@@ -275,6 +279,7 @@ async function catalogCommand(projectRoot, action, options) {
   const selected = await roots(projectRoot, options, { task: Boolean(options.task || options["task-dir"]) }); const runtime = await resolveRuntime({ projectRoot, ...selected, ...selectionOptions(options) });
   if (action === "ontology") return ontologyCatalog(runtime.ontologies);
   if (action === "circuit") return circuitCatalog(runtime.circuits);
+  if (["response", "response-circuit"].includes(action)) return responseCircuitCatalog(resolvedResponseCircuits(runtime));
   throw new Error(`USAGE_UNKNOWN_CATALOG: ${action}`);
 }
 

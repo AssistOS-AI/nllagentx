@@ -16,7 +16,7 @@ Execution:
   evaluate --suite <name-or-suite.mjs> [--invoke-agent] [--model <id>]
 
 Inspection:
-  context build|show        files index          catalog sdk|ontology|circuit
+  context build|show        files index          catalog sdk|ontology|circuit|response
   sdk check|usage [--surface core|ontology|longtext|circuit|cnl|intent|agent|evaluation|analysis]
   profile resolve           source ingest|outline|show|search|span|verify-anchors
   ontology check|build|show|affected             longtext check|execute|query|coverage

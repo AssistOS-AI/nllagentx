@@ -19,7 +19,7 @@ const categoryNames = Object.freeze({
     "Operation modes": ["analyze", "validate", "compare", "explain", "repair", "canonicalize", "generate", "plan", "summarizeSemantically", "askForClarification", "analyzeAndPlan"],
     "Text targets": ["longDocument", "narrativeText", "legalText", "scientificText", "argumentText", "taskScope"],
     "Domain selection": ["explicitDomain", "preferDomain", "allowDomain", "excludeDomain", "inferDomainsFromSource", "inferFromSource"],
-    "Concerns and outputs": ["concern", "findings", "cnlObservations", "compositionPlan", "structuralTrace", "repairFrames", "clarificationQuestions"],
+    "Concerns and outputs": ["concern", "findings", "cnlObservations", "markdownCnl", "compositionPlan", "structuralTrace", "repairFrames", "clarificationQuestions"],
     "Evidence and assurance": ["concreteExecution", "abstractPreflight", "symbolicWhereSupported", "symbolicDecisionCoverage", "interpretationRobust", "sourceGrounded"],
     "Fallback and profiles": ["allCompatible", "resourcePolicy", "usePack", "useEveryCompatiblePack", "concreteFirst", "abstractPreflightForSelectedCircuits", "allCompatibleWithinLoadedPacks", "runEveryCompatibleCircuit", "explainAllSelection", "preferConcern", "requireEvidenceBearing"]
   }),
@@ -65,6 +65,65 @@ const exactDescriptions = Object.freeze({
   groupResultsBy: "IntentJS presentation directive selecting status-family, status, code, or circuit grouping.",
   includeSatisfiedResults: "Prevents material-result suppression from hiding applicable satisfied findings in audit/completeness views."
 });
+
+const predefinedValues = Object.freeze({
+  ontology: Object.freeze([
+    ["Concept kind", "Entity / Event / State / Quality / Value / Proposition / DocumentArtifact", "Selects the semantic sort, available roles and index behavior of a declared concept."],
+    ["Role cardinality", "required / optional / repeatable / exactly-one / at-least-one / at-most-one", "Constrains how many fillers a frame role may have without turning cardinality into prose."],
+    ["Load tier", "core / baseline / domain / specialized", "Orders knowledge loading; it does not imply that a task source asserts the tier's facts."],
+    ["Knowledge level", "lower-secondary and declared pack-specific levels", "Records intended knowledge calibration independently of source evidence and runtime truth."]
+  ]),
+  intent: Object.freeze([
+    ["Operation", "analyze / validate / compare / explain / repair / canonicalize", "Selects an analysis-shaped request without fabricating a target finding."],
+    ["Operation", "generate / plan / analyze-and-plan / summarize-semantically / ask-for-clarification", "Selects generation, planning, semantic summary or clarification behavior."],
+    ["Primary output", "markdown-cnl", "Requires the tagged human-readable response written to results/response.md."],
+    ["Technical/semantic output", "findings / cnl-observations / composition-plan / structural-trace / repair-frames / clarification-questions", "Selects typed underlying artifacts; these do not replace the primary Markdown answer."],
+    ["Fallback", "all-compatible", "Runs every provider compatible with the loaded profile when the intent does not narrow selection."],
+    ["Domain mode", "require / prefer / allow / exclude / infer-from-source", "Controls pack selection while keeping explicit requirements above inferred source signals."]
+  ]),
+  longtext: Object.freeze([
+    ["Polarity", "asserted / denied / questioned", "Preserves positive, negative and interrogative source force."],
+    ["World/modal status", "actual / hypothetical / possible / necessary", "Separates what the source says happened from alternatives and modal claims."],
+    ["Deontic status", "obligatory / permitted", "Models requirements and permissions without treating them as actual events."],
+    ["Collection semantics", "sequence / set / bag / all-of / any-of / alternatives", "Preserves order, multiplicity, conjunction, disjunction and competing interpretations."],
+    ["Coverage", "scope-open / scope-closed", "Only closed relevant coverage permits a circuit to interpret absence as a negative fact."],
+    ["Identity relation", "same / possible-same / different", "Keeps proved identity, alias hypotheses and proved distinction separate."]
+  ]),
+  circuit: Object.freeze([
+    ...Circuit.STATUSES.map((status) => ["Finding status", status, ({
+      SATISFIED: "The selected rule is supported by the required evidence.",
+      VIOLATED: "A covered requirement is not satisfied.",
+      UNKNOWN: "The available evidence or coverage cannot decide the rule.",
+      CONFLICT: "Mutually incompatible evidence supports different outcomes.",
+      NOT_APPLICABLE: "The circuit is compatible but the current store has no relevant instance; public response circuits omit it.",
+      ACCEPTED_EXCEPTION: "A violation-shaped condition is explicitly excused by a supported exception.",
+      POSSIBLE_PROBLEM: "Evidence justifies review but not a definite violation.",
+      BLOCKED_ONTOLOGY: "A required semantic identity or ontology closure is missing.",
+      BLOCKED_COVERAGE: "Required source coverage is absent or open.",
+      BLOCKED_RESOURCE: "A declared resource is unavailable.",
+      BLOCKED_METHOD: "The requested execution/assurance method is unsupported."
+    })[status] ?? "Typed circuit result status."]),
+    ["Assurance", "concrete-execution", "Runs actual circuit stages against the SemanticStore and is the required truth-bearing execution."],
+    ["Assurance", "abstract-preflight", "Propagates finite abstract values to check convergence and reachable status families."],
+    ["Assurance", "symbolic-decision-coverage", "Explores decision conditions with declared exclusivity and reports path completeness/truncation."],
+    ["Assurance", "bounded-counterexample / constraint-proof / cnl-round-trip", "Runs the specialized auxiliary method only when both request and circuit declare support."]
+  ]),
+  cnl: Object.freeze([
+    ["Response style", "evidence-led", "Leads with material conclusions, rule explanation and ranked exact input quotations."],
+    ["Response style", "analytical", "Retains more evidence and details for comparison or deep review."],
+    ["Response style", "concise", "Keeps stable result markers while limiting rule prose and quotations."],
+    ["Response style", "procedural", "Places ordered generated ProcedureStep frames before the readiness finding."],
+    ["Grouping", "status-family / status / code / circuit", "Groups selected entries by user-facing family, exact status, stable code or producing circuit."],
+    ["Stable marker", "[CNL:DOCUMENT] / [CNL:GROUP] / [CNL:FINDING]", "Delimits filterable document, group and finding blocks for humans or a later formatter LLM."],
+    ["Empty result marker", "[CNL:NO-MATERIAL-RESULT]", "Emits one compact statement; it never lists every non-applicable circuit."],
+    ["Local response module", "*.response.circuit.mjs", "Executable agent/task policy loaded after framework defaults and ordered by identity plus priority."]
+  ])
+});
+
+function predefinedValueTable(surface, escapeHtml) {
+  const rows = predefinedValues[surface].map(([domain, value, meaning]) => `<tr><td>${escapeHtml(domain)}</td><td><code>${escapeHtml(value)}</code></td><td>${escapeHtml(meaning)}</td></tr>`).join("");
+  return `<h2>Predefined values and semantic distinctions</h2><p>These values are part of the DSL contract. They remain distinct during planning, execution, response composition and replay.</p><div class="table-wrap"><table><thead><tr><th>Domain</th><th>Value(s)</th><th>Meaning and boundary</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
 
 function categoryFor(surface, name) {
   for (const [category, patterns] of Object.entries(categoryNames[surface])) {
@@ -168,7 +227,7 @@ export function dslReference(surface, escapeHtml) {
     const category = categoryFor(surface, name);
     return `<tr><td><code>${escapeHtml(name)}</code></td><td>${escapeHtml(category)}</td><td><code>${escapeHtml(callShape(name, value))}</code></td><td>${escapeHtml(descriptionFor(surface, name, category))}</td></tr>`;
   }).join("");
-  return `<h2>Complete live export inventory (${Object.keys(namespace).length})</h2>
+  return `${predefinedValueTable(surface, escapeHtml)}<h2>Complete live export inventory (${Object.keys(namespace).length})</h2>
 <p>This table is generated from the imported local SDK namespace. A renamed or removed export therefore changes this page on the next documentation build.</p>
 <div class="table-wrap"><table><thead><tr><th>Construction</th><th>Category</th><th>Call shape</th><th>Semantic effect</th></tr></thead><tbody>${rows}</tbody></table></div>
 <h2>Fluent builder methods</h2>${builderTables(namespace, escapeHtml)}`;

@@ -28,10 +28,12 @@ acceptance unless the operator explicitly permits it.
 
 ### Authoring and inheritance sequence
 
-The task begins with framework packs, the selected profile, and reusable agent ontologies and circuits. Codex
+The task begins with framework packs, the selected profile, reusable agent ontologies and semantic circuits, and
+resolved framework/agent response circuits. Codex
 authors IntentJS when absent, audits semantic vocabulary through the ontology skill, authors only genuinely
 missing task-local OntologyJS, then authors source-grounded LongTextJS. It audits the combined circuit registry
-and creates task-local CircuitJS only when the requested behavior is not already provided realistically. Every
+and creates task-local CircuitJS only when the requested behavior is not already provided realistically. It adds a
+task-local response circuit only when the default presentation cannot express the requested filtering or grouping. Every
 phase edits canonical `.mjs` modules and focused tests directly and retains its run-local skills, catalogs,
 instructions, logs, and final response.
 
@@ -45,17 +47,19 @@ an explicit review rather than an implicit promotion.
 
 After initial authoring, nllAgent imports the complete runtime, checks ontology closure, verifies all source
 anchors, requires focused task tests, and validates that IntentJS retains instruction provenance, a semantic
-concern, source-grounded evidence, concrete execution, and the requested auxiliary modes. It checks that every
+concern, source-grounded evidence, the primary `markdown-cnl` output, concrete execution, and the requested auxiliary modes. It checks that every
 requested concern has a circuit provider and executes the
 real planner and SemanticStore. Acceptance requires a selected non-core circuit to produce a material finding or
 typed generated frame, so generic core grounding alone cannot pass; it also requires no blocking
 diagnostics, and the requested auxiliary interpretations for every selected non-core circuit. Abstract execution
-must converge. Symbolic decision coverage must produce at least one non-truncated path. A second ordinary
-model-free execution must reproduce the selected circuits, finding keys, generated-frame identities, and
-assurance selection before the cycle can be accepted.
+must converge. Symbolic decision coverage must produce at least one non-truncated path. The primary response must
+contain tagged, applicable Markdown CNL, include every response-selected material finding, quote exact input spans
+for finding-bearing analysis, and exclude raw executable projections and non-applicable branches. A second ordinary
+model-free execution must reproduce the selected circuits, finding keys, generated-frame identities, assurance
+selection, and SHA-256 digest of `response.md` before the cycle can be accepted.
 
 The tool writes a cycle-specific diagnostic bundle containing failures, selected circuits, findings, generated
-frame counts, abstract convergence, symbolic path counts, and truncation status. Codex then runs the review skill
+frame counts, public response-result count and digest, abstract convergence, symbolic path counts, and truncation status. Codex then runs the review skill
 chain with access to IntentJS, OntologyJS, LongTextJS, CircuitJS, runtime, and test guidance. It may repair only the
 task-owned programs and tests and must not weaken acceptance. Deterministic acceptance reruns after every review
 until it succeeds or the explicit cycle limit is exhausted. Exhaustion is a typed command failure, never a partial
@@ -70,7 +74,8 @@ The task retains a pre-authoring `results/adaptive-initial-state.mjs` inventory,
 findings/CNL/trace outputs, and complete auxiliary assurance artifacts. The
 executable record names every authoring phase, review cycle, failure, circuit, finding, frame count, and assurance
 summary. The task also retains the primary `response.md`, its semantic-program manifest, and the selected
-response-circuit trace. `adaptive-replay.mjs` records the accepted model-free replay projection, and ordinary `run` can then
+response-circuit trace. `adaptive-replay.mjs` records the accepted model-free replay projection including the
+Markdown CNL digest, and ordinary `run` can then
 replay the accepted task without Codex.
 
 ## Decisions & Questions

@@ -35,15 +35,24 @@ import {
   groundedClaims,
   identityOf,
   interpretationsCompatible,
+  requirementDetails,
   reviewDecisionTable,
   roleValues,
   termsOf
 } from "./review-support.mjs";
 
+const REQUIREMENTS = Object.freeze({
+  request: "The procedure request must be asserted and source-grounded.",
+  rules: "Every input operational rule must be asserted and source-grounded in a compatible interpretation.",
+  ordering: "The plan must order acknowledgement before authorization and gate action, " +
+    "require exception justification, and finish with audit recording.",
+  consistent: "The procedure request must not be both asserted and denied."
+});
+
 function evaluateProcedureReadiness({ store }) {
   const requests = termsOf(store, ProcedureRequest);
   if (requests.length === 0) {
-    return assessment(REVIEW_OUTCOMES.FALSE, [], { requests: [] });
+    return assessment(REVIEW_OUTCOMES.FALSE, [], requirementDetails({ requests: [] }));
   }
   const deniedRequests = requests.flatMap((request) => groundedClaims(store, request, "denied")
     .map((requestClaim) => ({ request, requestClaim })));
@@ -62,7 +71,10 @@ function evaluateProcedureReadiness({ store }) {
     return assessment(
       REVIEW_OUTCOMES.CONFLICT,
       evidenceFor(store, requestTerms, requestClaims),
-      { requests: requestTerms.map(identityOf), reason: "asserted-and-denied-request" },
+      requirementDetails(
+        { requests: requestTerms.map(identityOf), reason: "asserted-and-denied-request" },
+        { conflictingRequirements: [REQUIREMENTS.consistent] }
+      ),
       commonInterpretation(requestClaims)
     );
   }
@@ -79,21 +91,34 @@ function evaluateProcedureReadiness({ store }) {
     return assessment(
       REVIEW_OUTCOMES.UNKNOWN,
       evidenceFor(store, requestTerms, requestClaims),
-      { requests: requestTerms.map(identityOf), reason: "request-varies-by-interpretation" },
+      requirementDetails(
+        { requests: requestTerms.map(identityOf), reason: "request-varies-by-interpretation" },
+        { uncertainRequirements: [REQUIREMENTS.request, REQUIREMENTS.consistent] }
+      ),
       null
     );
   }
   if (groundedRequests.length === 0) {
     const deniedClaims = deniedRequests.map(({ requestClaim }) => requestClaim);
     return deniedClaims.length > 0
-      ? assessment(REVIEW_OUTCOMES.FALSE, evidenceFor(store, requests, deniedClaims), {
-        requests: requests.map(identityOf),
-        reason: "no-asserted-request"
-      })
-      : assessment(REVIEW_OUTCOMES.UNKNOWN, evidenceFor(store, requests), {
-        requests: requests.map(identityOf),
-        reason: "request-not-source-grounded"
-      });
+      ? assessment(
+        REVIEW_OUTCOMES.FALSE,
+        evidenceFor(store, requests, deniedClaims),
+        requirementDetails({
+          requests: requests.map(identityOf),
+          reason: "no-asserted-request"
+        })
+      )
+      : assessment(
+        REVIEW_OUTCOMES.UNKNOWN,
+        evidenceFor(store, requests),
+        requirementDetails({
+          requests: requests.map(identityOf),
+          reason: "request-not-source-grounded"
+        }, {
+          uncertainRequirements: [REQUIREMENTS.request]
+        })
+      );
   }
 
   const ready = [];
@@ -113,11 +138,18 @@ function evaluateProcedureReadiness({ store }) {
     const requestTerms = selected.map(({ request }) => request);
     const rules = incomplete.flatMap(({ rules: values }) => values);
     const claims = selected.map(({ requestClaim }) => requestClaim);
-    return assessment(REVIEW_OUTCOMES.UNKNOWN, evidenceFor(store, [...requestTerms, ...rules], claims), {
-      requests: requestTerms.map(identityOf),
-      inputRules: rules.map(identityOf),
-      reason: "missing-grounded-input-rule"
-    });
+    return assessment(
+      REVIEW_OUTCOMES.UNKNOWN,
+      evidenceFor(store, [...requestTerms, ...rules], claims),
+      requirementDetails({
+        requests: requestTerms.map(identityOf),
+        inputRules: rules.map(identityOf),
+        reason: "missing-grounded-input-rule"
+      }, {
+        uncertainRequirements: [REQUIREMENTS.rules],
+        satisfiedRequirements: [REQUIREMENTS.request]
+      })
+    );
   }
 
   const rules = ready.flatMap(({ groundedRules }) => groundedRules)
@@ -132,7 +164,7 @@ function evaluateProcedureReadiness({ store }) {
   return assessment(
     REVIEW_OUTCOMES.TRUE,
     evidenceFor(store, [...ready.map(({ request }) => request), ...rules], claims),
-    {
+    requirementDetails({
       request: identityOf(ready[0].request),
       rules: rules.map(identityOf),
       requestTerm: ready[0].request,
@@ -143,7 +175,9 @@ function evaluateProcedureReadiness({ store }) {
           (left, right) => identityOf(left).localeCompare(identityOf(right))
         ))
       })))
-    },
+    }, {
+      satisfiedRequirements: [REQUIREMENTS.request, REQUIREMENTS.rules, REQUIREMENTS.ordering]
+    }),
     commonInterpretation(claims)
   );
 }
@@ -227,10 +261,28 @@ const assess = proceduralStage("nl-rule-review.procedure-plan.assess")
   .run(evaluateProcedureReadiness);
 
 const decide = reviewDecisionTable("nl-rule-review.procedure-plan.decide", assess, {
-  true: { code: "PROCEDURE_PLAN_READY", status: "SATISFIED" },
-  false: { code: "PROCEDURE_PLAN_NOT_APPLICABLE", status: "NOT_APPLICABLE" },
-  unknown: { code: "PROCEDURE_PLAN_READINESS_UNKNOWN", status: "UNKNOWN" },
-  conflict: { code: "PROCEDURE_REQUEST_CONFLICT", status: "CONFLICT" }
+  true: {
+    code: "PROCEDURE_PLAN_READY",
+    status: "SATISFIED",
+    message: "The grounded request and input rules are sufficient to generate " +
+      "the required ordered operational procedure."
+  },
+  false: {
+    code: "PROCEDURE_PLAN_NOT_APPLICABLE",
+    status: "NOT_APPLICABLE",
+    message: "No asserted procedure-generation request applies to the available operational rules."
+  },
+  unknown: {
+    code: "PROCEDURE_PLAN_READINESS_UNKNOWN",
+    status: "UNKNOWN",
+    message: "The available source evidence cannot establish that the procedure request " +
+      "and every input rule are grounded."
+  },
+  conflict: {
+    code: "PROCEDURE_REQUEST_CONFLICT",
+    status: "CONFLICT",
+    message: "Compatible source claims both request and deny generation of the operational procedure."
+  }
 });
 
 const generate = proceduralStage("nl-rule-review.procedure-plan.generate")

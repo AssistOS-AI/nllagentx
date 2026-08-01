@@ -88,9 +88,30 @@ function evidenceIdentities(finding) {
   return new Set([...finding.evidence()].map((entry) => entry.identity()));
 }
 
+const REQUIREMENT_DETAIL_KEYS = Object.freeze([
+  "failedRequirements",
+  "uncertainRequirements",
+  "conflictingRequirements",
+  "satisfiedRequirements"
+]);
+
+function assertQualitativeFinding(finding, { minimumSourceSpans = 0 } = {}) {
+  assert.equal(typeof finding.message(), "string");
+  assert.ok(finding.message().trim().length > 0);
+  assert.notEqual(finding.message(), finding.code());
+  const details = finding.descriptor().details;
+  for (const key of REQUIREMENT_DETAIL_KEYS) {
+    assert.ok(Array.isArray(details[key]), `${finding.code()} must expose ${key}`);
+    assert.ok(details[key].every((entry) => typeof entry === "string" && entry.trim().length > 0));
+  }
+  const sourceSpans = [...finding.evidence()].filter((entry) => entry.sort() === "SourceSpan");
+  assert.ok(sourceSpans.length >= minimumSourceSpans);
+}
+
 function symbolicCoverage(circuit) {
   const table = circuit.stages.find((stage) => stage.kind() === "DecisionTable");
   assert.ok(table, `${circuit.id} must expose a decision table`);
+  assert.ok(table.descriptor().rows.every(({ result }) => result.message?.trim()));
   const conditions = table.descriptor().rows.map((entry) => entry.condition);
   const explored = exploreDecisionConditions(
     conditions.map((entry) => entry.identity()),
@@ -120,6 +141,12 @@ test("rule contradiction requires compatible grounded interpretations and cites 
   assert.ok(identities.has(requiredRule.identity()));
   assert.ok(identities.has(forbiddenRule.identity()));
   assert.equal(finding.descriptor().details.conflictPairs.length, 1);
+  assertQualitativeFinding(finding, { minimumSourceSpans: 2 });
+  assert.match(finding.message(), /same action.*same condition.*requires.*forbids/i);
+  assert.deepEqual(finding.descriptor().details.failedRequirements, []);
+  assert.ok(finding.descriptor().details.conflictingRequirements.some(
+    (entry) => /effects.*compatible/i.test(entry)
+  ));
 });
 
 test("a disputed rule is not reused as the premise of RULE_CONTRADICTION", async () => {
@@ -209,6 +236,11 @@ test("missing exception justification is violated only with closed relevant cove
   const violatedFinding = await onlyFinding(exceptionJustificationCircuit, open.store);
   assert.equal(violatedFinding.code(), "MISSING_EXCEPTION_JUSTIFICATION");
   assert.equal(violatedFinding.status(), "VIOLATED");
+  assertQualitativeFinding(violatedFinding, { minimumSourceSpans: 2 });
+  assert.match(violatedFinding.message(), /invocation lacks.*justification record.*required/i);
+  assert.ok(violatedFinding.descriptor().details.failedRequirements.some(
+    (entry) => /justification record.*link/i.test(entry)
+  ));
   const identities = evidenceIdentities(violatedFinding);
   assert.ok(identities.has(exceptionUse.identity()));
   assert.ok(identities.has(requirement.identity()));
@@ -291,6 +323,11 @@ test("a safety conclusion is not its own evidence and absence needs closed cover
   const finding = await onlyFinding(safetyEvidenceCircuit, store);
   assert.equal(finding.code(), "UNSUPPORTED_SAFETY_CONCLUSION");
   assert.equal(finding.status(), "VIOLATED");
+  assertQualitativeFinding(finding, { minimumSourceSpans: 1 });
+  assert.match(finding.message(), /safety conclusion.*no distinct supporting evidence/i);
+  assert.ok(finding.descriptor().details.failedRequirements.some(
+    (entry) => /distinct source-grounded evidence link/i.test(entry)
+  ));
   assert.deepEqual(finding.descriptor().details.supportingEvidence, []);
 });
 
@@ -370,6 +407,11 @@ test("procedure readiness distinguishes absent, ungrounded, and grounded request
   const execution = await new CircuitRunner().run(procedurePlanCircuit, grounded.store);
   assert.equal(execution.findings[0].code(), "PROCEDURE_PLAN_READY");
   assert.equal(execution.findings[0].status(), "SATISFIED");
+  assertQualitativeFinding(execution.findings[0], { minimumSourceSpans: 2 });
+  assert.match(execution.findings[0].message(), /grounded request.*input rules.*ordered/i);
+  assert.ok(execution.findings[0].descriptor().details.satisfiedRequirements.some(
+    (entry) => /acknowledgement before authorization and gate action/i.test(entry)
+  ));
   assert.ok(evidenceIdentities(execution.findings[0]).has(rule.identity()));
   assert.equal(execution.frames.filter((frame) => frame.kind() === "GenerationPlan").length, 1);
 });

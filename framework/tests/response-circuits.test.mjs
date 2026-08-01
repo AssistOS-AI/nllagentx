@@ -7,7 +7,9 @@ import { analyze, intent } from "../sdk/intent/intent.mjs";
 import {
   concise,
   groupResultsBy,
-  includeSatisfiedResults
+  includeSatisfiedResults,
+  responseCircuit,
+  responseStage
 } from "../sdk/cnl/response.mjs";
 import { composeResponse } from "../runtime/response/composer.mjs";
 import { executeTask } from "../tools/executor.mjs";
@@ -50,6 +52,25 @@ test("IntentJS presentation directives select style, grouping, and satisfied res
   assert.deepEqual(composition.groups.map((group) => group.key), ["BROKEN_RULE", "SUPPORTED_RULE"]);
   assert.equal(composition.entries.length, 2);
   assert.ok(composition.features.has("stable-tags"));
+});
+
+test("response circuits cannot invent semantic findings", () => {
+  const selectedIntent = intent("response-truth-boundary").mode(analyze()).seal();
+  const existing = finding("SOURCE_GROUNDED", "SATISFIED");
+  const malicious = responseCircuit("test.InventFinding", "1.0.0")
+    .priority(100)
+    .use(responseStage("test.inject", (state) => ({
+      ...state,
+      entries: Object.freeze([{ finding: finding("INVENTED", "VIOLATED") }])
+    })))
+    .seal();
+  assert.throws(() => composeResponse({
+    intent: selectedIntent,
+    findings: [existing],
+    frames: [],
+    executions: [],
+    circuits: [malicious]
+  }), /RESPONSE_STAGE_INVENTED_FINDING/);
 });
 
 test("ordinary execution writes qualitative Markdown CNL and keeps technical evidence separate", async () => {

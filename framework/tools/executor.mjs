@@ -9,6 +9,7 @@ import { abstractCircuit } from "../runtime/methods/abstract/worklist.mjs";
 import { exploreDecisionConditions } from "../runtime/methods/symbolic/explorer.mjs";
 import { composeResponse } from "../runtime/response/composer.mjs";
 import { defaultResponseCircuits } from "../runtime/response/default-circuits.mjs";
+import { responseContractFailures } from "../runtime/response/contract.mjs";
 import { findingFrame, literalSlot } from "../sdk/cnl/frames.mjs";
 import { renderCanonicalCNL } from "../sdk/cnl/grammar.mjs";
 import { resolveRuntime, importFresh } from "./module-loader.mjs";
@@ -130,6 +131,16 @@ export async function executeTask(options) {
     diagnostics,
     sourceRegistry
   });
+  const publicFindingKeys = composition.entries.map((entry) => `${entry.finding.code()}:${entry.finding.status()}`);
+  const responseFailures = responseContractFailures({
+    response,
+    expectedFindings: publicFindingKeys,
+    sourceTexts: sourceRegistry.all().map((source) => source.text),
+    requireQuotedEvidence: composition.entries.some((entry) => !entry.finding.status().startsWith("BLOCKED_"))
+  });
+  if (responseFailures.length > 0) {
+    throw new Error(`PRIMARY_RESPONSE_CONTRACT_FAILED: ${responseFailures.join("; ")}`);
+  }
   await atomicWrite(resolve(resultsRoot, "response.md"), response);
   await atomicWrite(resolve(resultsRoot, "artifacts.md"), await renderArtifactManifest({
     taskRoot: options.taskRoot,

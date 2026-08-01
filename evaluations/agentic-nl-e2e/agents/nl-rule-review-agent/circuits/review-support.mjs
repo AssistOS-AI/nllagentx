@@ -22,6 +22,25 @@ function uniqueSemanticValues(values) {
     .sort((left, right) => identityOf(left).localeCompare(identityOf(right)));
 }
 
+function requirementList(values) {
+  return Object.freeze([...new Set(values.filter(Boolean).map(String))]);
+}
+
+export function requirementDetails(details = {}, {
+  failedRequirements = [],
+  uncertainRequirements = [],
+  conflictingRequirements = [],
+  satisfiedRequirements = []
+} = {}) {
+  return Object.freeze({
+    ...details,
+    failedRequirements: requirementList(failedRequirements),
+    uncertainRequirements: requirementList(uncertainRequirements),
+    conflictingRequirements: requirementList(conflictingRequirements),
+    satisfiedRequirements: requirementList(satisfiedRequirements)
+  });
+}
+
 export function termsOf(store, concept) {
   return store.allTerms()
     .filter((term) => store.isSubtype(term, concept))

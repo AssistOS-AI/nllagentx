@@ -12,6 +12,8 @@ IntentJS owns presentation policy through `.present(...directives)`. Standard di
 
 Response circuits run only after semantic circuits have produced Findings and typed CNL frames. They may filter, rank, group, count, label, and render existing evidence. They must not change a finding status, invent a SourceSpan, convert absence under open coverage into a violation, or make an ontology assertion. Their output must be deterministic and part of model-free replay acceptance.
 
+The composer enforces this boundary after every stage. Every public entry must reference a Finding from the completed semantic execution, every generated frame must reference an emitted input frame, and every group member must reference a selected entry. A stage returning an invented finding, invented frame, invalid group, or non-Set feature collection fails with a typed response-stage diagnostic instead of rendering the value.
+
 Agent-local response circuits are loaded from `agent/cnl/*.response.circuit.mjs`; task-local response circuits are loaded from `task/cnl/*.response.circuit.mjs`. Composition starts with framework defaults, then agent modules, then task modules. A later module with the same declared identity replaces an earlier implementation before priority sorting, which permits an explicit task override without duplicate execution. A custom style must declare its applicability and tests, preserve stable tags unless an explicit machine contract says otherwise, and remain compatible with the technical artifact index. The generated coding context must expose all resolved policies in `RESPONSE_CIRCUIT_CATALOG.md`.
 
 ## Decisions & Questions

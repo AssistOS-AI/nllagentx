@@ -24,10 +24,19 @@ import {
   hasClosedCoverage,
   identityOf,
   interpretationsCompatible,
+  requirementDetails,
   reviewDecisionTable,
   roleValues,
   termsOf
 } from "./review-support.mjs";
+
+const REQUIREMENTS = Object.freeze({
+  invocation: "An emergency exception invocation must be source-grounded.",
+  policy: "An applicable policy requires a justification record for the invocation.",
+  record: "A source-grounded justification record must link to the invocation.",
+  consistent: "The invocation, requirement, and linked record must not be both asserted and denied.",
+  coverage: "Justification-record coverage must be closed before absence is treated as a violation."
+});
 
 function requirementApplies(store, requirement, exceptionUse) {
   const governedActions = roleValues(store, requirement, action);
@@ -48,13 +57,19 @@ function evaluateExceptionJustification({ store }) {
     .filter((requirement) => requirementApplies(store, requirement, exceptionUse))
     .map((requirement) => ({ exceptionUse, requirement })));
   if (structuralPairs.length === 0) {
-    return assessment(REVIEW_OUTCOMES.FALSE, evidenceFor(store, [...invocations, ...requirements]), {
-      invocations: invocations.map(identityOf),
-      requirements: requirements.map(identityOf)
-    }, null, {
-      code: "EXCEPTION_JUSTIFICATION_NOT_APPLICABLE",
-      status: "NOT_APPLICABLE"
-    });
+    return assessment(
+      REVIEW_OUTCOMES.FALSE,
+      evidenceFor(store, [...invocations, ...requirements]),
+      requirementDetails({
+        invocations: invocations.map(identityOf),
+        requirements: requirements.map(identityOf)
+      }),
+      null,
+      {
+        code: "EXCEPTION_JUSTIFICATION_NOT_APPLICABLE",
+        status: "NOT_APPLICABLE"
+      }
+    );
   }
 
   const results = [];
@@ -163,14 +178,38 @@ function evaluateExceptionJustification({ store }) {
     ...records
   ]);
   const claims = decisive.flatMap(({ claims: resultClaims }) => resultClaims);
+  const detailGroups = outcome === REVIEW_OUTCOMES.TRUE
+    ? {
+      satisfiedRequirements: [
+        REQUIREMENTS.invocation,
+        REQUIREMENTS.policy,
+        REQUIREMENTS.record,
+        REQUIREMENTS.consistent
+      ]
+    }
+    : outcome === REVIEW_OUTCOMES.FALSE
+      ? {
+        failedRequirements: [REQUIREMENTS.record],
+        satisfiedRequirements: [REQUIREMENTS.invocation, REQUIREMENTS.policy, REQUIREMENTS.coverage]
+      }
+      : outcome === REVIEW_OUTCOMES.CONFLICT
+        ? { conflictingRequirements: [REQUIREMENTS.consistent] }
+        : {
+          uncertainRequirements: claims.length > 0
+            ? [REQUIREMENTS.record, REQUIREMENTS.coverage]
+            : [REQUIREMENTS.invocation, REQUIREMENTS.policy, REQUIREMENTS.record],
+          satisfiedRequirements: claims.length > 0
+            ? [REQUIREMENTS.invocation, REQUIREMENTS.policy]
+            : []
+        };
   return assessment(
     outcome,
     evidenceFor(store, terms, claims),
-    {
+    requirementDetails({
       checkedInvocations: structuralPairs.length,
       decisiveInvocations: decisive.map(({ exceptionUse }) => identityOf(exceptionUse)),
       justificationRecords: decisive.flatMap(({ records = [] }) => records.map(identityOf))
-    },
+    }, detailGroups),
     commonInterpretation(claims)
   );
 }
@@ -182,10 +221,29 @@ const assess = proceduralStage("nl-rule-review.exception-justification.assess")
   .run(evaluateExceptionJustification);
 
 const decide = reviewDecisionTable("nl-rule-review.exception-justification.decide", assess, {
-  true: { code: "EXCEPTION_JUSTIFICATION_PRESENT", status: "SATISFIED" },
-  false: { code: "MISSING_EXCEPTION_JUSTIFICATION", status: "VIOLATED" },
-  unknown: { code: "EXCEPTION_JUSTIFICATION_UNKNOWN", status: "UNKNOWN" },
-  conflict: { code: "EXCEPTION_JUSTIFICATION_CONFLICT", status: "CONFLICT" }
+  true: {
+    code: "EXCEPTION_JUSTIFICATION_PRESENT",
+    status: "SATISFIED",
+    message: "Every reviewed emergency exception invocation has a linked source-grounded justification record."
+  },
+  false: {
+    code: "MISSING_EXCEPTION_JUSTIFICATION",
+    status: "VIOLATED",
+    message: "A recorded emergency exception invocation lacks the justification record " +
+      "required by the applicable policy."
+  },
+  unknown: {
+    code: "EXCEPTION_JUSTIFICATION_UNKNOWN",
+    status: "UNKNOWN",
+    message: "The available source evidence cannot determine whether every emergency exception " +
+      "invocation has its required justification record."
+  },
+  conflict: {
+    code: "EXCEPTION_JUSTIFICATION_CONFLICT",
+    status: "CONFLICT",
+    message: "Compatible source claims disagree about the emergency exception, " +
+      "its justification requirement, or its linked record."
+  }
 });
 
 export default circuit("nl-rule-review.ExceptionJustificationReview", "1.0.0")
