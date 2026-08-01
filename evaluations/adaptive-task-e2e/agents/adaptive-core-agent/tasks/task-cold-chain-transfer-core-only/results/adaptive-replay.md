@@ -6,4 +6,4 @@ Equivalent: yes.
 - Findings: `COLD_CHAIN_RELEASE_UNSUPPORTED:VIOLATED`, `CoreGroundingFinding.grounded:SATISFIED`.
 - Generated frames: 1.
 - Auxiliary passes: 2.
-- Markdown CNL SHA-256: `16f33ea1a274aeafbbb7d0b1f5d9917cc225a16c403862edfbf43bbb04158ddb`.
+- Markdown CNL SHA-256: `620510d6dc310b56a00f044a9e1274863650d0e407fe73c38c6bf72f71e934ce`.

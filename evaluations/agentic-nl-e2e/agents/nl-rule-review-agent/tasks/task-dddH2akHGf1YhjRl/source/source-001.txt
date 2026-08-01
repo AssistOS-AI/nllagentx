@@ -1,0 +1,7 @@
+North Gate Alarm Policy
+
+Rule A. While the building alarm is active, staff must keep the north gate closed until an operator acknowledges the alarm.
+
+Rule B. While the building alarm is active, staff must open the north gate before an operator acknowledges the alarm.
+
+The policy states no priority between Rule A and Rule B and gives no exception that resolves their overlap.

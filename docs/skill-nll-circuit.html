@@ -17,11 +17,83 @@
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">Use when creating or repairing a reusable rule, analysis, generation, refinement or assurance circuit.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-003</code>, <code>DS-000</code>, <code>DS-007-DS-019</code>, <code>DS005</code>, <code>DS041</code>, <code>DS042</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: <code>nll-runtime</code> → <code>nll-ontology</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
-<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody><tr><td>1</td><td><code>discover</code></td><td>Resolved task, catalogs and dependency skills</td><td>Inputs required by <code>author</code></td></tr><tr><td>2</td><td><code>author</code></td><td>Files and diagnostics from <code>discover</code></td><td>Inputs required by <code>validate</code></td></tr><tr><td>3</td><td><code>validate</code></td><td>Files and diagnostics from <code>author</code></td><td>Inputs required by <code>handoff</code></td></tr><tr><td>4</td><td><code>handoff</code></td><td>Files and diagnostics from <code>validate</code></td><td>Validated canonical files and a concise handoff</td></tr></tbody></table>
-<h2>Required tools</h2><ul><li><code>nllAgent catalog circuit</code></li><li><code>nllAgent catalog response</code></li><li><code>nllAgent catalog ontology</code></li><li><code>nllAgent sdk usage</code></li><li><code>nllAgent longtext query</code></li><li><code>nllAgent circuit check</code></li><li><code>nllAgent circuit plan</code></li><li><code>nllAgent circuit run</code></li><li><code>nllAgent circuit abstract</code></li><li><code>nllAgent circuit symbolic</code></li><li><code>nllAgent trace slice</code></li><li><code>nllAgent cnl roundtrip</code></li><li><code>nllAgent test task</code></li></ul>
-<h2>Canonical edit roots</h2><ul><li><code>framework/packs</code></li><li><code>agent/circuits</code></li><li><code>agent/cnl</code></li><li><code>task/circuits</code></li><li><code>task/cnl</code></li></ul>
-<h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
+<h2>What the executable manifest controls</h2>
+<p>When this skill is a phase root, nllAgent imports its adjacent <code>workflow.mjs</code> through the local SDK's <code>CodingSkill</code> builder. The manifest values below are not copied documentation; they are the live values used to prepare a coding run. Dependency order determines which skill instructions Codex reads first. The dependency-closed context union determines which projections exist. Edit roots communicate ownership, while the tool declarations identify the project commands the workflow depends on.</p>
+<table><thead><tr><th>Manifest field</th><th>Live value and effect</th></tr></thead><tbody><tr><td>.specs(...) — design contracts</td><td><code>DS-003</code> <code>DS-000</code> <code>DS-007-DS-019</code> <code>DS005</code> <code>DS041</code> <code>DS042</code> <code>DS043</code> <code>DS044</code></td></tr><tr><td>.context(...) — this skill's context</td><td><code>CIRCUIT_CATALOG.md</code> <code>RESPONSE_CIRCUIT_CATALOG.md</code> <code>ONTOLOGY_CATALOG.md</code> <code>SDK_CATALOG.md</code> <code>DIAGNOSTICS.md</code></td></tr><tr><td>.tools(...) — routed CLI dependencies</td><td>13 commands, each explained in the tool section below</td></tr><tr><td>.dependsOn(...) — installed order</td><td><code>nll-sdk</code> → <code>nll-runtime</code> → <code>nll-ontology</code> → <code>nll-circuit</code></td></tr><tr><td>.edits(...) — canonical owners</td><td><code>framework/packs</code> <code>agent/circuits</code> <code>agent/cnl</code> <code>task/circuits</code> <code>task/cnl</code></td></tr><tr><td>.phase(...) — applicable lifecycle</td><td><code>discover</code> → <code>author</code> → <code>validate</code> → <code>handoff</code></td></tr></tbody></table>
+<h2>How this skill receives enough context</h2>
+<p>The context builder first resolves the selected profile plus framework, agent, and task modules. It then materializes only the following artifacts requested by this skill and its dependencies. Each artifact is generated from live objects or retained source state; Codex follows its identities and paths into canonical code whenever the phase requires more detail.</p>
+<table><thead><tr><th>Generated context</th><th>What it contains and why it is present</th></tr></thead><tbody><tr><td><code>SDK_CATALOG.md</code></td><td>A projection of the currently exported SDK surfaces, constructor families, descriptors, and import locations. It tells Codex which real local APIs exist before it opens the narrower implementation modules it must change or use.</td></tr><tr><td><code>ONTOLOGY_CATALOG.md</code></td><td>The ontology modules and semantic identities produced by the resolved framework profile, agent, and task precedence. Codex uses it to reuse exact concepts, roles, relations, frames, facts, laws, and capabilities instead of creating spelling-based duplicates.</td></tr><tr><td><code>CIRCUIT_CATALOG.md</code></td><td>The resolved semantic circuit providers, concerns, requirements, provisions, statuses, stages, and declared assurance. It lets Codex see whether a requested behavior already has a compatible provider and which capability gaps are real.</td></tr><tr><td><code>RESPONSE_CIRCUIT_CATALOG.md</code></td><td>The default, agent, and task response circuits after same-identity precedence, including stage reads, writes, applicability, and presentation purpose. It exposes how material findings become grouped Markdown CNL without allowing presentation to invent truth.</td></tr><tr><td><code>SOURCE_OUTLINE.md</code></td><td>Decoded task sources, stable source units, digests, and absolute bounds without semantic interpretation. It gives IntentJS and LongTextJS authoring a complete evidence inventory while leaving meaning to the coding agent.</td></tr><tr><td><code>DIAGNOSTICS.md</code></td><td>Existing source, import, planning, execution, or acceptance failures retained for the next coding or review phase. An empty file states that no prior diagnostic exists; it never silently hides a failed resolution.</td></tr></tbody></table>
+<p><code>INSTRUCTIONS.md</code> places these files after the installed skills and exact DS contracts in the mandatory reading order. The adjacent <code>run.mjs</code> records the Codex adapter, canonical working directory, dependency-ordered skill IDs, objective, edit owner, and owner-level fast test. This keeps the prompt short without hiding where deeper knowledge lives.</p>
+<h2>What its declared tools actually do</h2>
+<p>These commands are routed through the same CLI used by a programmer and by retained evaluations. Framework tests reject a declared command that has no real route. The skill uses their observable outputs as discovery or validation evidence, not as prose suggestions.</p>
+<table><thead><tr><th>Declared command</th><th>Purpose and observable evidence</th></tr></thead><tbody><tr><td><code>nllAgent catalog circuit</code></td><td>Loads resolved semantic circuits and prints concerns, requirements, providers, statuses, stages, and assurance. It shows whether the requested capability already exists and what a new circuit must compose with.</td></tr><tr><td><code>nllAgent catalog response</code></td><td>Prints resolved response circuits and their stage dataflow. The skill uses it to reuse or extend filtering, grouping, evidence selection, and Markdown CNL policy without changing semantic truth.</td></tr><tr><td><code>nllAgent catalog ontology</code></td><td>Loads the resolved runtime and prints ontology modules and identities after profile, agent, and task precedence. This prevents duplicate concepts and reveals the exact vocabulary available to source and circuit code.</td></tr><tr><td><code>nllAgent sdk usage</code></td><td>Prints focused live usage for a requested SDK surface, including import shape and fluent composition, so Codex can load a narrow implementation context on demand.</td></tr><tr><td><code>nllAgent longtext query</code></td><td>Runs focused semantic queries over the materialized task to confirm that decisive terms, claims, alternatives, and relationships are represented as intended.</td></tr><tr><td><code>nllAgent circuit check</code></td><td>Imports circuit modules and validates identities, typed requirements/provisions, stages, data dependencies, emissions, and declared method support.</td></tr><tr><td><code>nllAgent circuit plan</code></td><td>Closes required capabilities and schedules compatible circuit providers without executing their semantic stages.</td></tr><tr><td><code>nllAgent circuit run</code></td><td>Executes the concrete scheduled circuit stages against the materialized store and retains typed findings, frames, evidence, and traces.</td></tr><tr><td><code>nllAgent circuit abstract</code></td><td>Runs declared abstract preflight and checks convergence, possible status sets, and any precision loss for circuits that claim this assurance.</td></tr><tr><td><code>nllAgent circuit symbolic</code></td><td>Explores declared symbolic decision coverage, retaining feasible paths, selected rows, pruning, and truncation so decision behavior is inspectable.</td></tr><tr><td><code>nllAgent trace slice</code></td><td>Reduces a retained trace to the dependencies of one result, allowing tests and reviews to inspect why that result occurred without reading unrelated execution.</td></tr><tr><td><code>nllAgent cnl roundtrip</code></td><td>Renders and reparses supported frames, then compares semantic slots to detect wording that loses or invents meaning.</td></tr><tr><td><code>nllAgent test task</code></td><td>Runs the selected deterministic Node test scope. Tests never invoke Codex; they assert semantic structure, evidence, diagnostics, response behavior, and replay independently of authoring.</td></tr></tbody></table>
+<h2>The authoring workflow Codex follows</h2>
+<p>The following sequence is taken directly from this skill's <code>SKILL.md</code>. Earlier steps establish semantic responsibility and reuse; later steps author canonical modules and obtain deterministic evidence. Codex may open more canonical code as needed, but it may not replace these boundaries with JSON descriptions or ungrounded text.</p>
+<p><strong>Step 1.</strong> State the circuit responsibility, inputs, outputs, statuses and coverage requirements.</p>
+<p><strong>Step 2.</strong> Decompose selection, normalization, reasoning, decision, explanation and generation.</p>
+<p><strong>Step 3.</strong> Choose methods by semantic problem shape, not fashion; combine methods when needed.</p>
+<p><strong>Step 4.</strong> Use query/dataflow and circuit kits before writing ad hoc traversal code.</p>
+<p><strong>Step 5.</strong> Use a procedural stage for genuinely irregular algorithms and declare semantic reads/writes.</p>
+<p><strong>Step 6.</strong> Add evidence-bearing emissions with qualitative messages and structured details naming failed, uncertain or conflicting requirements. Emit <code>NOT_APPLICABLE</code> only for planner/debug evidence; it will not enter the primary CNL response.</p>
+<p><strong>Step 7.</strong> Inspect <code>RESPONSE_CIRCUIT_CATALOG.md</code>. Add an agent- or task-local response circuit only when selection, filtering, grouping, counting, ranking or explanation differs from the defaults; never use it to invent a semantic finding.</p>
+<p><strong>Step 8.</strong> Create micro-cases, mutations and boundary tests.</p>
+<p><strong>Step 9.</strong> Run planning, concrete, auxiliary, response-composition and trace checks.</p>
+<h2>How this skill verifies its result</h2>
+<p>Circuit acceptance requires importable stages and capabilities, focused applicable/violated/unknown/conflict cases, concrete findings with reachable evidence, and every auxiliary method the circuit claims. Response stages are checked separately for truth preservation.</p>
+<p>There are three separate verification responsibilities. Codex runs the narrow commands declared above while it edits. The generated run manifest records the owner-level fast test. Evaluation or adaptive authoring, when used, independently inspects created and modified canonical files and applies phase-specific acceptance before it claims successful natural-language authoring. An ordinary <code>code</code> invocation retains the agent's report but must not be confused with those stronger evaluation gates.</p>
+<h3>Completion criterion from the skill</h3>
+<p>The circuit is composable through capabilities, produces correct evidence/status on micro-cases, has explicit method guarantees and does not depend on physical store fields.</p>
+<p>At completion, run the fast checks named in <code>INSTRUCTIONS.md</code>, summarize changed canonical files and leave any genuinely blocked issue as a typed diagnostic or refinement demand. Do not claim success merely because code imports.</p>
+<h2>The complete live manifest</h2>
+<p>This is the executable module imported by the loader. It is shown in full so dependencies, context, tools, edit roots, and phases can be reviewed against the prose above.</p>
+<pre><code class="language-javascript">import { codingSkill, contextArtifact, cliTool, editRoot } from &quot;../../framework/sdk/agent/skill.mjs&quot;;
+
+export default codingSkill(&quot;nll-circuit&quot;)
+  .specs(
+    &quot;DS-003&quot;,
+    &quot;DS-000&quot;,
+    &quot;DS-007-DS-019&quot;,
+    &quot;DS005&quot;,
+    &quot;DS041&quot;,
+    &quot;DS042&quot;,
+    &quot;DS043&quot;,
+    &quot;DS044&quot;
+  )
+  .context(
+    contextArtifact(&quot;CIRCUIT_CATALOG.md&quot;),
+    contextArtifact(&quot;RESPONSE_CIRCUIT_CATALOG.md&quot;),
+    contextArtifact(&quot;ONTOLOGY_CATALOG.md&quot;),
+    contextArtifact(&quot;SDK_CATALOG.md&quot;),
+    contextArtifact(&quot;DIAGNOSTICS.md&quot;)
+  )
+  .tools(
+    cliTool(&quot;nllAgent catalog circuit&quot;),
+    cliTool(&quot;nllAgent catalog response&quot;),
+    cliTool(&quot;nllAgent catalog ontology&quot;),
+    cliTool(&quot;nllAgent sdk usage&quot;),
+    cliTool(&quot;nllAgent longtext query&quot;),
+    cliTool(&quot;nllAgent circuit check&quot;),
+    cliTool(&quot;nllAgent circuit plan&quot;),
+    cliTool(&quot;nllAgent circuit run&quot;),
+    cliTool(&quot;nllAgent circuit abstract&quot;),
+    cliTool(&quot;nllAgent circuit symbolic&quot;),
+    cliTool(&quot;nllAgent trace slice&quot;),
+    cliTool(&quot;nllAgent cnl roundtrip&quot;),
+    cliTool(&quot;nllAgent test task&quot;)
+  )
+  .dependsOn(
+    &quot;nll-runtime&quot;,
+    &quot;nll-ontology&quot;
+  )
+  .edits(
+    editRoot(&quot;framework/packs&quot;),
+    editRoot(&quot;agent/circuits&quot;),
+    editRoot(&quot;agent/cnl&quot;),
+    editRoot(&quot;task/circuits&quot;),
+    editRoot(&quot;task/cnl&quot;)
+  )
+  .phase(&quot;discover&quot;, &quot;author&quot;, &quot;validate&quot;, &quot;handoff&quot;)
+  .seal();</code></pre>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS029-nll-circuit.md">its DS entry</a>, synchronized with <code>nll-skills/nll-circuit/SKILL.md</code> and <code>workflow.mjs</code>.</p>
     </article>
   </main>

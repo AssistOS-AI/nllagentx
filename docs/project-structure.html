@@ -12,46 +12,61 @@
   <main class="page">
     <article class="page__panel content">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Project Folders and Ownership</nav>
-      <p class="kicker">Where code, knowledge, tasks and evidence live</p>
+      <p class="kicker">How repository placement preserves authority, reuse, and evidence</p>
       <h1>Project Folders and Ownership</h1>
-      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
-      <p class="lead">Folder placement is part of the semantic contract. Framework code is reusable infrastructure, packs are default knowledge, an agent owns reusable local expertise, and a task owns one instruction, its sources, grounded interpretation, local code and results.</p>
-<div class="tree">
-<div><strong>AGENTS.md</strong><span>Repository-wide coding, ownership, testing and documentation instructions.</span></div>
-<div><strong>observations.md</strong><span>Uncertain or review-sensitive implementation decisions that need later discussion.</span></div>
-<div><strong>insights.md</strong><span>Observed classes of problems found by real coding-agent runs and the regression controls added for them.</span></div>
-<div><strong>design-specifications/</strong><span>Original DS-000 through DS-019, preserved without shortening.</span></div>
-<div><strong>docs/specs/</strong><span>Official contiguous DS000+ set; generated from the originals, skills and additive contracts.</span></div>
-<div><strong>framework/sdk/</strong><span>Fluent OntologyJS, IntentJS, LongTextJS, CircuitJS, CNL, agent and evaluation constructors.</span></div>
-<div><strong>framework/runtime/</strong><span>SemanticStore, queries, planner, scheduler, concrete and assurance algorithms, traces and cache.</span></div>
-<div><strong>framework/packs/</strong><span>Core language plus optional reusable domain ontology, circuits, signals, CNL and pack tests.</span></div>
-<div><strong>framework/tools/</strong><span>Folder resolution, source decoding, context generation, coding-agent adapters and execution helpers.</span></div>
-<div><strong>framework/cli/</strong><span>Thin command routing over reusable SDK, runtime and tool modules.</span></div>
-<div><strong>nll-skills/</strong><span>Ten coding-agent workflows; each has human instructions and an executable dependency/tool contract.</span></div>
-<div><strong>profiles/</strong><span>Executable default pack and planner policy; an agent can provide a same-name local override.</span></div>
-<div><strong>agents/&lt;name&gt;/</strong><span>Reusable local ontology, circuits, CNL, profiles, tests, coding runs and tasks.</span></div>
-<div><strong>agents/&lt;name&gt;/tasks/&lt;id&gt;/</strong><span>Instruction, decoded sources, IntentJS, LongTextJS, local extensions, tests, runs and results.</span></div>
-<div><strong>examples/</strong><span>Committed executable agents, tasks and evaluation declarations.</span></div>
-<div><strong>evaluations/</strong><span>Retained real evaluation agents, random-ID tasks, Codex logs, semantic programs and reports.</span></div>
-<div><strong>tools/</strong><span>Deterministic generators and project-wide verification utilities.</span></div>
-<div><strong>docs/</strong><span>Generated HTML documentation, relative navigation, loader and static assets.</span></div>
-</div>
-<p><a href="../observations.md">Review the decision log</a> and <a href="../insights.md">inspect coding-agent validation insights</a>. Environment-managed <code>.agents/</code> content is deliberately outside the project product/build boundary and is neither edited nor published as nllAgent source.</p>
-<h2>Resolution order</h2><p>The runtime loads mandatory framework defaults, the selected profile, agent-local modules, then task-local modules. Later layers may extend or explicitly override where the contract permits, but source assertions never become stable pack facts implicitly.</p>
-<h2>Generated task anatomy</h2><pre><code>tasks/task-ID/
-  task.mjs
-  source/                 original files, source-map.mjs, extractors/
-  intent/intent.mjs       requested concerns, outputs and selection
-  longtext/               root and source-unit semantic programs
-  ontologies/ circuits/   only genuinely task-local semantic extensions
-  cnl/                    optional task-local response circuits
-  tests/                  task semantic and anchor tests
-  runs/run-ID/            skills, context, instructions and Codex logs
-  results/response.md     primary tagged, grounded Markdown CNL answer
-  results/artifacts.md    semantic programs and technical evidence index
-  results/                plan, raw findings, canonical CNL, trace and assurance
-                          adaptive cycle records when DS042 is enabled</code></pre>
-<p>The CLI accepts either names or explicit folders: <code>--agent</code>/<code>--agent-dir</code> and <code>--task</code>/<code>--task-dir</code>. Generated imports are relative to the target module and selected project root.</p>
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="coding-agent.html">Coding agent</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
+      <p class="lead">The repository layout is not housekeeping around the semantic system; it is part of the semantic contract. A module's directory says whether it is framework machinery, default reusable knowledge, a specialized agent capability, an interpretation of one source, coding-process evidence, or a public result. The runtime and authoring tools use those ownership boundaries when they resolve dependencies and decide what may be reused.</p>
+
+<h2>The root separates original contracts from executable implementation</h2>
+<p><code>design-specifications/</code> contains the original DS-000 through DS-019 source contracts. Their content remains preserved rather than rewritten into shorter summaries. <code>docs/specs/</code> contains the contiguous official set: wrappers around the preserved originals plus additive implementation contracts discovered while building the system. <code>AGENTS.md</code> gives repository-wide coding and ownership rules. <code>observations.md</code> is the review index for decisions that still deserve discussion; <code>insights.md</code> records recurring problem classes observed in real coding-agent work and the regression controls added after them.</p>
+<p><code>tools/</code> owns deterministic project generators and verifiers: official specifications, HTML, source maps, context catalogs, retained tutorial projections, and contract checks. Generated documentation lives under <code>docs/</code> with document-relative navigation and project-owned assets. Environment-managed <code>.agents/</code> may contain maintenance skills available to the current Codex session, but it is not nllAgent product source, is not read by documentation generation, and is not published as a runtime dependency.</p>
+
+<h2>The framework defines the languages and their execution, not a particular agent</h2>
+<p><code>framework/sdk/</code> contains the public language surfaces. Core modules define handles, identity, values, collections, logic, provenance, and diagnostics. Ontology, LongText, Intent, Circuit, CNL, agent, and evaluation modules provide fluent builders for their respective contracts. Code here must remain domain-independent enough that a cold-chain task and a narrative-continuity task can use the same transaction, claim, query, decision, evidence, and response primitives.</p>
+<p><code>framework/runtime/</code> consumes those values. Its store owns transactions, canonicalization, immutable snapshots, and indexes. Query code compiles semantic patterns without exposing physical storage. The planner closes capabilities and explains selection. The scheduler orders declared dataflow. Method kernels implement concrete and auxiliary algorithms. Response composition validates presentation stages. Trace and cache code retain dependencies and replay metadata. This layer may know what a <code>Finding</code> or <code>SourceSpan</code> is; it must not know that one task's thermometer is TH-9.</p>
+<p><code>framework/tools/</code> connects semantic libraries to the filesystem and coding processes. It resolves agent and task folders, decodes source files, builds run context, invokes adapters, imports semantic programs, writes results, and runs evaluation. <code>framework/cli/</code> routes user commands to those tools. Keeping the CLI thin matters because evaluation and tests must be able to call the same reusable implementation without scraping terminal text.</p>
+
+<h2>Packs and profiles provide reusable defaults before an agent adds a specialty</h2>
+<p><code>framework/packs/</code> contains versioned ontology and circuit modules for common language, logic, elementary domains, reasoning errors, normative structure, and social interaction. A pack can declare concepts, roles, relations, facts, laws, recognition signals, capabilities, requirements, possible statuses, and assurance support. Pack facts are explicitly pack-owned; they are never presented as claims extracted from the current task source.</p>
+<p><code>profiles/</code> choose coherent pack sets and fallback policies. A minimal profile makes debugging and isolation possible. A broad school profile loads the intended baseline knowledge. A legal or literary profile gives domain-specific emphasis. The profile does not hard-code the final circuit list: IntentJS and capability planning still filter by target, concern, ontology, evidence, output, and guarantee. An agent may provide a local profile when its specialty needs a composition that should travel with that agent.</p>
+
+<h2>Project skills teach coding phases how to use the live system</h2>
+<p><code>nll-skills/</code> contains the project-owned authoring workflows. They are not semantic knowledge packs and they are not semantic agents. They teach a coding agent how to create or review architecture, orchestration, SDK primitives, runtime behavior, intent, ontology, LongText grounding, circuits, tests, and evaluations. Each folder owns <code>SKILL.md</code> and <code>workflow.mjs</code>; the latter lets nllAgent resolve dependencies, context, tools, edit roots, and phases programmatically.</p>
+<p>The theory these skills need remains authoritative in the DS files and SDK or pack code. A run-local catalog projects the live parts needed for one phase. This prevents ten copied descriptions of the same constructor from drifting while still giving Codex enough context to choose real imports and reuse existing identities.</p>
+
+<h2>An agent folder is a reusable semantic product</h2>
+<p>An agent can live under <code>agents/&lt;name&gt;/</code>, <code>examples/</code>, <code>evaluations/</code>, or an explicit directory supplied to the CLI. Its location may differ, but its ownership model is the same. <code>agent.mjs</code> composes framework packs, a default profile, local modules, and coding policy. <code>ontologies/</code> defines reusable vocabulary. <code>circuits/</code> and <code>methods/</code> define reusable behavior. <code>cnl/</code> can define agent-specific response composition. <code>profiles/</code> and <code>lexicons/</code> refine selection and language. <code>tests/</code> calibrates these capabilities independently of any one source.</p>
+<p>An agent also owns its <code>tasks/</code> collection and may retain agent-level authoring runs. Code placed at the agent level is available to every task resolved through that agent. That is why a coding phase must not promote a document's named entities or one-off conclusions into the agent merely because doing so makes the current test pass.</p>
+
+<h2>A task folder is one request, one source snapshot, and its complete audit trail</h2>
+<p><code>task.mjs</code> identifies the task sources, persistent instruction, expected language, and optional profile overlays. <code>source/</code> retains original files, deterministic decoded source maps, and any task-owned extractor. <code>intent/</code> owns the executable interpretation of the request. <code>longtext/</code> owns the executable interpretation of the source, often split into stable units and a deterministic root commit.</p>
+<p><code>ontologies/</code> and <code>circuits/</code> appear under a task only when the inherited system cannot represent a needed distinction or operation. <code>cnl/</code> can add task-local response behavior without changing semantic truth. <code>sdk/</code> may contain generated facades bound to the resolved ontology identities. <code>tests/</code> covers this interpretation, including source anchors and local decision behavior. These files are Intermediate artifacts in the tutorials because they are the inspectable bridge from natural-language input to output.</p>
+<p><code>runs/</code> retains how coding work occurred. Each run has installed skills, generated context, instructions, adapter logs, final response, and checks. <code>results/response.md</code> is the public Markdown CNL answer. Its siblings are technical evidence: execution plan, canonical findings and frames, executable result modules, response-circuit trace, diagnostics, coverage, assurance, binary trace, and artifact manifest. Keeping public and technical results together under the task preserves discoverability without mixing them into one unreadable answer.</p>
+
+<h2>The anatomy of a task mirrors the transformation it records</h2>
+<pre><code>tasks/task-ID/
+  task.mjs                 instruction and source ownership
+  source/                  original bytes, decoded map, optional extractors
+  intent/intent.mjs        requested operation and presentation policy
+  longtext/                grounded claims, contexts, alternatives, coverage
+  ontologies/              only meanings missing from inherited knowledge
+  circuits/                only behavior missing from inherited providers
+  cnl/                     optional task response composition
+  sdk/                     generated constructor facade for resolved identities
+  tests/                   anchors, semantics, decisions, response checks
+  runs/run-ID/             skills, live context, Codex process, checks
+  results/response.md      primary human-facing Markdown CNL
+  results/artifacts.md     index of semantic programs and technical evidence
+  results/                 plan, findings, frames, diagnostics, trace, assurance</code></pre>
+<p>The order in this tree is causal rather than merely conventional. The source map must exist before exact LongText spans can verify. Ontology identities must resolve before LongText and Circuit modules can import their constructors. Intent must request capabilities before the planner can select providers. Semantic findings must exist before response circuits can render the public answer. Runs and results point back to the canonical modules instead of becoming alternate sources of truth.</p>
+
+<h2>Resolution builds one stack from several owners</h2>
+<p>Every semantic command names an agent through <code>--agent</code> or <code>--agent-dir</code>; task commands additionally use <code>--task</code> or <code>--task-dir</code>. Names resolve through conventional folders, while explicit directories let a caller keep agents elsewhere. Generated import specifiers are calculated relative to each target file and the selected project root, so documentation and semantic code do not need machine-specific absolute URLs.</p>
+<p>The runtime begins with mandatory framework language, adds the selected profile's packs, then agent-local ontology and circuits, and finally task-local intent, grounding, and extensions. A later same-identity module may replace an earlier module only where an explicit override contract permits it. Otherwise providers coexist and the planner chooses by capability. Run-local context is informative and never outranks canonical code.</p>
+
+<h2>Examples and evaluations preserve different kinds of evidence</h2>
+<p><code>examples/</code> contains committed executable agents and tasks used for explanation and regression. They prove that existing semantic programs run. <code>evaluations/</code> creates isolated agents and random-ID tasks to measure authoring, semantic accuracy, evidence fidelity, assurance, and replay. A real authoring evaluation proves that target modules were absent, retains the Codex phases that created them, and links metrics to the exact task folder. It therefore carries more process evidence than a stable example.</p>
+<p><code>docs/</code> projects accepted artifacts into portable pages; it does not become their authority. Tutorial file viewers embed escaped retained content so a static documentation server never fetches arbitrary paths outside its tree. All navigation remains relative. The result is a repository in which a programmer can move from contract, to canonical source, to coding history, to execution evidence without confusing one layer for another.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>

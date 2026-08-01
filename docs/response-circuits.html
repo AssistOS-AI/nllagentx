@@ -31,6 +31,20 @@
 <tr><td>Layout/render</td><td>Composed response model and IntentJS style directives</td><td>Tagged human-readable Markdown CNL; executable/debug modules remain separate artifacts.</td></tr>
 </tbody></table>
 <p>Framework, agent and task response modules are ordered deterministically by identity and priority. A local module may extend the stage chain or deliberately replace the same semantic identity; unrelated policies compose. The composer validates stage reads/writes before running and rejects missing inputs or duplicate incompatible writes.</p>
+<h2>Where public requirement wording comes from</h2>
+<p>A semantic circuit may keep stable requirement codes for decisions and tests, but public prose needs the domain meaning that only that circuit knows. The finding therefore pairs its status arrays with <code>requirementStatements</code>. The renderer chooses the statement by code and inserts it into a fixed status template. It never guesses domain semantics by splitting underscores. A code-shaped requirement without a statement fails with <code>PUBLIC_REQUIREMENT_STATEMENT_REQUIRED</code> before a low-quality answer can be written.</p>
+<pre><code>details: Object.freeze({
+  failedRequirements: Object.freeze([
+    "RECEIVING_PARTY_ACKNOWLEDGED"
+  ]),
+  requirementStatements: Object.freeze({
+    RECEIVING_PARTY_ACKNOWLEDGED:
+      "The receiving party acknowledged the custody transfer."
+  })
+})</code></pre>
+<p>The rendered group begins with <code>[CNL:REQUIREMENT-GROUP] [STATUS:VIOLATED] [COUNT:1]</code>, explains in controlled prose that a required condition is not satisfied, and lists “The receiving party acknowledged the custody transfer.” The code remains available in executable findings and the finding marker; it is not exposed as the explanation.</p>
+<h2>How copied input is separated from generated explanation</h2>
+<p>The conclusion, status interpretation, requirement templates, and next actions are generated CNL. Exact source material appears only inside a section marked <code>[CNL:EVIDENCE]</code>. Every verified passage is introduced by <code>[CNL:SOURCE-QUOTE] [SOURCE:...]</code>, rendered as a Markdown blockquote, and attributed as exact source text copied from a relative source link. Decoded offsets remain technical verification data and are not shown to the reader.</p>
 <h2>IntentJS example</h2><pre><code>import { intent, analyze, markdownCnl } from "./framework/sdk/intent/index.mjs";
 import { evidenceLed, groupResultsBy, quoteSourceEvidence } from "./framework/sdk/cnl/index.mjs";
 
@@ -48,6 +62,9 @@ export default intent("policy-review")
 <tr><td><code>[CNL:DOCUMENT]</code></td><td>Declares style, grouping and selected result count.</td></tr>
 <tr><td><code>[CNL:GROUP]</code></td><td>Declares a non-empty semantic group and exact count.</td></tr>
 <tr><td><code>[CNL:FINDING]</code></td><td>Declares code, status, group and material/supporting classification.</td></tr>
+<tr><td><code>[CNL:REQUIREMENT-GROUP]</code></td><td>Declares the already-established requirement status and the exact number of public domain statements in that group.</td></tr>
+<tr><td><code>[CNL:EVIDENCE]</code> and <code>[CNL:SOURCE-QUOTE]</code></td><td>Separate generated explanation from digest-verified text copied exactly from one source.</td></tr>
+<tr><td><code>[CNL:NEXT-ACTION]</code></td><td>Declares how many controlled actions follow from the failed or unresolved conditions.</td></tr>
 <tr><td><code>[CNL:NO-MATERIAL-RESULT]</code></td><td>One compact statement used instead of listing non-applicable circuits.</td></tr>
 </tbody></table>
 <p>See <a href="specsLoader.html?spec=DS043-primary-markdown-cnl-response.md">DS043</a> and <a href="specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md">DS044</a>.</p>

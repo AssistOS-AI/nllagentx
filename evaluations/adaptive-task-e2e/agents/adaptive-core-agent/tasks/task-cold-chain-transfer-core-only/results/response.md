@@ -10,49 +10,83 @@
 
 [CNL:FINDING] [CODE:COLD_CHAIN_RELEASE_UNSUPPORTED] [STATUS:VIOLATED] [GROUP:violations] [MATERIAL]
 ### Cold chain release unsupported
-**Status:** VIOLATED
+**Status:** Not satisfied
 The release conclusion lacks valid support for one or more required preconditions.
 
 - **Rule evaluated:** Cold chain transfer release support
 - **Circuit:** `task-cold-chain-transfer.ColdChainTransferReleaseSupport`
 - **Decision:** The circuit emitted this result because Cold chain transfer release support evaluated as not supported.
 
-**Why this result**
+**Assessment of required conditions**
 
-- **Failed requirements:**
-  - RECEIVING_PARTY_ACKNOWLEDGED
-  - THERMOMETER_CALIBRATION_VALID
-- **Unresolved requirement:**
-  - EXCURSION_QUARANTINE_PATH
+[CNL:REQUIREMENT-GROUP] [STATUS:VIOLATED] [COUNT:2]
+
+**Required conditions not satisfied**
+
+The analysis found that the following required conditions are not satisfied:
+
+- The receiving party acknowledged the custody transfer.
+- Every thermometer used for the transfer has a calibration valid at the transfer time.
+
+[CNL:REQUIREMENT-GROUP] [STATUS:UNKNOWN] [COUNT:1]
+
+**Required conditions not determined**
+
+The available input does not determine whether the following required condition holds:
+
+- Every recorded temperature excursion follows the required quarantine or stability-study path.
 
 **Assessment details**
 
 - Checked conclusions: 1
 
-**Evidence from the input**
+[CNL:EVIDENCE] [COUNT:6]
+
+**Exact evidence copied from the input**
+
+The passages below are copied exactly from the input. They are evidence for the generated conclusion above.
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > the readings come from a thermometer whose calibration is valid at the time of transfer
 >
-> — [source-001](../source/cold-chain-transfer.txt), characters 333–420
+> — Exact source text copied from [source-001](../source/cold-chain-transfer.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > both the releasing party and the receiving party acknowledge the transfer
 >
-> — [source-001](../source/cold-chain-transfer.txt), characters 426–499
+> — Exact source text copied from [source-001](../source/cold-chain-transfer.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
+
+> unless a named stability study explicitly supports the observed temperature and duration
+>
+> — Exact source text copied from [source-001](../source/cold-chain-transfer.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > The calibration certificate for TH-9 expired on 13 July 2026.
 >
-> — [source-001](../source/cold-chain-transfer.txt), characters 1166–1227
+> — Exact source text copied from [source-001](../source/cold-chain-transfer.txt)
 
-> North Courier acknowledged release.
->
-> — [source-001](../source/cold-chain-transfer.txt), characters 1228–1263
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > The record contains no acknowledgement by Vale Laboratory.
 >
-> — [source-001](../source/cold-chain-transfer.txt), characters 1264–1322
+> — Exact source text copied from [source-001](../source/cold-chain-transfer.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > The transfer memo concludes: “Cold-chain custody was satisfied, so AX-17 may be released.”
 >
-> — [source-001](../source/cold-chain-transfer.txt), characters 1397–1487
+> — Exact source text copied from [source-001](../source/cold-chain-transfer.txt)
 
-**Next action:** Address the failed requirement: RECEIVING_PARTY_ACKNOWLEDGED
+[CNL:NEXT-ACTION] [COUNT:2]
+
+**Next actions**
+
+Resolve every failed condition and provide source evidence for each corrected state:
+
+- “The receiving party acknowledged the custody transfer.”
+- “Every thermometer used for the transfer has a calibration valid at the transfer time.”

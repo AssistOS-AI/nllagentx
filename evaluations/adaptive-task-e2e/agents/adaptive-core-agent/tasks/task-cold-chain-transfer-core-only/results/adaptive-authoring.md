@@ -1,6 +1,6 @@
 # Adaptive task authoring
 
-Accepted after 6 deterministic assessments and 3 Codex review cycle(s).
+Accepted after 8 deterministic assessments and 4 Codex review cycle(s).
 
-Phases: `intent`, `ontology`, `longtext`, `circuit`, `review`, `ontology`, `circuit`, `review`, `ontology`, `circuit`, `review`.
+Phases: `intent`, `ontology`, `longtext`, `circuit`, `review`, `ontology`, `circuit`, `review`, `ontology`, `circuit`, `review`, `ontology`, `circuit`, `review`.
 Auxiliary requirement: `all`.

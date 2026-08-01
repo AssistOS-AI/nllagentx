@@ -16,7 +16,9 @@ This specification formalizes the user-required notion that agents and tasks are
 
 Every semantic command must resolve an agent from `--agent <name-or-path>` or `--agent-dir <path>`. Task commands must additionally resolve `--task <id-or-path>` or `--task-dir <path>`. Name resolution uses `agents/<name>` and `<agent>/tasks/<id>`; explicit paths may be outside those defaults while still importing the selected project SDK.
 
-Runtime resolution must load framework defaults, the selected profile, agent-local ontologies/circuits, and task-local ontologies/circuits/IntentJS/LongTextJS in documented precedence. The context builder must ingest task sources, resolve the selected skill dependency graph, install run-local skill folders, identify exact DS filenames, and generate compact catalogs from live SDK descriptors and resolved ontology/circuit objects. Catalogs are informational and must not replace canonical modules.
+Runtime resolution must load framework defaults, the selected profile, agent-local ontologies/circuits, and task-local ontologies/circuits/IntentJS/LongTextJS in documented precedence. The context builder must ingest task sources, resolve the selected skill dependency graph, install run-local skill folders, identify exact DS filenames, and generate exactly the supported context-artifact union declared by that dependency graph. Those artifacts are compact projections from live SDK descriptors, resolved ontology/circuit objects, profile selection, decoded sources, project paths, and retained diagnostics. Unsupported manifest names are configuration errors. Catalogs are informational and must not replace canonical modules.
+
+`INSTRUCTIONS.md` must enumerate the actual generated context files and place them after the installed skills and selected DS files in the mandatory reading order. It must not claim that an undeclared catalog is present. The adjacent executable run manifest records the adapter, canonical working directory, installed skills, edit root, objective, and deterministic owner-level check. A prepare-only command may stop after creating this auditable context; invoking the coding adapter is a separate, explicit action.
 
 A long-running authoring or evaluation process must observe changes to transitive agent/task modules made by a coding phase in the same process. Fresh import applies to the entire local semantic dependency graph below the resolved agent ownership root, not only to its entry module. Framework SDK/runtime modules retain stable process identities so constructors and `instanceof` boundaries are not duplicated. Freshness keys must be derived from local file metadata and covered by a regression that rewrites an entry module and one imported dependency between two resolutions.
 
@@ -47,6 +49,10 @@ Response: The original twenty files must remain intact and use their established
 ### Question #4: Why version transitive local modules but not framework modules?
 
 Response: Coding phases edit the agent/task dependency graph while an evaluator remains alive, so every local dependency must be fresh. Duplicating framework constructors would instead split semantic class identity inside one runtime. The module hook therefore versions only files below the resolved ownership root.
+
+### Question #5: Why does the manifest select context artifacts by name?
+
+Response: A phase needs enough information to choose correct SDK constructors and reuse loaded semantic identities, but an undifferentiated project dump hides ownership and wastes the coding agent's context. A small validated vocabulary of generated artifacts makes the dependency explicit, inspectable, and testable while canonical modules remain available for deliberate follow-up reading.
 
 ## Conclusion
 

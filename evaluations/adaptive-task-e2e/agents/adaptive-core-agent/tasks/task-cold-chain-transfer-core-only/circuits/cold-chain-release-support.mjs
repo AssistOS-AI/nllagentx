@@ -5,6 +5,18 @@ import {
 
 export const RELEASE_OUTCOMES = Object.freeze({ TRUE, FALSE, UNKNOWN, CONFLICT });
 
+export const RELEASE_REQUIREMENT_STATEMENTS = Object.freeze({
+  RELEASE_CONCLUSION: "The source states the release conclusion consistently.",
+  CONCRETE_CUSTODY_TRANSFER_GROUNDING: "The release conclusion is linked to a concrete custody transfer described by the source.",
+  SEALED_IDENTIFIER_RECORDED: "A sealed-container identifier is recorded for the custody transfer.",
+  BEFORE_TEMPERATURE_IN_RANGE: "The temperature immediately before handoff is within the required range.",
+  AFTER_TEMPERATURE_IN_RANGE: "The temperature immediately after receipt is within the required range.",
+  THERMOMETER_CALIBRATION_VALID: "Every thermometer used for the transfer has a calibration valid at the transfer time.",
+  RELEASING_PARTY_ACKNOWLEDGED: "The releasing party acknowledged the custody transfer.",
+  RECEIVING_PARTY_ACKNOWLEDGED: "The receiving party acknowledged the custody transfer.",
+  EXCURSION_QUARANTINE_PATH: "Every recorded temperature excursion follows the required quarantine or stability-study path."
+});
+
 function identityOf(value) {
   if (typeof value?.identity === "function") return value.identity();
   if (typeof value?.identity === "string") return value.identity;
@@ -304,17 +316,33 @@ function concreteConclusionEntries(store, releaseRows, transferRows) {
 function statusSummary(entries) {
   return Object.freeze(entries.map((entry) => Object.freeze({
     code: entry.code,
+    statement: RELEASE_REQUIREMENT_STATEMENTS[entry.code],
     status: entry.status,
     reason: entry.reason
   })));
 }
 
+function publicRequirementStatements(details) {
+  const codes = [
+    ...(details.failedRequirements ?? []),
+    ...(details.uncertainRequirements ?? []),
+    ...(details.conflictingRequirements ?? []),
+    ...(details.satisfiedRequirements ?? [])
+  ];
+  return Object.freeze(Object.fromEntries([...new Set(codes)].sort().map((code) => {
+    const statement = RELEASE_REQUIREMENT_STATEMENTS[code];
+    if (!statement) throw new Error(`PUBLIC_REQUIREMENT_STATEMENT_REQUIRED: ${code}`);
+    return [code, statement];
+  })));
+}
+
 function resultAssessment(status, evidenceValues, details, claims, finding = null) {
+  const requirementStatements = publicRequirementStatements(details);
   return Object.freeze({
     outcome: releaseOutcomeForStatus(status),
     status,
     evidence: Object.freeze(uniqueSemanticValues(evidenceValues)),
-    details: Object.freeze(details),
+    details: Object.freeze({ ...details, requirementStatements }),
     interpretation: commonInterpretation(claims),
     finding: finding ? Object.freeze(finding) : null
   });

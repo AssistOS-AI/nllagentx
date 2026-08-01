@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nllAgent Documentation — The Coding Agent Inside nllAgent</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="assets/artifact-browser.mjs"></script>
+</head>
+<body>
+  <div data-include="partials/header.html"></div>
+  <main class="page">
+    <article class="page__panel content">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>The Coding Agent Inside nllAgent</nav>
+      <p class="kicker">Adapter, skills, context, direct editing, and independent acceptance</p>
+      <h1>The Coding Agent Inside nllAgent</h1>
+      <nav class="section-nav" aria-label="Reference pages"><span>Reference</span><a href="specsLoader.html?spec=matrix.md">Specification browser</a><a href="documentation-ownership.html">Documentation ownership</a><a href="specification-review.html">Specification review</a><a href="documentation-generation.html">Documentation generation</a></nav>
+      <p class="lead">The coding agent is the component that converts an underspecified natural-language authoring request into canonical semantic code. It is not the semantic agent stored in <code>agents/&lt;name&gt;/</code>, and it is not the deterministic runtime. Codex is the first implementation of this role; <code>CodingAgentAdapter</code> keeps the process boundary replaceable.</p>
+
+<h2>Three actors with similar names do different work</h2>
+<p>A <em>semantic agent</em> is a persistent folder of reusable ontology, circuits, profiles, response behavior, and tests. A <em>coding agent</em> is a process that reads natural language and edits those folders or one task folder. nllAgent itself is the orchestrator and runtime: it resolves ownership, prepares context, starts the coding process when explicitly requested, then validates and executes the resulting modules. Confusing these actors makes it appear either that an agent folder learned by itself or that ordinary execution secretly calls a model.</p>
+<p>Codex may run during <code>code ...</code>, real authoring evaluation, or adaptive authoring. It never runs merely because the user requested <code>run</code>, <code>plan</code>, <code>query</code>, source inspection, or unit tests. This makes model use observable and gives ordinary replay a clear meaning.</p>
+
+<h2>The adapter creates a process, not a semantic oracle</h2>
+<p><code>CodexAdapter</code> invokes the locally installed <code>codex exec</code> command in direct-editing mode. It sets the canonical agent or task directory as the working directory and points Codex to file-based instructions. An optional model identifier is passed through when the operator supplies one; otherwise the local Codex configuration chooses its default. Repository code does not hard-code a time-sensitive model name.</p>
+<p>The adapter captures standard output and error, final response, start and finish times, exit status, and changed paths. A zero exit status means the process completed. The adapter does not parse the final prose as a finding, convert it into patches, or decide that tests are semantically sufficient. That deliberate lack of authority is what allows a future adapter to replace Codex without changing the meaning of accepted nllAgent artifacts.</p>
+
+<h2>Before Codex starts, nllAgent constructs the world it may rely on</h2>
+<p>The orchestrator first resolves the project root, target agent, optional task, authoring phase, canonical edit owner, and write lock. It decodes task sources and resolves the active profile plus framework, agent, and task semantic modules. It then loads the selected skill's executable workflow and closes its dependencies. The dependency closure decides both which instructions are installed and which context projections exist.</p>
+<p>A run does not receive generic copied theory. <code>SDK_CATALOG.md</code> is derived from live SDK descriptors and shows current imports, signatures, semantics, examples, and diagnostics. <code>ONTOLOGY_CATALOG.md</code> reports the resolved concepts, roles, relations, constructors, and pack ownership. <code>CIRCUIT_CATALOG.md</code> and <code>RESPONSE_CIRCUIT_CATALOG.md</code> report providers, requirements, provisions, stages, statuses, assurance, and local override identities. <code>PROFILE_RESOLUTION.md</code> explains loaded packs and precedence. <code>SOURCE_OUTLINE.md</code> and source tools expose decoded units and exact text. <code>DIAGNOSTICS.md</code> gives the current failures that a review must repair. <code>PROJECT_MAP.md</code> locates canonical owners without assuming a fixed workspace URL.</p>
+<p>Only artifacts named by the dependency-closed workflows are generated. This is important in both directions. Missing a declared catalog is a configuration error, because Codex would be asked to code without a promised dependency. Generating every catalog for every phase would create a large, misleading context and make workflow manifests descriptive rather than executable.</p>
+
+<h2>A skill is both a reading contract and a machine-resolved manifest</h2>
+<p>Each <code>nll-*</code> skill has two synchronized parts. <code>SKILL.md</code> tells Codex when the skill applies, which design boundaries matter, how to inspect the current state, which artifacts it may create, what tests it must write, and what evidence completes the phase. <code>workflow.mjs</code> declares the same responsibility in a form nllAgent can resolve: design specifications, context artifacts, CLI tools, dependencies, edit roots, and lifecycle phases.</p>
+<p>Dependencies create a meaningful order rather than a flat pile of prompts. The ontology skill depends on SDK knowledge because it must use real constructors. LongText work depends on intent and ontology because grounding must reflect both the operation and the available semantic signature. Circuit work depends on runtime and ontology because it must choose query, decision, procedural, or assurance primitives that the local runtime actually implements. Testing and evaluation close the chain without giving test execution permission to start Codex implicitly.</p>
+<p>The generated <code>INSTRUCTIONS.md</code> makes that order explicit: installed dependency skill contracts first, then the selected DS files, then the context artifacts that were actually generated, followed by the objective, edit root, and checks. The adjacent <code>run.mjs</code> records the adapter, working directory, skill IDs, owner, and deterministic owner-level command. A reviewer can therefore reconstruct what Codex was told without relying on ephemeral API messages.</p>
+
+<h2>Codex edits the source of truth directly</h2>
+<p>The canonical working directory is the agent when the phase creates reusable knowledge and the task when it interprets one source. Codex may inspect any relevant local code, but the workflow's edit roots communicate which ownership boundary it must preserve. It writes ordinary <code>.mjs</code> modules using SDK builders, imports semantic identities from resolved ontology facades, and writes <code>node:test</code> checks beside the owner. nllAgent does not ask for JSON and later translate it into DSL code; such translation would erase the design choices and make the retained model output the hidden authority.</p>
+<p>During architecture work, Codex decides which modules and capabilities are needed and where they belong. During ontology work, it designs stable concepts, roles, cardinalities, lexicalizations, and constructor facades. During circuit work, it implements source-independent behavior and its satisfied, violated, unknown, conflict, and not-applicable microcases. During task intent work, it preserves the original instruction and declares presentation policy. During LongText work, it uses source inspection tools to choose exact spans and constructs claims, contexts, alternatives, and coverage. Review work receives failures and trace slices and may repair the canonical modules; it cannot weaken the acceptance gates that requested the review.</p>
+
+<h2>Tools give the coding agent observations, not answers to copy</h2>
+<p>CLI tools reduce uncertainty about the local system. Catalog commands reveal which constructors and providers exist. Source commands expose exact decoded evidence. Intent and plan commands explain selection. Ontology, LongText, and circuit checks expose typed contract violations. Trace commands isolate the dependencies of a bad finding. These tools do not author semantic meaning on Codex's behalf; they make the state that constrains authoring observable.</p>
+<pre><code># Build the dependency-closed skills and live context for an intent-authoring phase without starting Codex.
+node nllAgent.mjs context build --agent-dir path/to/agent --task-dir path/to/task --phase intent
+
+# Inspect the exact skills, DS contracts, catalogs, owner, and checks placed in that prepared run.
+node nllAgent.mjs context show --agent-dir path/to/agent --task-dir path/to/task --phase intent
+
+# Start the explicit Codex intent-authoring phase against the canonical task directory.
+node nllAgent.mjs code intent --agent-dir path/to/agent --task-dir path/to/task
+
+# Execute the authored semantic programs afterward without invoking Codex.
+node nllAgent.mjs run --agent-dir path/to/agent --task-dir path/to/task --assurance all</code></pre>
+
+<h2>Verification is deliberately split across three viewpoints</h2>
+<p>First, Codex runs the focused discovery and validation commands named by its skill while it works. This catches errors quickly and lets it iterate in context. Second, the generated run manifest names an owner-level fast test that nllAgent can execute after the process. Third, evaluation or adaptive authoring applies phase-specific acceptance: it compares before and after paths, imports the new code, verifies ontology closure and anchors, runs focused tests, executes real planning and circuits, checks public CNL and exact evidence, and requires replay.</p>
+<p>These layers answer different questions. Codex's check asks whether the current edit appears coherent. The owner test asks whether the canonical folder still satisfies its local contract. Evaluation asks whether natural-language authoring actually created the requested behavior and whether that behavior survives model-free execution. A phase can pass the first and fail the third; the retained failure is useful evidence about the coding workflow rather than something to hide.</p>
+
+<h2>Retained runs make the coding process auditable</h2>
+<p>Every run directory keeps installed skills, generated context, instructions, process logs, final response, timings, exit status, before/after artifact inventory, and check results. In a real authoring evaluation, the agent brief and task sources are retained outside those run directories as input evidence. The canonical modules live under the agent or task. Results and replay live under the task. These separate locations let a reviewer answer four different questions: what Codex was asked, what it knew, what it changed, and what the independent runtime subsequently proved.</p>
+<p>The <a href="skills-workflow.html">skill workflow chapter</a> exposes every live manifest and its exact tool set. The <a href="testing-evaluation.html">testing and evaluation chapter</a> explains the independent gates. The <a href="tutorials.html">tutorials</a> show the application-facing result after this process has produced accepted code.</p>
+    </article>
+  </main>
+  <div data-include="partials/footer.html"></div>
+  <script src="partials-loader.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+Emergency Access Policy and Log
+
+Policy rule. Every use of the emergency-access exception must have a recorded reason linked to that invocation.
+
+Event log. At 09:02, operator Ana invoked the emergency-access exception and opened the north gate. The log ends after the opening entry. It contains no reason or justification record for the invocation.

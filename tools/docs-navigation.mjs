@@ -6,6 +6,7 @@ const groups = Object.freeze([
       Object.freeze(["System guide", "index.html"]),
       Object.freeze(["Architecture", "architecture.html"]),
       Object.freeze(["Agentic authoring", "agentic-authoring.html"]),
+      Object.freeze(["Coding agent", "coding-agent.html"]),
       Object.freeze(["Project folders", "project-structure.html"]),
       Object.freeze(["Source ingestion", "source-ingestion.html"])
     ])

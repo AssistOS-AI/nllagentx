@@ -182,19 +182,22 @@ function generateObservation({ inputs }) {
   const details = assessment.details ?? {};
   const sourceSpans = (assessment.evidence ?? [])
     .filter((value) => value?.sort?.() === "SourceSpan");
+  const requirementText = (name) => (details[name] ?? [])
+    .map((code) => details.requirementStatements?.[code] ?? code)
+    .join(" ") || "none";
   return [findingFrame("task-cold-chain-transfer.release-support")
     .set("status", literalSlot(assessment.status ?? "UNKNOWN"))
     .set(
       "failed-preconditions",
-      literalSlot(details.failedRequirements?.join(", ") || "none")
+      literalSlot(requirementText("failedRequirements"))
     )
     .set(
       "uncertain-preconditions",
-      literalSlot(details.uncertainRequirements?.join(", ") || "none")
+      literalSlot(requirementText("uncertainRequirements"))
     )
     .set(
       "conflicting-preconditions",
-      literalSlot(details.conflictingRequirements?.join(", ") || "none")
+      literalSlot(requirementText("conflictingRequirements"))
     )
     .set("source-evidence", slot("SourceEvidence", ...sourceSpans))
     .provenance(...(assessment.evidence ?? []))

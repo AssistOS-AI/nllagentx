@@ -24,9 +24,7 @@ export default codingSkill("nll-orchestrator")
     cliTool("nllAgent source outline"),
     cliTool("nllAgent review bundle")
   )
-  .dependsOn(
-    
-  )
+  .dependsOn()
   .edits(
     editRoot("framework/cli"),
     editRoot("framework/tools"),

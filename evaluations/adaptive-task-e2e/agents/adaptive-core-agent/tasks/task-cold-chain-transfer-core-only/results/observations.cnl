@@ -12,8 +12,8 @@ END FRAME
 
 FRAME Finding task-cold-chain-transfer.release-support
 CONFLICTING-PRECONDITIONS: none
-FAILED-PRECONDITIONS: RECEIVING_PARTY_ACKNOWLEDGED, THERMOMETER_CALIBRATION_VALID
+FAILED-PRECONDITIONS: The receiving party acknowledged the custody transfer. Every thermometer used for the transfer has a calibration valid at the transfer time.
 SOURCE-EVIDENCE: source-001:1264-1322 | source-001:175-218 | source-001:220-331 | source-001:1092-1165 | source-001:1060-1091 | source-001:1228-1263 | source-001:972-1059 | source-001:1166-1227 | source-001:333-420 | source-001:788-876 | source-001:1397-1487 | source-001:426-499
 STATUS: VIOLATED
-UNCERTAIN-PRECONDITIONS: EXCURSION_QUARANTINE_PATH
+UNCERTAIN-PRECONDITIONS: Every recorded temperature excursion follows the required quarantine or stability-study path.
 END FRAME

@@ -1,0 +1,29 @@
+FRAME Finding CoreGroundingFinding.not-applicable
+EVIDENCE: none
+MESSAGE: CoreGroundingFinding.not-applicable
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding EXCEPTION_JUSTIFICATION_NOT_APPLICABLE
+EVIDENCE: none
+MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
+EVIDENCE: none
+MESSAGE: No asserted procedure-generation request applies to the available operational rules.
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding RULE_CONTRADICTION_NOT_APPLICABLE
+EVIDENCE: none
+MESSAGE: No pair of operational rules governs the same action under the same condition.
+STATUS: NOT_APPLICABLE
+END FRAME
+
+FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
+EVIDENCE: none
+MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
+STATUS: NOT_APPLICABLE
+END FRAME

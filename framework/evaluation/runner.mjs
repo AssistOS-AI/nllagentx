@@ -170,6 +170,46 @@ async function archiveCurrentReports(reportsRoot) {
   return archiveRoot;
 }
 
+function isRetainedCodingRun(run) {
+  return Boolean(
+    run
+    && typeof run.adapter === "string"
+    && typeof run.runPath === "string"
+    && Number.isInteger(run.exitCode)
+  );
+}
+
+function hasRetainedAuthoring(results, agentAuthoring) {
+  return agentAuthoring.some(isRetainedCodingRun)
+    || results.some((result) => (result.authoring ?? []).some(isRetainedCodingRun));
+}
+
+export async function retainedEvaluationRecords(reportsRoot) {
+  const candidates = [reportsRoot];
+  const iterationsRoot = resolve(reportsRoot, "iterations");
+  if (await exists(iterationsRoot)) {
+    const archived = (await readdir(iterationsRoot, { withFileTypes: true }))
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => resolve(iterationsRoot, entry.name))
+      .sort((left, right) => right.localeCompare(left));
+    candidates.push(...archived);
+  }
+  for (const root of candidates) {
+    const resultsPath = resolve(root, "task-results.mjs");
+    const agentAuthoringPath = resolve(root, "agent-authoring.mjs");
+    if (!(await exists(resultsPath))) continue;
+    const results = (await importFresh(resultsPath)).default;
+    const agentAuthoring = await exists(agentAuthoringPath)
+      ? (await importFresh(agentAuthoringPath)).default
+      : [];
+    if (!Array.isArray(results) || !Array.isArray(agentAuthoring)) continue;
+    if (hasRetainedAuthoring(results, agentAuthoring)) {
+      return Object.freeze({ root, results, agentAuthoring });
+    }
+  }
+  throw new Error(`EVALUATION_RETAINED_AUTHORING_MISSING: ${reportsRoot}`);
+}
+
 export async function runEvaluationSuite({
   projectRoot,
   suitePath,
@@ -186,16 +226,14 @@ export async function runEvaluationSuite({
   const agentName = suite.agent; const agentRoot = resolve(evaluationRoot, "agents", agentName);
   const reportsRoot = resolve(evaluationRoot, "reports");
   const retainedResultsPath = resolve(reportsRoot, "task-results.mjs");
-  const retainedAgentAuthoringPath = resolve(reportsRoot, "agent-authoring.mjs");
   if (replayRetained && !(await exists(retainedResultsPath))) {
     throw new Error(`EVALUATION_RETAINED_RESULTS_MISSING: ${retainedResultsPath}`);
   }
-  const retainedResults = replayRetained
-    ? (await importFresh(retainedResultsPath)).default
-    : [];
-  const retainedAgentAuthoring = replayRetained && await exists(retainedAgentAuthoringPath)
-    ? (await importFresh(retainedAgentAuthoringPath)).default
-    : [];
+  const retained = replayRetained
+    ? await retainedEvaluationRecords(reportsRoot)
+    : Object.freeze({ root: null, results: [], agentAuthoring: [] });
+  const retainedResults = retained.results;
+  const retainedAgentAuthoring = retained.agentAuthoring;
   await archiveCurrentReports(reportsRoot);
   const codingAdapter = invokeAgent ? adapterFactory(suite.agentAdapter ?? "codex") : null;
   await mkdir(resolve(reportsRoot, "failures"), { recursive: true });
@@ -341,7 +379,10 @@ export async function runEvaluationSuite({
     const reportTarget = relative(reportsRoot, resolve(projectRoot, result.taskPath, "results", "response.md")).split("\\").join("/");
     return `| ${result.caseId} | [\`${result.taskId}\`](${reportTarget}) | ${result.status} | ${result.findings?.length ?? 0} | ${result.generatedFrames ?? 0} | ${result.metrics.f1 === undefined ? "not gold-scored" : result.metrics.f1.toFixed(3)} |`;
   }).join("\n");
-  await atomicWrite(resolve(reportsRoot, "summary.md"), `# Evaluation suite ${suite.id}\n\nModes: ${suite.modeValues.map((entry) => `\`${entry.value}\``).join(", ")}. Coding agent invoked this iteration: ${invokeAgent ? "yes" : "no"}. Retained real authoring replayed: ${replayRetained ? "yes" : "no"}. Agent authoring phases: ${suite.agentAuthoringValues.map((phase) => `\`${phase}\``).join(", ") || "none"}. Task authoring phases: ${taskPhases.map((phase) => `\`${phase}\``).join(", ") || "none"}.\n\n| Case | Primary Markdown CNL response | Status | Findings | Frames | F1 |\n| --- | --- | --- | ---: | ---: | ---: |\n${taskTable}\n\n## Aggregate metrics\n\n${Object.entries(aggregate).map(([name, value]) => `- ${name}: ${value.toFixed(4)}`).join("\n") || "No numeric metrics."}\n\nThe linked task artifact is the primary human-facing response. See \`authoring.md\` for every retained Codex phase, \`assurance.md\` for auxiliary debug evidence, and \`artifacts.md\` for all retained files.\n`);
+  const retainedSource = replayRetained
+    ? relative(reportsRoot, retained.root).split("\\").join("/") || "."
+    : null;
+  await atomicWrite(resolve(reportsRoot, "summary.md"), `# Evaluation suite ${suite.id}\n\nModes: ${suite.modeValues.map((entry) => `\`${entry.value}\``).join(", ")}. Coding agent invoked this iteration: ${invokeAgent ? "yes" : "no"}. Retained real authoring replayed: ${replayRetained ? "yes" : "no"}. Agent authoring phases: ${suite.agentAuthoringValues.map((phase) => `\`${phase}\``).join(", ") || "none"}. Task authoring phases: ${taskPhases.map((phase) => `\`${phase}\``).join(", ") || "none"}.${retainedSource ? ` Retained authoring source: \`${retainedSource}\`.` : ""}\n\n| Case | Primary Markdown CNL response | Status | Findings | Frames | F1 |\n| --- | --- | --- | ---: | ---: | ---: |\n${taskTable}\n\n## Aggregate metrics\n\n${Object.entries(aggregate).map(([name, value]) => `- ${name}: ${value.toFixed(4)}`).join("\n") || "No numeric metrics."}\n\nThe linked task artifact is the primary human-facing response. See \`authoring.md\` for every retained Codex phase, \`assurance.md\` for auxiliary debug evidence, and \`artifacts.md\` for all retained files.\n`);
   const runRow = (run) => `| ${run.scope} | ${run.phase} | ${run.adapter ?? suite.agentAdapter ?? "not invoked"} | ${run.exitCode} | [run](${relative(reportsRoot, resolve(projectRoot, run.runPath)).split("\\").join("/")}/INSTRUCTIONS.md) | [final response](${relative(reportsRoot, resolve(projectRoot, run.finalResponsePath)).split("\\").join("/")}) | ${run.created.length} | ${run.modified.length} |`;
   const authoringSections = results.map((result) => `## ${result.caseId}\n\nTask: \`${result.taskPath}\`.\n\n${result.authoring?.map(runRow).join("\n") || "No task coding-agent phase was retained."}`).join("\n\n");
   await atomicWrite(resolve(reportsRoot, "authoring.md"), `# Coding-agent authoring evidence\n\nEvery row is a real CodingAgentAdapter process with retained instructions, installed skills, context, stdout, stderr, and final response.\n\n| Scope | Phase | Adapter | Exit | Instructions | Final response | Created | Modified |\n| --- | --- | --- | ---: | --- | --- | ---: | ---: |\n${agentAuthoring.map(runRow).join("\n") || "| agent | none | not invoked | 0 | — | — | 0 | 0 |"}\n\n${authoringSections}\n`);

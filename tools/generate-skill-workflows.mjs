@@ -32,9 +32,9 @@ export default codingSkill(${JSON.stringify(id)})
   .tools(
     ${tools.map((value) => `cliTool(${JSON.stringify(`nllAgent ${value}`)})`).join(",\n    ")}
   )
-  .dependsOn(
-    ${dependencies.map((value) => JSON.stringify(value)).join(",\n    ")}
-  )
+${dependencies.length > 0
+    ? `  .dependsOn(\n    ${dependencies.map((value) => JSON.stringify(value)).join(",\n    ")}\n  )`
+    : "  .dependsOn()"}
   .edits(
     ${editRoots.map((value) => `editRoot(${JSON.stringify(value)})`).join(",\n    ")}
   )

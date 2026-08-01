@@ -489,7 +489,9 @@ The HTML documentation is a generated product interface. It must explain the exe
 
 Documentation must provide detailed project structure, skill operation, OntologyJS, IntentJS, LongTextJS, CircuitJS, response-circuit, runtime, CLI, testing, evaluation, and tutorial pages. DSL reference pages must include comprehensive tables of the current exported constructors and fluent operations, their parameters, result types, invariants, and concrete usage. Tables must be generated from or checked against live SDK exports so documentation drift is visible.
 
-The five Understand pages must explain the system as a connected implementation story derived from the preserved architecture and workspace specifications. They must explain why authoring and deterministic execution are separate, why the semantic programs exist, how folder ownership controls reuse, how decoded source evidence becomes grounded claims, how planning composes compatible circuits, and how result circuits produce the public CNL answer. Headings and coherent prose carry that explanation. Bullet inventories and process tables may support the prose only when they clarify a dense vocabulary; they must not substitute for the narrative. Tables in these chapters are limited to simple two-column concept/explanation references.
+The six Understand pages must explain the system as a connected implementation story derived from the preserved architecture and workspace specifications. They must explain why authoring and deterministic execution are separate, why the semantic programs exist, how folder ownership controls reuse, how decoded source evidence becomes grounded claims, how planning composes compatible circuits, and how result circuits produce the public CNL answer. A dedicated coding-agent chapter must explain the adapter process, canonical working directory, skill dependency closure, live context generation, mandatory reading order, direct semantic-code editing, phase handoff, retained logs, and the distinction between process completion and deterministic semantic acceptance. It must connect that process to both reusable agent authoring and source-specific task authoring instead of treating Codex as an unexplained external box.
+
+Every Understand chapter must develop its subject through connected causes and consequences. A subsection must explain what state exists when it begins, which component changes that state, which semantic boundary constrains the change, what inspectable artifact results, and why the next component can rely on it. Short slogans, one-sentence component summaries, repeated “what/why” templates, and component inventories presented as architecture are insufficient. Headings and coherent prose carry the explanation; concrete examples must recur across component boundaries so a reader can follow one instruction and source into authored programs, runtime values, findings, and public CNL. Bullet inventories and process tables may support the prose only when they clarify a dense vocabulary; they must not substitute for the narrative. Tables in these chapters are limited to simple two-column concept/explanation references.
 
 The global skill workflow page and every individual skill page must be generated from the live \`SKILL.md\` and \`workflow.mjs\`. They must explain the manifest fields and show their actual values, dependency-first installation, context selection and provenance, the purpose and observable output of every declared CLI tool, the generated instructions and run manifest, edit ownership, the exact authoring workflow, and the completion criterion. They must distinguish checks Codex is instructed to run, the owner-level check recorded in \`run.mjs\`, and phase-specific acceptance enforced by evaluation or adaptive authoring. Generic statements that a skill “uses context” or “runs checks” are insufficient.
 
@@ -563,6 +565,10 @@ Response: The coding agent's behavior depends on executable dependency, context,
 
 Response: Architecture is a chain of reasons and boundaries: ambiguity belongs to authoring, deterministic behavior belongs to executable semantic programs, reuse belongs to agents and packs, and source interpretation belongs to tasks. Tables enumerate components but do not explain those causal relationships. Coherent prose makes the model usable before the reader consults the detailed API references.
 
+### Question #11: Why does the coding agent need its own Understand chapter when skill pages already exist?
+
+Response: A skill page explains one executable workflow contract. The coding-agent chapter explains the complete actor across workflows: how nllAgent constructs its world, how dependency-ordered skills and live catalogs become context, how Codex changes canonical semantic programs, how ownership limits those changes, and how independent checks decide whether the resulting system is acceptable. Without that connecting account, individual skill manifests remain accurate but the authoring architecture remains fragmented.
+
 ## Conclusion
 
 The HTML documentation is complete only when it is detailed, evidence-backed, independently regenerable, and portable under arbitrary URL prefixes.`);
@@ -603,7 +609,8 @@ negative evidence used by a violation.
 Before a later suite invocation replaces the canonical report set, the runner must archive the previous executable
 agent-authoring and task-result records. Archived records continue to reference their original random-ID task and
 run folders. Evaluation reruns must not erase earlier coding-agent attempts, generated programs, logs, failures, or
-semantic results.
+semantic results. Retained replay must select the newest current or archived cohort that contains actual coding-agent
+process evidence; an intervening ordinary run with no authoring must not hide the most recent real cohort.
 
 The evaluator command is fail-closed: any failed case produces a non-zero command result even when report generation
 completed. \`evaluate --replay-retained\` may re-execute the exact random-ID tasks from the preceding real authoring
@@ -640,6 +647,13 @@ Response: Retained subprocess evidence, generated canonical code absent before t
 ### Question #5: Why have a retained replay mode if ordinary task replay already exists?
 
 Response: Ordinary replay validates one task. Retained suite replay reuses the exact real-authoring cohort and strict per-case oracles, regenerates aggregate reports against current runtime code, and proves explicitly that no new coding agent was invoked.
+
+### Question #6: What happens if an ordinary evaluation is run after the real authoring evaluation?
+
+Response: Its report is archived like every other iteration, but it is not eligible to become the source of retained
+authoring because it has no adapter process evidence. The replay selector searches the current report and archived
+iterations from newest to oldest, then uses the newest cohort whose agent or task authoring records name the adapter,
+run path, and exit code. The summary records which report directory supplied that provenance.
 
 ## Conclusion
 

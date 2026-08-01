@@ -16,7 +16,9 @@ Adaptive authoring must treat a missing presentation policy as an incomplete Int
 
 Response circuits run only after semantic circuits have produced Findings and typed CNL frames. They may filter, rank, group, count, label, and render existing evidence. They must not change a finding status, invent a SourceSpan, convert absence under open coverage into a violation, or make an ontology assertion. Their output must be deterministic and part of model-free replay acceptance.
 
-Evidence enrichment may expose positive and explicit negative source claims already retained by the finding, plus human-readable rule and requirement details. It must not perform new ontology matching or natural-language extraction. Procedural style orders relevant generated steps and their supporting quotations; analytical/evidence-led styles expose each material finding and structured failed or uncertain requirements. All styles omit empty result groups and raw assurance projections.
+Evidence enrichment may expose positive and explicit negative source claims already retained by the finding, plus human-readable rule and requirement details. Semantic circuits own the public statements associated with domain requirement codes. Response circuits may select those statements, group them by the already established status, insert them into fixed controlled-language templates, count them, quote them in a requested action, and attach stable filtering markers. They must not derive a domain statement by tokenizing an internal code, change its meaning, or silently render an unmapped code as prose. A missing public statement for a code-shaped requirement is a typed response-contract failure.
+
+Evidence enrichment must not perform new ontology matching or natural-language extraction. Procedural style orders relevant generated steps and their supporting quotations; analytical/evidence-led styles expose each material finding and structured failed or uncertain requirements. Exact source material is rendered in separately marked quotation blocks, distinct from generated explanations. All styles omit empty result groups and raw assurance projections.
 
 The composer enforces this boundary after every stage. Every public entry must reference a Finding from the completed semantic execution, every generated frame must reference an emitted input frame, and every group member must reference a selected entry. A stage returning an invented finding, invented frame, invalid group, or non-Set feature collection fails with a typed response-stage diagnostic instead of rendering the value.
 
@@ -43,6 +45,10 @@ Response: Dynamic composition is safe only when the framework can validate order
 ### Question #5: Why is `markdown-cnl` alone insufficient in adaptive IntentJS?
 
 Response: It names the artifact but does not say which results, evidence, groups, counts, or style make the artifact useful. Presentation directives or a local response circuit make those decisions executable, inspectable, and replayable.
+
+### Question #6: Why does response composition reject an unmapped requirement code instead of humanizing it automatically?
+
+Response: Automatic tokenization can improve typography but cannot recover domain meaning, scope, modality, or time. Rejection makes the missing semantic contract visible to the circuit author. Human-readable sentences already present in findings continue to work, so the rule does not force a separate label table where the finding already carries proper CNL.
 
 ## Conclusion
 

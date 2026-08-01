@@ -1,0 +1,9 @@
+import { findingResult, findingSet } from "../../../../../../../framework/sdk/circuit/results.mjs";
+
+export default findingSet(
+  findingResult("CoreGroundingFinding.not-applicable", "NOT_APPLICABLE", [], { "claims": 0, "grounded": 0 }, "", "circuit:core-language.CoreGroundingFinding@1.0.0"),
+  findingResult("EXCEPTION_JUSTIFICATION_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "invocations": [], "requirements": [], "failedRequirements": [], "uncertainRequirements": [], "conflictingRequirements": [], "satisfiedRequirements": [] }, "A recorded emergency exception invocation lacks the justification record required by the applicable policy.", "circuit:nl-rule-review.ExceptionJustificationReview@1.0.0"),
+  findingResult("PROCEDURE_PLAN_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "requests": [], "failedRequirements": [], "uncertainRequirements": [], "conflictingRequirements": [], "satisfiedRequirements": [] }, "No asserted procedure-generation request applies to the available operational rules.", "circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0"),
+  findingResult("RULE_CONTRADICTION_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "comparablePairs": 0, "rules": [], "failedRequirements": [], "uncertainRequirements": [], "conflictingRequirements": [], "satisfiedRequirements": [] }, "No pair of operational rules governs the same action under the same condition.", "circuit:nl-rule-review.RuleContradictionReview@1.0.0"),
+  findingResult("SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE", "NOT_APPLICABLE", [], { "conclusions": [], "failedRequirements": [], "uncertainRequirements": [], "conflictingRequirements": [], "satisfiedRequirements": [] }, "The source states a safety conclusion but provides no distinct supporting evidence for it.", "circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0")
+);

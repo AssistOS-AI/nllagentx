@@ -20,10 +20,12 @@
 <h2>Input ownership and requested behavior</h2>
 <p><strong>Agent input:</strong> <code>agent/source/agent-brief.md</code> asks Codex to create reusable operational-policy vocabulary and four source-independent circuit capabilities. <strong>Task input:</strong> <code>task/task-instruction.txt</code> selects what this run must do, and <code>task/source/source-001.txt</code> is the exact evidence it must interpret. The agent brief is shared by all four cases; the task instruction and source are case-specific.</p>
 <h2>Retained input, executable interpretation, and public answer</h2>
-<p><strong>Input</strong> contains only natural-language material. <strong>Intermediate</strong> first lists reusable <code>agent/</code> programs authored from the brief, then <code>task/</code> programs authored for this source. <strong>Output</strong> contains only <code>task/results/response.md</code>. The full repository path remains attached as metadata, but the visible labels keep only the ownership boundary needed to understand the example.</p>
+<p>The left-hand tree keeps <strong>Input</strong>, <strong>Intermediate</strong>, and <strong>Output</strong> visible together. Input contains only natural-language material. Intermediate first lists reusable <code>agent/</code> programs authored from the brief, then <code>task/</code> programs authored for this source. Output contains only <code>task/results/response.md</code>. Each branch names the command that produced or replayed it, while the visible file labels keep only the ownership boundary needed to understand the example.</p>
 <section class="artifact-browser" data-artifact-browser data-initial-file="artifact-browser-3-file-1">
-<div class="artifact-browser__tabs" role="tablist" aria-label="Artifact stages"><button type="button" role="tab" aria-selected="true" aria-controls="artifact-browser-3-input" data-artifact-group="artifact-browser-3-input">Input</button><button type="button" role="tab" aria-selected="false" aria-controls="artifact-browser-3-intermediate" data-artifact-group="artifact-browser-3-intermediate">Intermediate</button><button type="button" role="tab" aria-selected="false" aria-controls="artifact-browser-3-output" data-artifact-group="artifact-browser-3-output">Output</button></div>
-<div class="artifact-browser__body"><nav class="artifact-browser__inventory" aria-label="Files"><div id="artifact-browser-3-input" class="artifact-browser__files" role="tabpanel"><button type="button" data-artifact-file="artifact-browser-3-file-1" aria-current="true" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/source/agent-brief.md"><code>agent/source/agent-brief.md</code></button><button type="button" data-artifact-file="artifact-browser-3-file-2" aria-current="false" title="task/task-instruction.txt"><code>task/task-instruction.txt</code></button><button type="button" data-artifact-file="artifact-browser-3-file-3" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/source/source-001.txt"><code>task/source/source-001.txt</code></button></div><div id="artifact-browser-3-intermediate" class="artifact-browser__files" role="tabpanel" hidden><button type="button" data-artifact-file="artifact-browser-3-file-4" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/agent.mjs"><code>agent/agent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-5" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/profiles/minimal-core.profile.mjs"><code>agent/profiles/minimal-core.profile.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-6" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs"><code>agent/ontologies/operational-policy.ontology.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-7" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs"><code>agent/circuits/exception-justification.circuit.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-8" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs"><code>task/task.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-9" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs"><code>task/intent/intent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-10" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs"><code>task/longtext/root.longtext.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-11" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs"><code>task/longtext/units/source-001-emergency-access.longtext.mjs</code></button></div><div id="artifact-browser-3-output" class="artifact-browser__files" role="tabpanel" hidden><button type="button" data-artifact-file="artifact-browser-3-file-12" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md"><code>task/results/response.md</code></button></div></nav>
+<div class="artifact-browser__body"><nav class="artifact-browser__inventory" aria-label="Input, intermediate, and output artifact tree" role="tree"><details class="artifact-browser__branch" open><summary>Input</summary><div class="artifact-browser__provenance"><pre><code># This suite invocation created isolated folders and retained the exact brief, task instruction, and source before authoring.
+node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent</code></pre></div><div class="artifact-browser__files" role="group" aria-label="Input files"><button type="button" data-artifact-file="artifact-browser-3-file-1" aria-current="true" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/source/agent-brief.md"><code>agent/source/agent-brief.md</code></button><button type="button" data-artifact-file="artifact-browser-3-file-2" aria-current="false" title="task/task-instruction.txt"><code>task/task-instruction.txt</code></button><button type="button" data-artifact-file="artifact-browser-3-file-3" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/source/source-001.txt"><code>task/source/source-001.txt</code></button></div></details><details class="artifact-browser__branch" open><summary>Intermediate</summary><div class="artifact-browser__provenance"><pre><code># The same real invocation ran Codex architect, ontology, circuit, intent, and LongText phases, then accepted these executable programs.
+node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent</code></pre></div><div class="artifact-browser__files" role="group" aria-label="Intermediate files"><button type="button" data-artifact-file="artifact-browser-3-file-4" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/agent.mjs"><code>agent/agent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-5" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/profiles/minimal-core.profile.mjs"><code>agent/profiles/minimal-core.profile.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-6" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs"><code>agent/ontologies/operational-policy.ontology.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-7" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs"><code>agent/circuits/exception-justification.circuit.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-8" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs"><code>task/task.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-9" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs"><code>task/intent/intent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-10" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs"><code>task/longtext/root.longtext.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-11" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs"><code>task/longtext/units/source-001-emergency-access.longtext.mjs</code></button></div></details><details class="artifact-browser__branch" open><summary>Output</summary><div class="artifact-browser__provenance"><pre><code># This ordinary model-free run executes the retained programs and regenerates the public response shown here.
+node nllAgent.mjs run --agent-dir evaluations/agentic-nl-e2e/agents/nl-rule-review-agent --task-dir evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt --assurance all</code></pre></div><div class="artifact-browser__files" role="group" aria-label="Output files"><button type="button" data-artifact-file="artifact-browser-3-file-12" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md"><code>task/results/response.md</code></button></div></details></nav>
 <div class="artifact-browser__viewer"><p class="artifact-browser__path" data-artifact-path>agent/source/agent-brief.md</p><pre><code class="language-markdown" data-artifact-content># Natural-language brief for the rule-review agent
 
 Create a reusable semantic agent for reviewing short operational policies and event records. The agent must be authored with the local nllAgent SDK and must remain isolated to the `core-language` framework pack plus agent-local OntologyJS and CircuitJS modules. Do not encode source-specific facts in the reusable agent.
@@ -696,41 +698,64 @@ export default describe(&quot;source-001-emergency-access-policy-and-log&quot;)
 
 [CNL:FINDING] [CODE:MISSING_EXCEPTION_JUSTIFICATION] [STATUS:VIOLATED] [GROUP:violations] [MATERIAL]
 ### Missing exception justification
-**Status:** VIOLATED
+**Status:** Not satisfied
 A recorded emergency exception invocation lacks the justification record required by the applicable policy.
 
 - **Rule evaluated:** Emergency exception justification
 - **Circuit:** `nl-rule-review.ExceptionJustificationReview`
 - **Decision:** The circuit emitted this result because Emergency exception justification evaluated as not supported.
 
-**Why this result**
+**Assessment of required conditions**
 
-- **Failed requirement:**
-  - A source-grounded justification record must link to the invocation.
-- **Confirmed requirements:**
-  - An emergency exception invocation must be source-grounded.
-  - An applicable policy requires a justification record for the invocation.
-  - Justification-record coverage must be closed before absence is treated as a violation.
+[CNL:REQUIREMENT-GROUP] [STATUS:VIOLATED] [COUNT:1]
+
+**Required conditions not satisfied**
+
+The analysis found that the following required condition is not satisfied:
+
+- A source-grounded justification record must link to the invocation.
+
+[CNL:REQUIREMENT-GROUP] [STATUS:SATISFIED] [COUNT:3]
+
+**Required conditions supported**
+
+The available input supports the following required conditions:
+
+- An emergency exception invocation must be source-grounded.
+- An applicable policy requires a justification record for the invocation.
+- Justification-record coverage must be closed before absence is treated as a violation.
 
 **Assessment details**
 
 - Checked invocations: 1
 
-**Evidence from the input**
+[CNL:EVIDENCE] [COUNT:3]
+
+**Exact evidence copied from the input**
+
+The passages below are copied exactly from the input. They are evidence for the generated conclusion above.
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 &gt; Every use of the emergency-access exception must have a recorded reason linked to that invocation.
 &gt;
-&gt; — [source-001](../source/source-001.txt), characters 46–144
+&gt; — Exact source text copied from [source-001](../source/source-001.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 &gt; At 09:02, operator Ana invoked the emergency-access exception and opened the north gate.
 &gt;
-&gt; — [source-001](../source/source-001.txt), characters 157–245
+&gt; — Exact source text copied from [source-001](../source/source-001.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 &gt; It contains no reason or justification record for the invocation.
 &gt;
-&gt; — [source-001](../source/source-001.txt), characters 284–349
+&gt; — Exact source text copied from [source-001](../source/source-001.txt)
 
-**Next action:** Address the failed requirement: A source-grounded justification record must link to the invocation.
+[CNL:NEXT-ACTION] [COUNT:1]
+
+**Next action:** Resolve this failed condition and provide source evidence for the corrected state: “A source-grounded justification record must link to the invocation.”
 </template></section>
 <h2>From the agent brief to reusable behavior</h2>
 <p><code>agent/ontologies/operational-policy.ontology.mjs</code> supplies stable identities for operational rules, exception invocations, justification records, safety conclusions, support relations, and procedure requests. <code>agent/circuits/exception-justification.circuit.mjs</code> implements the selected capability over semantic store values; it does not search the raw source. <code>agent/agent.mjs</code> and the minimal profile load only core language plus this agent-owned knowledge, which keeps source-specific facts inside the task.</p>

@@ -146,3 +146,110 @@ to incidental word order.
 **Remedy and control:** the validator now requires the two complete decisive source sentences exactly: the expired
 certificate and the absent receiving-party acknowledgement. This strengthens evidence validation without asking the
 renderer to synthesize a validator-specific paraphrase.
+
+## 11. Machine anchor coordinates leaked into the human citation
+
+**Observed by:** coding-agent review of the retained tutorial responses.
+
+**Symptom:** each public finding already reproduced the exact verified source substring, but its attribution ended
+with a decoded interval such as `characters 42–77`. A reader had to interpret machine coordinates even though the
+useful evidence was visible immediately above them.
+
+**Problem class:** provenance needed for validation and replay can become interface noise when it crosses unchanged
+into a human-facing projection. Retaining technical detail does not require displaying every detail in the primary
+answer.
+
+**Remedy and control:** `SourceSpan` start/end values remain in executable and technical artifacts, while public
+Markdown CNL renders the exact verified substring, identifies it as exact source text, and links the source through
+a relative path. Renderer and tutorial tests reject character-range citations in the public response.
+
+## 12. Skill context declarations did not constrain the generated context
+
+**Observed by:** coding-agent review while tracing how the skill documentation obtained its claimed context.
+
+**Symptom:** every `workflow.mjs` declared a focused set of context artifacts, but the context builder materialized
+all standard catalogs for every phase. The documentation therefore described a manifest-selected context that the
+implementation did not actually enforce.
+
+**Problem class:** an executable manifest can look authoritative while one of its fields is only descriptive. This
+creates context bloat, obscures missing dependency declarations, and makes it impossible to verify what a coding
+agent truly received.
+
+**Remedy and control:** the builder now validates context artifact names and materializes exactly the union declared
+by the dependency-closed skill chain. `INSTRUCTIONS.md` enumerates that actual inventory. A temporary-workspace
+regression proves that the SDK phase receives only its three declared catalogs, and generated skill pages expose the
+live manifest, dependency order, context provenance, declared tools, and distinct verification layers.
+
+## 13. Internal requirement identifiers leaked into public CNL
+
+**Observed by:** human review of the retained adaptive cold-chain `response.md`, then verified by the real Codex
+circuit-authoring and final-review phases.
+
+**Symptom:** the semantic verdict and evidence were correct, but the explanation listed
+`RECEIVING_PARTY_ACKNOWLEDGED`, `THERMOMETER_CALIBRATION_VALID`, and `EXCURSION_QUARANTINE_PATH` as failed or
+unresolved requirements. The values were useful circuit/test identities but not useful sentences for a reader.
+
+**Problem class:** a technical semantic descriptor crossed the presentation boundary without a public-language
+contract. Generic formatting cannot reconstruct domain modality, actor, scope, or time from an identifier.
+
+**Remedy and control:** the cold-chain circuit now owns complete public requirement statements and uses them in both
+the Markdown response and canonical observation. The general renderer groups those statements through controlled
+status templates, quotes them in counted next actions, and throws `PUBLIC_REQUIREMENT_STATEMENT_REQUIRED` for a raw
+unmapped code. Focused tests cover successful mapping, fail-closed behavior, absence of the internal identifiers,
+and the real cold-chain result.
+
+## 14. Documentation contracts passed while the architecture story remained shallow
+
+**Observed by:** human review of every page in the Understand menu after the first narrative documentation pass.
+
+**Symptom:** the pages contained correct component names and several paragraphs, yet they still read as compressed
+inventories. Phrases such as “natural-language interpretation benefits from a coding agent” named a boundary without
+explaining the actual input state, how Codex obtains SDK/ontology knowledge, what it writes, how ownership changes
+reuse, or how the next runtime layer consumes the artifact.
+
+**Problem class:** structural documentation checks can count prose and reject diagrams while still accepting a
+caricature of the architecture. Correct nouns and headings are not a usable causal model.
+
+**Remedy and control:** DS040 now requires six connected chapters and a dedicated coding-agent story. The generated
+pages follow recurring concrete cases through source, authoring, DSL values, transaction, planning, execution,
+response composition, evidence, and replay. A focused test includes the coding-agent page and requires its adapter,
+skill closure, live catalog, instruction, direct-editing, process/acceptance, and model-free boundaries; paragraph
+and table checks remain only lower-level guards.
+
+## 15. An adaptive authoring phase can correctly conclude that no code is missing
+
+**Observed by:** the real Codex ontology phase and mandatory final review in the resumed cold-chain evaluation.
+
+**Symptom:** the adaptive workflow always asks Codex to audit the resolved ontology and later review the complete
+execution. A naive implementation could interpret every invoked phase as an obligation to create or rewrite a file,
+even though this task already had 17 domain concepts, four roles, correct core identity reuse, complete anchored
+LongTextJS, and passing ontology tests.
+
+**Problem class:** agentic authoring can introduce semantic churn when phase completion is confused with file
+mutation. Extra ontology concepts or source-specific facts would make the task less reusable while still appearing
+to be productive work.
+
+**Remedy and control:** the ontology goal explicitly permits task-local additions only for genuinely missing
+meanings, and the review goal tells Codex to avoid semantic churn when acceptance is already satisfied. In the real
+run, Codex regenerated the facade deterministically, found no diff, retained the existing ontology and IntentJS, and
+reported the no-change decision with 5/5 focused ontology tests, 20/20 task tests, 50/50 framework tests, and 26/26
+valid source anchors. A no-change audit is therefore a successful evidence-bearing outcome, not an incomplete phase.
+
+## 16. An ordinary evaluation hid the retained real-authoring cohort
+
+**Observed by:** final replay validation of the four agentic tutorial cases.
+
+**Symptom:** invoking the suite without `--invoke-agent` or `--replay-retained` correctly created four fresh tasks,
+but they had no generated IntentJS or LongTextJS and therefore returned only non-applicable findings. The runner
+archived the preceding successful real-authoring report and made this ordinary result canonical. A subsequent
+retained replay would previously have reused the fresh incomplete tasks instead of the archived Codex-authored ones.
+
+**Problem class:** a mutable “latest report” pointer is not the same thing as retained authoring provenance. Report
+chronology alone cannot distinguish an authored cohort from a deterministic run that intentionally invoked no
+coding agent.
+
+**Remedy and control:** retained replay now searches current and archived reports newest-first and requires an
+adapter, run path, and exit code in agent- or task-authoring evidence. A focused temporary-workspace regression
+reproduces the overwritten-pointer case. The repaired replay automatically recovered the archived four-task cohort
+and passed precision, recall, F1, anchor validity, semantic replay, Markdown CNL contract, CNL replay, and authoring
+completion at 1.0.

@@ -17,11 +17,62 @@
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">Use when adding or changing public semantic constructors, fluent builders, handles, collections, CNL frames, descriptors or generated catalogs.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-002</code>, <code>DS039</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: none. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
-<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody><tr><td>1</td><td><code>discover</code></td><td>Resolved task, catalogs and dependency skills</td><td>Inputs required by <code>author</code></td></tr><tr><td>2</td><td><code>author</code></td><td>Files and diagnostics from <code>discover</code></td><td>Inputs required by <code>validate</code></td></tr><tr><td>3</td><td><code>validate</code></td><td>Files and diagnostics from <code>author</code></td><td>Inputs required by <code>handoff</code></td></tr><tr><td>4</td><td><code>handoff</code></td><td>Files and diagnostics from <code>validate</code></td><td>Validated canonical files and a concise handoff</td></tr></tbody></table>
-<h2>Required tools</h2><ul><li><code>nllAgent catalog sdk</code></li><li><code>nllAgent catalog response</code></li><li><code>nllAgent sdk check</code></li><li><code>nllAgent sdk usage</code></li><li><code>nllAgent ontology build</code></li><li><code>nllAgent ontology check</code></li><li><code>nllAgent test framework --level fast</code></li></ul>
-<h2>Canonical edit roots</h2><ul><li><code>framework/sdk</code></li></ul>
-<h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
+<h2>What the executable manifest controls</h2>
+<p>When this skill is a phase root, nllAgent imports its adjacent <code>workflow.mjs</code> through the local SDK's <code>CodingSkill</code> builder. The manifest values below are not copied documentation; they are the live values used to prepare a coding run. Dependency order determines which skill instructions Codex reads first. The dependency-closed context union determines which projections exist. Edit roots communicate ownership, while the tool declarations identify the project commands the workflow depends on.</p>
+<table><thead><tr><th>Manifest field</th><th>Live value and effect</th></tr></thead><tbody><tr><td>.specs(...) — design contracts</td><td><code>DS-002</code> <code>DS039</code> <code>DS043</code> <code>DS044</code></td></tr><tr><td>.context(...) — this skill's context</td><td><code>SDK_CATALOG.md</code> <code>ONTOLOGY_CATALOG.md</code> <code>RESPONSE_CIRCUIT_CATALOG.md</code></td></tr><tr><td>.tools(...) — routed CLI dependencies</td><td>7 commands, each explained in the tool section below</td></tr><tr><td>.dependsOn(...) — installed order</td><td><code>nll-sdk</code></td></tr><tr><td>.edits(...) — canonical owners</td><td><code>framework/sdk</code></td></tr><tr><td>.phase(...) — applicable lifecycle</td><td><code>discover</code> → <code>author</code> → <code>validate</code> → <code>handoff</code></td></tr></tbody></table>
+<h2>How this skill receives enough context</h2>
+<p>The context builder first resolves the selected profile plus framework, agent, and task modules. It then materializes only the following artifacts requested by this skill and its dependencies. Each artifact is generated from live objects or retained source state; Codex follows its identities and paths into canonical code whenever the phase requires more detail.</p>
+<table><thead><tr><th>Generated context</th><th>What it contains and why it is present</th></tr></thead><tbody><tr><td><code>SDK_CATALOG.md</code></td><td>A projection of the currently exported SDK surfaces, constructor families, descriptors, and import locations. It tells Codex which real local APIs exist before it opens the narrower implementation modules it must change or use.</td></tr><tr><td><code>ONTOLOGY_CATALOG.md</code></td><td>The ontology modules and semantic identities produced by the resolved framework profile, agent, and task precedence. Codex uses it to reuse exact concepts, roles, relations, frames, facts, laws, and capabilities instead of creating spelling-based duplicates.</td></tr><tr><td><code>RESPONSE_CIRCUIT_CATALOG.md</code></td><td>The default, agent, and task response circuits after same-identity precedence, including stage reads, writes, applicability, and presentation purpose. It exposes how material findings become grouped Markdown CNL without allowing presentation to invent truth.</td></tr></tbody></table>
+<p><code>INSTRUCTIONS.md</code> places these files after the installed skills and exact DS contracts in the mandatory reading order. The adjacent <code>run.mjs</code> records the Codex adapter, canonical working directory, dependency-ordered skill IDs, objective, edit owner, and owner-level fast test. This keeps the prompt short without hiding where deeper knowledge lives.</p>
+<h2>What its declared tools actually do</h2>
+<p>These commands are routed through the same CLI used by a programmer and by retained evaluations. Framework tests reject a declared command that has no real route. The skill uses their observable outputs as discovery or validation evidence, not as prose suggestions.</p>
+<table><thead><tr><th>Declared command</th><th>Purpose and observable evidence</th></tr></thead><tbody><tr><td><code>nllAgent catalog sdk</code></td><td>Reads live SDK descriptors and prints the public semantic surfaces and import paths. This is the discovery view used before choosing or extending a constructor.</td></tr><tr><td><code>nllAgent catalog response</code></td><td>Prints resolved response circuits and their stage dataflow. The skill uses it to reuse or extend filtering, grouping, evidence selection, and Markdown CNL policy without changing semantic truth.</td></tr><tr><td><code>nllAgent sdk check</code></td><td>Imports the SDK registry and validates export, descriptor, namespace, and constructor consistency before a new primitive is treated as public.</td></tr><tr><td><code>nllAgent sdk usage</code></td><td>Prints focused live usage for a requested SDK surface, including import shape and fluent composition, so Codex can load a narrow implementation context on demand.</td></tr><tr><td><code>nllAgent ontology build</code></td><td>Executes ontology modules and regenerates the constructor facade used by LongTextJS and circuits; an importable facade is concrete evidence that the schema is usable.</td></tr><tr><td><code>nllAgent ontology check</code></td><td>Runs uniqueness, subtype, disjointness, frame-role, lexicalization, and cross-module diagnostics over the resolved ontology set.</td></tr><tr><td><code>nllAgent test framework --level fast</code></td><td>Runs the selected deterministic Node test scope. Tests never invoke Codex; they assert semantic structure, evidence, diagnostics, response behavior, and replay independently of authoring.</td></tr></tbody></table>
+<h2>The authoring workflow Codex follows</h2>
+<p>The following sequence is taken directly from this skill's <code>SKILL.md</code>. Earlier steps establish semantic responsibility and reuse; later steps author canonical modules and obtain deterministic evidence. Codex may open more canonical code as needed, but it may not replace these boundaries with JSON descriptions or ungrounded text.</p>
+<p><strong>Step 1.</strong> Search the catalog for an existing primitive or kit before adding one.</p>
+<p><strong>Step 2.</strong> Define the semantic sort, input/output contract, provenance behavior and canonical identity.</p>
+<p><strong>Step 3.</strong> Implement a fluent API returning opaque semantic handles rather than generic field objects. Response policy uses typed <code>ResponseDirective</code>, <code>ResponseStage</code> and <code>ResponseCircuitModel</code> objects, never untyped JSON.</p>
+<p><strong>Step 4.</strong> Register a descriptor with examples, diagnostics and determinism notes.</p>
+<p><strong>Step 5.</strong> Add concrete tests and, where useful, abstract/symbolic adapters or explicit unsupported behavior.</p>
+<p><strong>Step 6.</strong> Update generated catalogs and constructor facades.</p>
+<p><strong>Step 7.</strong> Run import, catalog and focused runtime tests.</p>
+<h2>How this skill verifies its result</h2>
+<p>SDK work must pass live export/descriptor checks and focused framework tests. A new fluent name is not accepted until its semantic sort, identity, provenance, diagnostics, and import surface execute consistently.</p>
+<p>There are three separate verification responsibilities. Codex runs the narrow commands declared above while it edits. The generated run manifest records the owner-level fast test. Evaluation or adaptive authoring, when used, independently inspects created and modified canonical files and applies phase-specific acceptance before it claims successful natural-language authoring. An ordinary <code>code</code> invocation retains the agent's report but must not be confused with those stronger evaluation gates.</p>
+<h3>Completion criterion from the skill</h3>
+<p>The new SDK feature is reusable by ontology, LongText, semantic-circuit or response-circuit code; has no external dependency; is cataloged; and is tested through public APIs.</p>
+<p>At completion, run the fast checks named in <code>INSTRUCTIONS.md</code>, summarize changed canonical files and leave any genuinely blocked issue as a typed diagnostic or refinement demand. Do not claim success merely because code imports.</p>
+<h2>The complete live manifest</h2>
+<p>This is the executable module imported by the loader. It is shown in full so dependencies, context, tools, edit roots, and phases can be reviewed against the prose above.</p>
+<pre><code class="language-javascript">import { codingSkill, contextArtifact, cliTool, editRoot } from &quot;../../framework/sdk/agent/skill.mjs&quot;;
+
+export default codingSkill(&quot;nll-sdk&quot;)
+  .specs(
+    &quot;DS-002&quot;,
+    &quot;DS039&quot;,
+    &quot;DS043&quot;,
+    &quot;DS044&quot;
+  )
+  .context(
+    contextArtifact(&quot;SDK_CATALOG.md&quot;),
+    contextArtifact(&quot;ONTOLOGY_CATALOG.md&quot;),
+    contextArtifact(&quot;RESPONSE_CIRCUIT_CATALOG.md&quot;)
+  )
+  .tools(
+    cliTool(&quot;nllAgent catalog sdk&quot;),
+    cliTool(&quot;nllAgent catalog response&quot;),
+    cliTool(&quot;nllAgent sdk check&quot;),
+    cliTool(&quot;nllAgent sdk usage&quot;),
+    cliTool(&quot;nllAgent ontology build&quot;),
+    cliTool(&quot;nllAgent ontology check&quot;),
+    cliTool(&quot;nllAgent test framework --level fast&quot;)
+  )
+  .dependsOn()
+  .edits(
+    editRoot(&quot;framework/sdk&quot;)
+  )
+  .phase(&quot;discover&quot;, &quot;author&quot;, &quot;validate&quot;, &quot;handoff&quot;)
+  .seal();</code></pre>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS024-nll-sdk.md">its DS entry</a>, synchronized with <code>nll-skills/nll-sdk/SKILL.md</code> and <code>workflow.mjs</code>.</p>
     </article>
   </main>

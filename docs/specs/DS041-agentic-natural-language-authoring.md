@@ -40,7 +40,8 @@ negative evidence used by a violation.
 Before a later suite invocation replaces the canonical report set, the runner must archive the previous executable
 agent-authoring and task-result records. Archived records continue to reference their original random-ID task and
 run folders. Evaluation reruns must not erase earlier coding-agent attempts, generated programs, logs, failures, or
-semantic results.
+semantic results. Retained replay must select the newest current or archived cohort that contains actual coding-agent
+process evidence; an intervening ordinary run with no authoring must not hide the most recent real cohort.
 
 The evaluator command is fail-closed: any failed case produces a non-zero command result even when report generation
 completed. `evaluate --replay-retained` may re-execute the exact random-ID tasks from the preceding real authoring
@@ -77,6 +78,13 @@ Response: Retained subprocess evidence, generated canonical code absent before t
 ### Question #5: Why have a retained replay mode if ordinary task replay already exists?
 
 Response: Ordinary replay validates one task. Retained suite replay reuses the exact real-authoring cohort and strict per-case oracles, regenerates aggregate reports against current runtime code, and proves explicitly that no new coding agent was invoked.
+
+### Question #6: What happens if an ordinary evaluation is run after the real authoring evaluation?
+
+Response: Its report is archived like every other iteration, but it is not eligible to become the source of retained
+authoring because it has no adapter process evidence. The replay selector searches the current report and archived
+iterations from newest to oldest, then uses the newest cohort whose agent or task authoring records name the adapter,
+run path, and exit code. The summary records which report directory supplied that provenance.
 
 ## Conclusion
 

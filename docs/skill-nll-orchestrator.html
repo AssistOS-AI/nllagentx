@@ -17,11 +17,68 @@
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">Use when implementing or changing the CLI, workspace layout, source ingestion, run context, coding-agent adapter, skill installation, locks, logs or process lifecycle.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-001</code>, <code>DS035</code>, <code>DS036</code>, <code>DS037</code>, <code>DS041</code>, <code>DS042</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: none. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
-<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody><tr><td>1</td><td><code>discover</code></td><td>Resolved task, catalogs and dependency skills</td><td>Inputs required by <code>author</code></td></tr><tr><td>2</td><td><code>author</code></td><td>Files and diagnostics from <code>discover</code></td><td>Inputs required by <code>validate</code></td></tr><tr><td>3</td><td><code>validate</code></td><td>Files and diagnostics from <code>author</code></td><td>Inputs required by <code>handoff</code></td></tr><tr><td>4</td><td><code>handoff</code></td><td>Files and diagnostics from <code>validate</code></td><td>Validated canonical files and a concise handoff</td></tr></tbody></table>
-<h2>Required tools</h2><ul><li><code>nllAgent files index</code></li><li><code>nllAgent context build</code></li><li><code>nllAgent context show</code></li><li><code>nllAgent source ingest</code></li><li><code>nllAgent source outline</code></li><li><code>nllAgent review bundle</code></li></ul>
-<h2>Canonical edit roots</h2><ul><li><code>framework/cli</code></li><li><code>framework/tools</code></li><li><code>runs</code></li></ul>
-<h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
+<h2>What the executable manifest controls</h2>
+<p>When this skill is a phase root, nllAgent imports its adjacent <code>workflow.mjs</code> through the local SDK's <code>CodingSkill</code> builder. The manifest values below are not copied documentation; they are the live values used to prepare a coding run. Dependency order determines which skill instructions Codex reads first. The dependency-closed context union determines which projections exist. Edit roots communicate ownership, while the tool declarations identify the project commands the workflow depends on.</p>
+<table><thead><tr><th>Manifest field</th><th>Live value and effect</th></tr></thead><tbody><tr><td>.specs(...) — design contracts</td><td><code>DS-001</code> <code>DS035</code> <code>DS036</code> <code>DS037</code> <code>DS041</code> <code>DS042</code> <code>DS043</code> <code>DS044</code></td></tr><tr><td>.context(...) — this skill's context</td><td><code>PROJECT_MAP.md</code> <code>RESPONSE_CIRCUIT_CATALOG.md</code> <code>DIAGNOSTICS.md</code></td></tr><tr><td>.tools(...) — routed CLI dependencies</td><td>6 commands, each explained in the tool section below</td></tr><tr><td>.dependsOn(...) — installed order</td><td><code>nll-orchestrator</code></td></tr><tr><td>.edits(...) — canonical owners</td><td><code>framework/cli</code> <code>framework/tools</code> <code>runs</code></td></tr><tr><td>.phase(...) — applicable lifecycle</td><td><code>discover</code> → <code>author</code> → <code>validate</code> → <code>handoff</code></td></tr></tbody></table>
+<h2>How this skill receives enough context</h2>
+<p>The context builder first resolves the selected profile plus framework, agent, and task modules. It then materializes only the following artifacts requested by this skill and its dependencies. Each artifact is generated from live objects or retained source state; Codex follows its identities and paths into canonical code whenever the phase requires more detail.</p>
+<table><thead><tr><th>Generated context</th><th>What it contains and why it is present</th></tr></thead><tbody><tr><td><code>PROJECT_MAP.md</code></td><td>An ownership-aware, repository-relative inventory of framework, agent, task, source, run, and result paths. Codex uses it to find canonical files without guessing where a similarly named artifact belongs.</td></tr><tr><td><code>RESPONSE_CIRCUIT_CATALOG.md</code></td><td>The default, agent, and task response circuits after same-identity precedence, including stage reads, writes, applicability, and presentation purpose. It exposes how material findings become grouped Markdown CNL without allowing presentation to invent truth.</td></tr><tr><td><code>DIAGNOSTICS.md</code></td><td>Existing source, import, planning, execution, or acceptance failures retained for the next coding or review phase. An empty file states that no prior diagnostic exists; it never silently hides a failed resolution.</td></tr></tbody></table>
+<p><code>INSTRUCTIONS.md</code> places these files after the installed skills and exact DS contracts in the mandatory reading order. The adjacent <code>run.mjs</code> records the Codex adapter, canonical working directory, dependency-ordered skill IDs, objective, edit owner, and owner-level fast test. This keeps the prompt short without hiding where deeper knowledge lives.</p>
+<h2>What its declared tools actually do</h2>
+<p>These commands are routed through the same CLI used by a programmer and by retained evaluations. Framework tests reject a declared command that has no real route. The skill uses their observable outputs as discovery or validation evidence, not as prose suggestions.</p>
+<table><thead><tr><th>Declared command</th><th>Purpose and observable evidence</th></tr></thead><tbody><tr><td><code>nllAgent files index</code></td><td>Walks the selected project and emits an ownership-aware file index. The skill uses it to locate canonical edit targets and avoid confusing framework, agent, task, run, and generated-result files.</td></tr><tr><td><code>nllAgent context build</code></td><td>Creates a run folder, installs the dependency-closed skill set, selects DS files, and materializes the declared live context artifacts without invoking Codex.</td></tr><tr><td><code>nllAgent context show</code></td><td>Lists the exact context files in the prepared run so a programmer or Codex can verify what was made available rather than relying on a prompt claim.</td></tr><tr><td><code>nllAgent source ingest</code></td><td>Decodes retained source bytes, chooses a task extractor or built-in decoder, creates stable source units and digests, and writes the executable source map; it performs no semantic inference.</td></tr><tr><td><code>nllAgent source outline</code></td><td>Prints decoded sources and stable units with their bounds so authoring can account for the entire input before selecting exact evidence.</td></tr><tr><td><code>nllAgent review bundle</code></td><td>Builds a failure-oriented context that survives a broken task import and retains diagnostics, selected skills, DS contracts, and canonical paths for a repair run.</td></tr></tbody></table>
+<h2>The authoring workflow Codex follows</h2>
+<p>The following sequence is taken directly from this skill's <code>SKILL.md</code>. Earlier steps establish semantic responsibility and reuse; later steps author canonical modules and obtain deterministic evidence. Codex may open more canonical code as needed, but it may not replace these boundaries with JSON descriptions or ungrounded text.</p>
+<p><strong>Step 1.</strong> Verify the canonical repository and path-resolution rules.</p>
+<p><strong>Step 2.</strong> Implement one CLI command as a thin orchestration layer over reusable modules.</p>
+<p><strong>Step 3.</strong> Ensure every semantic command requires --agent and task commands require --task where applicable.</p>
+<p><strong>Step 4.</strong> Build run directories, copy only selected skills and generate INSTRUCTIONS.md.</p>
+<p><strong>Step 5.</strong> Invoke Codex through CodingAgentAdapter in direct-editing mode; do not stage or approve patches.</p>
+<p><strong>Step 6.</strong> Implement fresh-process execution, lock handling, logs and deterministic exit statuses.</p>
+<p><strong>Step 7.</strong> Write <code>results/response.md</code> as the default stdout result and keep findings modules, assurance, traces and logs as separately linked technical artifacts. Load response circuits from framework, agent and task scopes in declared precedence.</p>
+<p><strong>Step 8.</strong> Add unit and end-to-end workspace tests using temporary directories.</p>
+<h2>How this skill verifies its result</h2>
+<p>Workspace changes are accepted through temporary-directory CLI and path-resolution tests, lock and process evidence, portable context construction, and deterministic command exit behavior.</p>
+<p>There are three separate verification responsibilities. Codex runs the narrow commands declared above while it edits. The generated run manifest records the owner-level fast test. Evaluation or adaptive authoring, when used, independently inspects created and modified canonical files and applies phase-specific acceptance before it claims successful natural-language authoring. An ordinary <code>code</code> invocation retains the agent's report but must not be confused with those stronger evaluation gates.</p>
+<h3>Completion criterion from the skill</h3>
+<p>CLI commands create the exact paths in DS-001, Codex can be launched and awaited, post-run checks can be executed, and no hidden skill directory or JSON manifest is introduced.</p>
+<p>At completion, run the fast checks named in <code>INSTRUCTIONS.md</code>, summarize changed canonical files and leave any genuinely blocked issue as a typed diagnostic or refinement demand. Do not claim success merely because code imports.</p>
+<h2>The complete live manifest</h2>
+<p>This is the executable module imported by the loader. It is shown in full so dependencies, context, tools, edit roots, and phases can be reviewed against the prose above.</p>
+<pre><code class="language-javascript">import { codingSkill, contextArtifact, cliTool, editRoot } from &quot;../../framework/sdk/agent/skill.mjs&quot;;
+
+export default codingSkill(&quot;nll-orchestrator&quot;)
+  .specs(
+    &quot;DS-001&quot;,
+    &quot;DS035&quot;,
+    &quot;DS036&quot;,
+    &quot;DS037&quot;,
+    &quot;DS041&quot;,
+    &quot;DS042&quot;,
+    &quot;DS043&quot;,
+    &quot;DS044&quot;
+  )
+  .context(
+    contextArtifact(&quot;PROJECT_MAP.md&quot;),
+    contextArtifact(&quot;RESPONSE_CIRCUIT_CATALOG.md&quot;),
+    contextArtifact(&quot;DIAGNOSTICS.md&quot;)
+  )
+  .tools(
+    cliTool(&quot;nllAgent files index&quot;),
+    cliTool(&quot;nllAgent context build&quot;),
+    cliTool(&quot;nllAgent context show&quot;),
+    cliTool(&quot;nllAgent source ingest&quot;),
+    cliTool(&quot;nllAgent source outline&quot;),
+    cliTool(&quot;nllAgent review bundle&quot;)
+  )
+  .dependsOn()
+  .edits(
+    editRoot(&quot;framework/cli&quot;),
+    editRoot(&quot;framework/tools&quot;),
+    editRoot(&quot;runs&quot;)
+  )
+  .phase(&quot;discover&quot;, &quot;author&quot;, &quot;validate&quot;, &quot;handoff&quot;)
+  .seal();</code></pre>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS023-nll-orchestrator.md">its DS entry</a>, synchronized with <code>nll-skills/nll-orchestrator/SKILL.md</code> and <code>workflow.mjs</code>.</p>
     </article>
   </main>

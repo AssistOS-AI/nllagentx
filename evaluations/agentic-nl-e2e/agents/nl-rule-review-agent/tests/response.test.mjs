@@ -152,11 +152,14 @@ test("analysis response quotes both conflicting rules and suppresses non-applica
     /\[CNL:FINDING\] \[CODE:RULE_CONTRADICTION\] \[STATUS:CONFLICT\].*\[MATERIAL\]/
   );
   assert.match(rendered.response, /one requires it while the other forbids it/i);
-  assert.match(rendered.response, /Conflicting requirement.*Effects .* must be compatible\./is);
+  assert.match(rendered.response, /\[CNL:REQUIREMENT-GROUP\] \[STATUS:CONFLICT\] \[COUNT:1\]/);
+  assert.match(rendered.response, /Required conditions with conflicting evidence.*Effects .* must be compatible\./is);
   assert.doesNotMatch(rendered.response, /## Input basis|## Artifacts|No blocking diagnostic/);
   assert.match(rendered.response, /\*\*Rule evaluated:\*\* Incompatible rule effects/);
   assert.ok(rendered.response.includes(`> ${firstRuleText}`));
   assert.ok(rendered.response.includes(`> ${secondRuleText}`));
+  assert.match(rendered.response, /\[CNL:EVIDENCE\] \[COUNT:2\]/);
+  assert.match(rendered.response, /\[CNL:SOURCE-QUOTE\] \[SOURCE:conflicting-rules\]/);
   assert.doesNotMatch(rendered.response, /NOT_APPLICABLE|SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE/);
   assert.doesNotMatch(rendered.response, /nll\.source-span|Object\.freeze|symbolic-decision-coverage/);
   assert.deepEqual(responseContractFailures({

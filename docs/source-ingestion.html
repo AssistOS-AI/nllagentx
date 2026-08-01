@@ -12,35 +12,51 @@
   <main class="page">
     <article class="page__panel content">
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Source Ingestion and Provenance</nav>
-      <p class="kicker">Deterministic bytes-to-spans pipeline</p>
+      <p class="kicker">How retained bytes become exact evidence without hidden interpretation</p>
       <h1>Source Ingestion and Provenance</h1>
-      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
-      
-<p class="lead">Source ingestion turns retained files into deterministic decoded text before a coding agent can author LongTextJS with exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON or hidden semantic extraction.</p>
-<div class="callout"><strong>Boundary.</strong> Ingestion stops at text, units, digests, offsets and non-semantic outlines. It does not infer IntentJS, LongTextJS, ontology, circuits, findings or generated answers. Codex performs that semantic authoring in explicit skill phases; deterministic runtime commands reuse the resulting code.</div>
-<h2>Run and inspect ingestion</h2>
-<pre><code># Decode the retained source and rebuild its stable source map before semantic authoring.
+      <nav class="section-nav" aria-label="Understand pages"><span>Understand</span><a href="index.html">System guide</a><a href="architecture.html">Architecture</a><a href="agentic-authoring.html">Agentic authoring</a><a href="coding-agent.html">Coding agent</a><a href="project-structure.html">Project folders</a><a href="source-ingestion.html">Source ingestion</a></nav>
+      <p class="lead">Source ingestion creates the stable textual substrate on which semantic authoring depends. It answers “what exact text was decoded, where is this passage, and has it changed?” It deliberately does not answer “what does this sentence mean for the task?” That second question belongs to LongTextJS authoring under an explicit coding-agent phase.</p>
+
+<h2>Why provenance begins before semantic code</h2>
+<p>A <code>SourceSpan</code> can support a finding only if the runtime can reproduce the text it names. Plain UTF-8 files make this look trivial, but even there a later edit can shift offsets or replace a selected phrase. PDFs complicate the problem further because visible text can be assembled from compressed streams, font mappings, and drawing operators rather than one contiguous byte range. Treating a byte offset or a string search as permanent evidence would make replay fragile.</p>
+<p>nllAgent therefore defines decoded text as the coordinate space for semantic grounding. The source registry retains the original task-owned path, extractor identity and metadata, source digest, decoded-text digest, stable source units, and absolute decoded bounds. LongTextJS refers to that registry rather than opening arbitrary files. Anchor verification can then prove that a source ID, unit, interval, and selected-text hash still identify the passage the author intended.</p>
+
+<h2>Ingestion chooses an explicit decoder and fails visibly</h2>
+<p>The registry starts with the exact files declared by the task in stable lexical order. A task-owned module under <code>source/extractors/</code> has first opportunity to decode its known format. Otherwise built-in UTF-8 decoding handles text, Markdown, CNL, CSV, and HTML. The dependency-free PDF extractor validates the document, rejects encryption, decodes supported streams, interprets ordinary text operands, and retains page metadata.</p>
+<p>A decoder must return reproducible text or a typed failure. Empty extraction, encrypted PDFs, unsupported filters, scans without OCR, custom fonts that cannot be decoded, invalid extractor modules, and unsupported formats do not become successful blank sources. A task may add an OCR capture or specialized font map through an explicit extractor, making that extra authority reviewable and replayable instead of pretending Node.js built-ins inferred the missing glyphs.</p>
+
+<h2>Stable source units make large documents addressable</h2>
+<p>Validated decoded text is segmented deterministically into source units such as paragraphs, sections, pages, or another stable task-defined structure. The executable <code>source/source-map.mjs</code> records source and unit identities, paths, digests, extractor metadata, and decoded bounds. It is executable project data rather than JSON, but it remains non-semantic: a heading boundary says where text is, not whether the heading defines a legal exception.</p>
+<p>Source units help a coding agent navigate a long document without copying the entire file into every semantic module. A LongText unit can anchor several claims inside one source unit and export semantic handles. The root module commits units in deterministic order and reconciles cross-unit identity. If one unit changes, dependency tracking can invalidate the affected materialization while preserving unchanged evidence.</p>
+
+<h2>The source tools expose evidence before Codex chooses its meaning</h2>
+<pre><code># Decode the retained source files and rebuild the executable source map before semantic authoring.
 node nllAgent.mjs source ingest   --agent-dir examples/validation-agent   --task task-symbolic-validation
 
-# Inspect decoded units and absolute offsets so LongTextJS anchors can target the right text.
+# Inspect source units and decoded bounds so the author can navigate the exact retained text.
 node nllAgent.mjs source outline   --agent-dir examples/validation-agent   --task task-symbolic-validation
 
-# Find every exact occurrence of “alarm” and its offsets before choosing a source span.
+# Locate every exact occurrence of “alarm” and obtain candidate decoded spans for grounding.
 node nllAgent.mjs source search   --agent-dir examples/validation-agent   --task task-symbolic-validation   --text "alarm"
 
-# Revalidate every committed LongTextJS anchor after ingestion or source changes.
+# Recheck all committed LongTextJS anchors after ingestion or any source revision.
 node nllAgent.mjs source verify-anchors   --agent-dir examples/validation-agent   --task task-symbolic-validation</code></pre>
-<h2>What happens, step by step</h2>
-<table><thead><tr><th>Step</th><th>Input</th><th>What the tool does</th><th>Output</th></tr></thead><tbody>
-<tr><td>1. Read bytes</td><td>The exact retained source file</td><td>Look first for a task-owned extractor matching the extension. Otherwise select the built-in UTF-8 or supported PDF decoder.</td><td>Decoded text, or a typed diagnostic when decoding is unsupported.</td></tr>
-<tr><td>2. Validate decoding</td><td>Decoded text and extractor metadata</td><td>Reject empty, encrypted, scanned or otherwise undecodable content instead of inventing text.</td><td>Validated text plus reproducible decoder metadata.</td></tr>
-<tr><td>3. Create stable units</td><td>Validated decoded text</td><td>Segment the text, retain absolute character offsets and compute SHA-256 digests.</td><td>Executable <code>source/source-map.mjs</code>.</td></tr>
-<tr><td>4. Author meaning later</td><td>Source map and task instruction</td><td>A coding agent, in a separate phase, authors LongTextJS claims with exact anchors.</td><td>Grounded <code>longtext/*.mjs</code>; ingestion itself emits no finding.</td></tr>
-</tbody></table>
-<h2>Concrete validation-agent example</h2>
-<table><thead><tr><th>Input text</th><th>Ingestion output</th><th>Semantic consumer</th><th>Final public output</th></tr></thead><tbody><tr><td><code>source/incident.txt</code></td><td><code>source/source-map.mjs</code> with one stable source unit</td><td><code>longtext/root.longtext.mjs</code> anchors the alarm and opening sentences</td><td><code>results/response.md</code> quotes both sentences in the <code>ORDER_OK</code> finding</td></tr></tbody></table>
-<h2>Task-local extractor contract</h2>
-<p>Create <code>source/extractors/bin.extractor.mjs</code> when a task owns <code>.bin</code> material. The adapter receives the bytes and returns decoded text plus replay metadata:</p>
+<p><code>source outline</code> and <code>source search</code> are authoring aids. They reveal exact retained text and coordinates; they do not decide that an alarm event precedes a gate-opening event. A coding agent uses those observations together with the task instruction, ontology constructors, and LongText skill to decide which semantic terms and claims the passages support.</p>
+
+<h2>LongTextJS turns a passage into a grounded claim</h2>
+<p>In the validation example, the source says that the alarm sounded in Building A at 08:57 and that Ana opened the north gate at 09:00. Ingestion produces decoded text and one stable source unit. LongTextJS then creates two typed facility events, their actors, locations, and times, wraps them as source claims, and attaches each claim to its exact sentence. The facility-order circuit later queries those values and compares time, but ingestion never asserts that the order is valid.</p>
+<p>This separation becomes more important with negation and policy. In the cold-chain source, a search can locate “no acknowledgement by Vale Laboratory.” LongTextJS must decide that the passage grounds a denied transfer acknowledgement by the receiving party, not a generic negative sentence and not merely absence of a positive event. The ontology supplies the roles; the task instruction supplies the purpose; the source span supplies evidence. No one of those inputs is sufficient by itself.</p>
+
+<h2>Anchor verification protects meaning from source drift</h2>
+<p>A committed anchor contains the source identity, decoded digest, unit, start and end bounds, and selected-text hash. Verification checks all of them. If a revision inserts text earlier in the file, the old numeric interval cannot silently select different words. The coding agent may realign the claim explicitly and rerun its tests, producing a new source snapshot and semantic identity. If it does not, ordinary execution reports a stale or invalid span.</p>
+<p>Coverage is a separate semantic assertion. Processing every source unit may justify a LongText declaration that a particular concept was covered for a particular scope, but the source map itself cannot claim that all exceptions or all acknowledgements were materialized. This distinction prevents a completed decoding pass from becoming a false closed-world guarantee.</p>
+
+<h2>Exact input text remains distinct in the public answer</h2>
+<p>Findings carry semantic evidence values. Provenance traversal reaches verified <code>SourceSpan</code> handles, and the response renderer uses their selected substrings. Machine offsets remain in technical artifacts for replay, while <code>response.md</code> reproduces the exact passage. The evidence section is marked as copied input, and each source quotation has its own source marker and relative link. Generated conclusions and requirement explanations remain outside the blockquote.</p>
+<p>This visual and semantic boundary prevents two opposite confusions. A reader does not have to resolve “characters 42–77” to understand the evidence, and a later formatter does not mistake generated explanation for text written in the source. If decisive evidence is missing from the finding, the renderer is not allowed to rediscover it with a keyword search; the semantic circuit or LongText grounding must be repaired where the missing meaning belongs.</p>
+
+<h2>A task-local extractor extends decoding without extending semantic authority</h2>
+<p>A specialized binary format can add <code>source/extractors/bin.extractor.mjs</code>. Its function receives immutable path, extension, bytes, and task-root information and returns text plus reproducible metadata. The registry validates and hashes that text exactly like built-in output. The extractor may understand bytes and glyphs specific to that format; it still must not create ontology terms, IntentJS, findings, or circuit code.</p>
 <pre><code>export function extractSource({ bytes }) {
   const text = decodeKnownCorpusFormat(bytes);
   return Object.freeze({
@@ -48,10 +64,7 @@ node nllAgent.mjs source verify-anchors   --agent-dir examples/validation-agent 
     metadata: Object.freeze({ format: "known-corpus-v1" })
   });
 }</code></pre>
-<p>The generated registry records extractor metadata, a SHA-256 digest of decoded text, and absolute decoded offsets. A LongTextJS anchor is valid only when the source, unit, bounds, digest, and selected text hash all match. Encrypted, scanned, or custom-font PDFs require a retained task adapter; the built-in never invents OCR text.</p>
-<h2>Observed output</h2>
-<p>The validation task produces one source unit, and its two facility-event claims verify against exact source spans. <code>results/source-diagnostics.md</code> states <code>No source extraction diagnostics.</code> after a clean ingestion, avoiding stale errors from earlier source revisions.</p>
-<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for extraction and decoded offsets and <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">DS041</a> for the coding-agent authoring boundary.</p>
+<p>The result is a clean chain of authority: the extractor establishes decoded evidence, the coding agent authors a semantic interpretation, the transaction validates that interpretation, circuits derive results, and response composition quotes only verified passages. Each step can be inspected and repaired without asking another layer to guess what the previous one omitted.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>

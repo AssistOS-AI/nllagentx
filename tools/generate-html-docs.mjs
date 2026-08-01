@@ -3,10 +3,13 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { buildAgenticDocumentationPages } from "./docs-agentic-pages.mjs";
+import { buildUnderstandDocumentationPages } from "./docs-understand-pages.mjs";
 import { artifactBrowser, filesBelow, loadDefaultIfPresent } from "./docs-file-helpers.mjs";
 import { documentationHeader, documentationSectionNavigation } from "./docs-navigation.mjs";
 import { documentationStyles } from "./docs-styles.mjs";
 import { frameworkPacks } from "../framework/packs/index.mjs";
+import { supportedContextArtifacts } from "../framework/tools/context-builder.mjs";
+import { resolveSkillChain } from "../framework/tools/skill-loader.mjs";
 
 const root = resolve(import.meta.dirname, ".."); const docs = resolve(root, "docs");
 await mkdir(resolve(docs, "partials"), { recursive: true }); await mkdir(resolve(docs, "assets"), { recursive: true });
@@ -18,6 +21,102 @@ const ownedArtifact = (owner, path, ownerRoot, localPath = relative(ownerRoot, p
   path,
   displayRoot: ownerRoot,
   label: `${owner}/${localPath.split("\\").join("/")}`
+});
+
+const contextArtifactExplanations = Object.freeze({
+  "PROJECT_MAP.md": "An ownership-aware, repository-relative inventory of framework, agent, task, source, run, and result paths. Codex uses it to find canonical files without guessing where a similarly named artifact belongs.",
+  "SDK_CATALOG.md": "A projection of the currently exported SDK surfaces, constructor families, descriptors, and import locations. It tells Codex which real local APIs exist before it opens the narrower implementation modules it must change or use.",
+  "ONTOLOGY_CATALOG.md": "The ontology modules and semantic identities produced by the resolved framework profile, agent, and task precedence. Codex uses it to reuse exact concepts, roles, relations, frames, facts, laws, and capabilities instead of creating spelling-based duplicates.",
+  "CIRCUIT_CATALOG.md": "The resolved semantic circuit providers, concerns, requirements, provisions, statuses, stages, and declared assurance. It lets Codex see whether a requested behavior already has a compatible provider and which capability gaps are real.",
+  "RESPONSE_CIRCUIT_CATALOG.md": "The default, agent, and task response circuits after same-identity precedence, including stage reads, writes, applicability, and presentation purpose. It exposes how material findings become grouped Markdown CNL without allowing presentation to invent truth.",
+  "PROFILE_RESOLUTION.md": "The selected profile, loaded packs, inherited agent modules, task extensions, and planner policy. Codex uses it to distinguish available default knowledge from knowledge that must genuinely be authored locally.",
+  "SOURCE_OUTLINE.md": "Decoded task sources, stable source units, digests, and absolute bounds without semantic interpretation. It gives IntentJS and LongTextJS authoring a complete evidence inventory while leaving meaning to the coding agent.",
+  "DIAGNOSTICS.md": "Existing source, import, planning, execution, or acceptance failures retained for the next coding or review phase. An empty file states that no prior diagnostic exists; it never silently hides a failed resolution."
+});
+
+function markdownSection(markdown, title) {
+  const marker = `## ${title}`;
+  const start = markdown.indexOf(marker);
+  if (start < 0) return "";
+  const contentStart = start + marker.length;
+  const next = markdown.indexOf("\n## ", contentStart);
+  return markdown.slice(contentStart, next < 0 ? markdown.length : next).trim();
+}
+
+function inlineMarkdown(value) {
+  return escapeHtml(value).replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+function markdownParagraphs(value) {
+  return value.split(/\n\s*\n/).filter(Boolean).map((paragraph) => `<p>${inlineMarkdown(paragraph)}</p>`).join("\n");
+}
+
+function workflowHtml(markdown) {
+  const steps = [...markdownSection(markdown, "Workflow").matchAll(/^(\d+)\.\s+(.+)$/gm)];
+  return steps.map(([, order, body]) => `<p><strong>Step ${escapeHtml(order)}.</strong> ${inlineMarkdown(body)}</p>`).join("\n");
+}
+
+function commandExplanation(command) {
+  const value = command.replace(/^nllAgent\s+/, "");
+  if (value === "files index") return "Walks the selected project and emits an ownership-aware file index. The skill uses it to locate canonical edit targets and avoid confusing framework, agent, task, run, and generated-result files.";
+  if (value === "catalog sdk") return "Reads live SDK descriptors and prints the public semantic surfaces and import paths. This is the discovery view used before choosing or extending a constructor.";
+  if (value === "catalog ontology") return "Loads the resolved runtime and prints ontology modules and identities after profile, agent, and task precedence. This prevents duplicate concepts and reveals the exact vocabulary available to source and circuit code.";
+  if (value === "catalog circuit") return "Loads resolved semantic circuits and prints concerns, requirements, providers, statuses, stages, and assurance. It shows whether the requested capability already exists and what a new circuit must compose with.";
+  if (value === "catalog response") return "Prints resolved response circuits and their stage dataflow. The skill uses it to reuse or extend filtering, grouping, evidence selection, and Markdown CNL policy without changing semantic truth.";
+  if (value === "profile resolve") return "Explains the chosen profile, loaded packs, local overrides, and planner policy. It establishes which knowledge is inherited and which missing capability is allowed to become local code.";
+  if (value === "context build") return "Creates a run folder, installs the dependency-closed skill set, selects DS files, and materializes the declared live context artifacts without invoking Codex.";
+  if (value === "context show") return "Lists the exact context files in the prepared run so a programmer or Codex can verify what was made available rather than relying on a prompt claim.";
+  if (value.startsWith("agent ")) return "Creates, inspects, validates, or catalogs the reusable agent owner named by the second word. The result is agent-scoped state that may be reused by more than one task.";
+  if (value.startsWith("task ")) return "Creates or inspects one task owner and its retained sources/runs. Task commands preserve the boundary between one source interpretation and reusable agent knowledge.";
+  if (value.startsWith("code ")) return "Prepares the named authoring phase and, unless prepare-only is selected, invokes the configured coding-agent adapter with run-local skills, specifications, catalogs, edit ownership, and retained process evidence.";
+  if (value === "source ingest") return "Decodes retained source bytes, chooses a task extractor or built-in decoder, creates stable source units and digests, and writes the executable source map; it performs no semantic inference.";
+  if (value === "source outline") return "Prints decoded sources and stable units with their bounds so authoring can account for the entire input before selecting exact evidence.";
+  if (value === "source show") return "Returns one decoded source or unit exactly as registered, allowing LongTextJS authoring to inspect the evidence rather than a summary.";
+  if (value === "source search") return "Finds exact decoded occurrences and reports candidate bounds. It supports anchor selection but does not decide what the passage means.";
+  if (value === "source span") return "Prints the exact substring for an explicit decoded interval so an author can verify a proposed SourceSpan before committing it.";
+  if (value === "source verify-anchors") return "Rechecks every committed LongTextJS SourceSpan against source identity, bounds, digest, and selected-text hash; stale or invented evidence fails deterministically.";
+  if (value === "sdk check") return "Imports the SDK registry and validates export, descriptor, namespace, and constructor consistency before a new primitive is treated as public.";
+  if (value === "sdk usage") return "Prints focused live usage for a requested SDK surface, including import shape and fluent composition, so Codex can load a narrow implementation context on demand.";
+  if (value === "ontology show") return "Shows the resolved definition of selected ontology identities, including roles and inheritance, for precise reuse during authoring.";
+  if (value === "ontology check") return "Runs uniqueness, subtype, disjointness, frame-role, lexicalization, and cross-module diagnostics over the resolved ontology set.";
+  if (value === "ontology build") return "Executes ontology modules and regenerates the constructor facade used by LongTextJS and circuits; an importable facade is concrete evidence that the schema is usable.";
+  if (value === "ontology affected") return "Finds circuits and semantic programs that consume changed ontology identities so their compatibility tests can be included in the same change.";
+  if (value === "longtext check") return "Imports task LongTextJS and validates semantic structure, ownership, references, and composition before committing it to a store.";
+  if (value === "longtext execute") return "Commits the composed LongTextJS transaction to a SemanticStore, exposing constructor, identity, role, and transaction failures that static inspection cannot prove.";
+  if (value === "longtext query") return "Runs focused semantic queries over the materialized task to confirm that decisive terms, claims, alternatives, and relationships are represented as intended.";
+  if (value === "longtext coverage") return "Reports typed source and concept coverage so a circuit can distinguish verified absence from missing inspection.";
+  if (value === "intent check") return "Imports IntentJS and validates its mode, concerns, outputs, evidence, assurance, exclusions, fallback, and Markdown CNL presentation contract.";
+  if (value === "intent infer-signals") return "Reports cheap lexical and already-materialized semantic signals as advice. It does not author or silently mutate the canonical IntentJS module.";
+  if (value === "intent explain") return "Explains how explicit directives, profile policy, source signals, and fallback produced the selected task intent.";
+  if (value === "plan show") return "Builds and prints provider selection, capability closure, rejected alternatives, blocked dependencies, and response composition for the resolved task.";
+  if (value === "circuit check") return "Imports circuit modules and validates identities, typed requirements/provisions, stages, data dependencies, emissions, and declared method support.";
+  if (value === "circuit plan") return "Closes required capabilities and schedules compatible circuit providers without executing their semantic stages.";
+  if (value === "circuit run") return "Executes the concrete scheduled circuit stages against the materialized store and retains typed findings, frames, evidence, and traces.";
+  if (value === "circuit abstract") return "Runs declared abstract preflight and checks convergence, possible status sets, and any precision loss for circuits that claim this assurance.";
+  if (value === "circuit symbolic") return "Explores declared symbolic decision coverage, retaining feasible paths, selected rows, pruning, and truncation so decision behavior is inspectable.";
+  if (value === "trace slice") return "Reduces a retained trace to the dependencies of one result, allowing tests and reviews to inspect why that result occurred without reading unrelated execution.";
+  if (value === "trace explain") return "Renders the semantic derivation and provenance for a selected retained value or finding.";
+  if (value === "trace compare") return "Compares two retained executions by semantic identities, findings, frames, assurance, and response digest rather than process noise.";
+  if (value === "cnl render") return "Renders typed CNL frames or selected semantic results through the controlled renderer.";
+  if (value === "cnl parse") return "Parses supported canonical CNL back into typed frame structure for validation and downstream tooling.";
+  if (value === "cnl roundtrip") return "Renders and reparses supported frames, then compares semantic slots to detect wording that loses or invents meaning.";
+  if (value === "review bundle") return "Builds a failure-oriented context that survives a broken task import and retains diagnostics, selected skills, DS contracts, and canonical paths for a repair run.";
+  if (value.startsWith("test ")) return "Runs the selected deterministic Node test scope. Tests never invoke Codex; they assert semantic structure, evidence, diagnostics, response behavior, and replay independently of authoring.";
+  if (value === "evaluate") return "Runs an isolated evaluation suite, optionally invoking real Codex phases, then retains authored programs, process evidence, semantic metrics, concrete execution, and model-free replay.";
+  return "Routes this declared operation through the real project CLI; the skill workflow treats its observable output as phase evidence.";
+}
+
+const skillAcceptance = Object.freeze({
+  "nll-architect": "Agent authoring acceptance imports the resulting agent, checks reusable ontology and circuit modules, verifies declared stages and capabilities, and runs agent tests. A plan document alone does not satisfy this phase.",
+  "nll-orchestrator": "Workspace changes are accepted through temporary-directory CLI and path-resolution tests, lock and process evidence, portable context construction, and deterministic command exit behavior.",
+  "nll-sdk": "SDK work must pass live export/descriptor checks and focused framework tests. A new fluent name is not accepted until its semantic sort, identity, provenance, diagnostics, and import surface execute consistently.",
+  "nll-runtime": "Runtime work is checked through concrete execution, deterministic scheduling, trace reasons, invalidation/replay tests, and differential reference behavior where a second implementation is practical.",
+  "nll-intent": "Task authoring acceptance requires an importable IntentJS module with Markdown CNL output and a presentation policy, followed by intent and plan checks that expose selected and rejected providers.",
+  "nll-ontology": "Ontology acceptance requires an importable task or agent module, clean ontology diagnostics, a generated usable constructor facade where applicable, and affected-consumer tests.",
+  "nll-longtext": "LongText acceptance requires an importable composed root, non-empty verified SourceSpans, clean anchor checks, successful store materialization, and focused task tests. Unsupported semantic slots cannot be filled merely to satisfy a later circuit.",
+  "nll-circuit": "Circuit acceptance requires importable stages and capabilities, focused applicable/violated/unknown/conflict cases, concrete findings with reachable evidence, and every auxiliary method the circuit claims. Response stages are checked separately for truth preservation.",
+  "nll-test": "The test skill proves wrong-reason failures with semantic assertions, mutations, deterministic generators, trace/evidence checks, response checks, and model-free execution. Its own tests may not call a coding agent or the network.",
+  "nll-evaluate": "Evaluation acceptance retains real authoring provenance when Codex is claimed, validates phase-created artifacts, computes semantic metrics, executes concrete and required auxiliary methods, checks the public CNL independently, and proves ordinary replay equivalence."
 });
 function shell(title, kicker, content) {
   return `<!doctype html>
@@ -73,109 +172,6 @@ function packKnowledgeHtml() {
 }
 
 const pages = new Map();
-pages.set("index.html", shell("System Guide", "Executable semantic programs", `
-<p class="lead">nllAgent is a dependency-free Node.js workbench for authoring source-grounded semantic programs, selecting reusable semantic circuits, and retaining evidence-bearing findings and controlled-language artifacts. Its semantic languages are executable <code>.mjs</code> modules rather than serialized data formats.</p>
-<div class="callout"><strong>Specification authority.</strong> The contiguous DS set is authoritative. Start with <a href="specsLoader.html?spec=DS000-vision.md">DS000</a> and the <a href="specsLoader.html?spec=DS001-coding-style.md">coding-style contract</a>; use the <a href="specsLoader.html?spec=matrix.md">specification matrix</a> for the complete set.</div>
-<h2>From text input to CNL output</h2>
-<table><thead><tr><th>Step</th><th>Input</th><th>Work performed</th><th>Observable output</th></tr></thead><tbody>
-<tr><td>1. Retain the request</td><td>Task instruction and source files</td><td>The workspace records the exact text, source units, digests and offsets.</td><td>Task declaration and <code>source-map.mjs</code>.</td></tr>
-<tr><td>2. Author semantics</td><td>Text plus resolved SDK, packs and agent knowledge</td><td>Codex authors or reuses IntentJS, LongTextJS, OntologyJS and CircuitJS modules.</td><td>Inspectable <code>.mjs</code> programs and focused tests.</td></tr>
-<tr><td>3. Execute</td><td>Semantic programs</td><td>The store materializes grounded claims; the planner selects compatible circuits; the runner emits typed findings or generation frames.</td><td>Deterministic semantic results and separate technical evidence.</td></tr>
-<tr><td>4. Present</td><td>Material semantic results plus IntentJS presentation policy</td><td>Response circuits remove internal or irrelevant entries, group results and attach exact source quotations.</td><td>Human-facing <code>results/response.md</code> in Markdown CNL.</td></tr>
-</tbody></table>
-<h2>Repository structure and ownership</h2>
-<p>The SDK defines semantic values and fluent builders. The runtime materializes one logical store, closes circuit dependencies, schedules stages, and executes concrete or declared auxiliary methods. Framework packs provide default ontology and circuit modules. Agent folders own reusable extensions; task folders own source interpretation, intent, task-local code, tests, coding runs, and retained results.</p>
-<div class="tree" role="group" aria-label="Repository layout">
-  <div><strong>framework/sdk/</strong><span>OntologyJS, LongTextJS, IntentJS, CircuitJS, CNL, agents, evaluation</span></div>
-  <div><strong>framework/runtime/</strong><span>store, planner, scheduler, algorithms, cache, trace</span></div>
-  <div><strong>framework/packs/</strong><span>core language and thirteen default knowledge packs</span></div>
-  <div><strong>framework/tools/ + framework/cli/</strong><span>workspace, context, execution, tests, evaluation, CLI</span></div>
-  <div><strong>nll-skills/</strong><span>ten executable coding workflows</span></div>
-  <div><strong>docs/specs/</strong><span>official gap-free contract set</span></div>
-</div>
-<p>For a folder-by-folder ownership map, see <a href="project-structure.html">Project folders and ownership</a>. For the natural-language-to-program lifecycle, see <a href="agentic-authoring.html">Agentic natural-language authoring</a>.</p>
-<h2>Runtime defaults</h2>
-<p>Commands use <code>node nllAgent.mjs</code>. Semantic configuration always names an agent through <code>--agent</code> or <code>--agent-dir</code>; task operations also use <code>--task</code> or <code>--task-dir</code>. The mandatory <code>core-language</code> pack supplies shared vocabulary. Profiles and explicit CLI controls select additional packs. When intent remains open, the planner executes every compatible circuit in the resolved pack set and records the selection.</p>
-<h2>Tests and documentation maintenance</h2>
-<p>Tests use <code>node:test</code>, executable fixtures, semantic assertions, deterministic generators, and mutation helpers. They never invoke a coding agent. Evaluation is separate and may invoke Codex only when requested. Code changes that alter a contract must update both the relevant HTML page and DS file. The <a href="testing-evaluation.html">testing and evaluation chapter</a> gives the runnable commands.</p>`));
-
-pages.set("architecture.html", shell("Architecture and Execution Model", "Boundaries and data flow", `
-<p class="lead">The implementation separates authoring, semantic materialization, capability planning, execution, and retained explanation. Full JavaScript remains available to authors, but semantic state changes pass through explicit SDK and runtime boundaries.</p>
-<h2>Layer responsibilities</h2>
-<table><thead><tr><th>Layer</th><th>Owns</th><th>Does not own</th></tr></thead><tbody>
-<tr><td>SDK</td><td>immutable handles, fluent builders, identities, DSL contracts</td><td>workspace discovery or process invocation</td></tr>
-<tr><td>Runtime</td><td>transactional store, queries, planner, scheduler, methods, traces</td><td>source interpretation authored by Codex</td></tr>
-<tr><td>Packs</td><td>default ontology, circuits, CNL support, selection signals</td><td>task-specific claims</td></tr>
-<tr><td>Tools and CLI</td><td>folders, sources, context, execution, tests, evaluation</td><td>hidden semantic inference outside modules</td></tr>
-<tr><td>Coding skills</td><td>agent-facing workflow, dependencies, edit roots, checks</td><td>runtime acceptance decisions</td></tr>
-</tbody></table>
-<h2>Agent and task resolution</h2>
-<table><thead><tr><th>Step</th><th>Programmer supplies</th><th>Resolver action</th><th>Result</th></tr></thead><tbody>
-<tr><td>1. Resolve agent</td><td><code>--agent name</code> or <code>--agent-dir path</code></td><td>Resolve the reusable agent folder without assuming it is under a fixed workspace root.</td><td>Agent definition, profiles, ontology, circuits and response policies.</td></tr>
-<tr><td>2. Resolve task</td><td><code>--task id</code> or <code>--task-dir path</code></td><td>Resolve the task inside the selected agent or at the explicit path.</td><td>Instruction, source, IntentJS, LongTextJS and task-local extensions.</td></tr>
-<tr><td>3. Compose knowledge</td><td>Agent, task and selected profile</td><td>Load mandatory <code>core-language</code>, profile packs, then agent and task modules with declared override precedence.</td><td>One executable catalog for planning and execution.</td></tr>
-</tbody></table>
-<p>Module specifiers generated for agents and tasks are relative to the target file and the explicit project root. This allows an agent directory to live outside the default <code>agents/</code> directory while using the same framework SDK.</p>
-<h2>Concrete execution and assurance</h2>
-<p><code>executeTask()</code> loads ontologies, commits LongTextJS through a transaction, plans capability closure, and schedules each selected circuit. Findings and frames are derived from actual stage values. If both the intent/profile and circuit declare auxiliary support, abstract preflight and symbolic decision coverage are also retained in <code>results/assurance.mjs</code> and <code>assurance.md</code>.</p>
-<h2>Concrete planning algorithm</h2><table><thead><tr><th>Planner input</th><th>Operation</th><th>Deterministic rule</th><th>Retained result</th></tr></thead><tbody>
-<tr><td>Loaded pack/profile/agent/task circuits</td><td>Index providers by capability and semantic identity.</td><td>Task same-identity declarations override agent, which override framework; unrelated providers coexist.</td><td>Resolved circuit catalog.</td></tr>
-<tr><td>Intent concerns, domains, exclusions and fallback</td><td>Build the root provider demand.</td><td>Explicit directives precede profile and source signals; fallback never loads an excluded pack.</td><td>Requested and rejected checks.</td></tr>
-<tr><td>Provider requirements/provisions/cost</td><td>Close transitive capability dependencies.</td><td>Lowest declared cost then lexical semantic identity; cycles and missing providers are typed failures.</td><td>Capability graph and diagnostics.</td></tr>
-<tr><td>Circuit stage reads/writes</td><td>Build a stage DAG and execute ready nodes.</td><td>Stable topological ordering; no undeclared data dependency or implicit global mutation.</td><td>Execution trace, findings and typed frames.</td></tr>
-<tr><td>Semantic result plus IntentJS presentation</td><td>Plan response circuits over immutable truth output.</td><td>Validated read/write stages may select and organize but cannot create truth or evidence.</td><td>Response-circuit trace and <code>response.md</code>.</td></tr>
-</tbody></table>
-<p>The effective “super-circuit” is this retained composition graph. It remains decomposed into independently tested providers and response stages; no adaptive run flattens it into opaque generated source.</p>
-<h2>Failure semantics</h2>
-<p>Process exit status describes tool success. Semantic outcomes remain findings such as <code>UNKNOWN</code>, <code>CONFLICT</code>, <code>BLOCKED_ONTOLOGY</code>, or <code>BLOCKED_COVERAGE</code>. Source decoding failures retain typed diagnostics without pretending that binary extraction succeeded.</p>`));
-
-pages.set("source-ingestion.html", shell("Source Ingestion and Provenance", "Deterministic bytes-to-spans pipeline", `
-<p class="lead">Source ingestion turns retained files into deterministic decoded text before a coding agent can author LongTextJS with exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON or hidden semantic extraction.</p>
-<div class="callout"><strong>Boundary.</strong> Ingestion stops at text, units, digests, offsets and non-semantic outlines. It does not infer IntentJS, LongTextJS, ontology, circuits, findings or generated answers. Codex performs that semantic authoring in explicit skill phases; deterministic runtime commands reuse the resulting code.</div>
-<h2>Run and inspect ingestion</h2>
-<pre><code># Decode the retained source and rebuild its stable source map before semantic authoring.
-node nllAgent.mjs source ingest \
-  --agent-dir examples/validation-agent \
-  --task task-symbolic-validation
-
-# Inspect decoded units and absolute offsets so LongTextJS anchors can target the right text.
-node nllAgent.mjs source outline \
-  --agent-dir examples/validation-agent \
-  --task task-symbolic-validation
-
-# Find every exact occurrence of “alarm” and its offsets before choosing a source span.
-node nllAgent.mjs source search \
-  --agent-dir examples/validation-agent \
-  --task task-symbolic-validation \
-  --text "alarm"
-
-# Revalidate every committed LongTextJS anchor after ingestion or source changes.
-node nllAgent.mjs source verify-anchors \
-  --agent-dir examples/validation-agent \
-  --task task-symbolic-validation</code></pre>
-<h2>What happens, step by step</h2>
-<table><thead><tr><th>Step</th><th>Input</th><th>What the tool does</th><th>Output</th></tr></thead><tbody>
-<tr><td>1. Read bytes</td><td>The exact retained source file</td><td>Look first for a task-owned extractor matching the extension. Otherwise select the built-in UTF-8 or supported PDF decoder.</td><td>Decoded text, or a typed diagnostic when decoding is unsupported.</td></tr>
-<tr><td>2. Validate decoding</td><td>Decoded text and extractor metadata</td><td>Reject empty, encrypted, scanned or otherwise undecodable content instead of inventing text.</td><td>Validated text plus reproducible decoder metadata.</td></tr>
-<tr><td>3. Create stable units</td><td>Validated decoded text</td><td>Segment the text, retain absolute character offsets and compute SHA-256 digests.</td><td>Executable <code>source/source-map.mjs</code>.</td></tr>
-<tr><td>4. Author meaning later</td><td>Source map and task instruction</td><td>A coding agent, in a separate phase, authors LongTextJS claims with exact anchors.</td><td>Grounded <code>longtext/*.mjs</code>; ingestion itself emits no finding.</td></tr>
-</tbody></table>
-<h2>Concrete validation-agent example</h2>
-<table><thead><tr><th>Input text</th><th>Ingestion output</th><th>Semantic consumer</th><th>Final public output</th></tr></thead><tbody><tr><td><code>source/incident.txt</code></td><td><code>source/source-map.mjs</code> with one stable source unit</td><td><code>longtext/root.longtext.mjs</code> anchors the alarm and opening sentences</td><td><code>results/response.md</code> quotes both sentences in the <code>ORDER_OK</code> finding</td></tr></tbody></table>
-<h2>Task-local extractor contract</h2>
-<p>Create <code>source/extractors/bin.extractor.mjs</code> when a task owns <code>.bin</code> material. The adapter receives the bytes and returns decoded text plus replay metadata:</p>
-<pre><code>export function extractSource({ bytes }) {
-  const text = decodeKnownCorpusFormat(bytes);
-  return Object.freeze({
-    text,
-    metadata: Object.freeze({ format: "known-corpus-v1" })
-  });
-}</code></pre>
-<p>The generated registry records extractor metadata, a SHA-256 digest of decoded text, and absolute decoded offsets. A LongTextJS anchor is valid only when the source, unit, bounds, digest, and selected text hash all match. Encrypted, scanned, or custom-font PDFs require a retained task adapter; the built-in never invents OCR text.</p>
-<h2>Observed output</h2>
-<p>The validation task produces one source unit, and its two facility-event claims verify against exact source spans. <code>results/source-diagnostics.md</code> states <code>No source extraction diagnostics.</code> after a clean ingestion, avoiding stale errors from earlier source revisions.</p>
-<p>See <a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">DS037</a> for extraction and decoded offsets and <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">DS041</a> for the coding-agent authoring boundary.</p>`));
-
 pages.set("semantic-dsls.html", shell("Semantic DSLs and SDK", "Executable .mjs contracts", `
 <p class="lead">The DSLs share stable semantic identities while preserving separate responsibilities. The root SDK offers namespace exports for cases where two DSLs intentionally use the same fluent name.</p>
 <h2>OntologyJS</h2><p>Ontology builders declare pack-qualified concepts, roles, relations, lexicalizations, facts, laws, capabilities, and cardinalities. Sealed modules expose generated constructors through <code>constructorFor()</code> and diagnostic construction through <code>tryConstruct()</code>. Ground terms enforce declared role cardinality and direct range constraints; pattern terms may omit roles for partial queries. Read the <a href="ontologyjs.html">detailed OntologyJS chapter</a>.</p>
@@ -409,25 +405,37 @@ async function validationTutorialContent() {
   ];
   const responsePath = resolve(resultRoot, "response.md");
   const explorer = await artifactBrowser({
-    Input: [
-      Object.freeze({ label: "task/task-instruction.txt", content: instruction, language: "text" }),
-      ownedArtifact("task", sourcePath, taskRoot)
-    ],
-    Intermediate: [...agentFiles, ...resolvedAgentDependencies, ...taskFiles],
-    Output: [ownedArtifact("task", responsePath, taskRoot)]
+    Input: Object.freeze({
+      provenance: Object.freeze({ description: "The instruction and incident are committed example input; no coding command generated them." }),
+      entries: [Object.freeze({ label: "task/task-instruction.txt", content: instruction, language: "text" }), ownedArtifact("task", sourcePath, taskRoot)]
+    }),
+    Intermediate: Object.freeze({
+      provenance: Object.freeze({
+        description: "These are committed agent and task programs; this fast task command validates them without invoking Codex.",
+        command: "node nllAgent.mjs test task --agent-dir examples/validation-agent --task task-symbolic-validation --level fast"
+      }),
+      entries: [...agentFiles, ...resolvedAgentDependencies, ...taskFiles]
+    }),
+    Output: Object.freeze({
+      provenance: Object.freeze({
+        description: "This deterministic execution uses the committed programs and regenerates the public CNL response.",
+        command: "node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation --assurance all"
+      }),
+      entries: [ownedArtifact("task", responsePath, taskRoot)]
+    })
   }, root, escapeHtml);
   return `<p class="lead">This committed example answers one concrete question: did Ana open the north gate after the facility alarm? It uses a pre-existing validation agent, translates the two incident sentences into typed events and an explicit temporal relation, then returns one grounded Markdown CNL confirmation.</p>
 <h2>Input ownership and requested result</h2>
 <p><strong>Agent input:</strong> none. The validation agent and its imported facility ontology and ordering circuit already exist before this task runs. <strong>Task input:</strong> <code>task/task-instruction.txt</code> asks for the order check with retained evidence, and <code>task/source/incident.txt</code> states that the alarm sounded at 08:57 and the gate opened at 09:00.</p>
 <p>The desired result is a decision about that ordering, not a state-machine trace or a symbolic-path tutorial. Auxiliary assurance still runs and is retained elsewhere, but the application-facing output is one CNL answer.</p>
 <h2>Retained input, executable interpretation, and public answer</h2>
-<p><strong>Input</strong> contains only task text because this run does not author an agent. <strong>Intermediate</strong> lists the pre-existing <code>agent/</code> modules and their resolved shared imports before the task-owned declaration, source map, IntentJS, LongTextJS, and test. <strong>Output</strong> contains only <code>task/results/response.md</code>.</p>
+<p>The artifact tree keeps every stage visible. <strong>Input</strong> contains only task text because this run does not author an agent. <strong>Intermediate</strong> lists the pre-existing <code>agent/</code> modules and their resolved shared imports before the task-owned declaration, source map, IntentJS, LongTextJS, and test. <strong>Output</strong> contains only <code>task/results/response.md</code>. The branch notes distinguish committed inputs and programs from the commands that validate and execute them.</p>
 ${explorer}
 <h2>How the incident text became executable meaning</h2>
 <p>The facility ontology defines <code>Alarm</code> and <code>Open</code> events with typed locations, actors, gates, and clock times. The task's LongTextJS constructs an alarm event at 08:57 in Building A and an opening event at 09:00 by Ana, anchors each claim with <code>spanByText</code>, and states <code>before(alarmEvent, openingEvent)</code>. Complete coverage for <code>Alarm</code> and <code>Open</code> tells the runtime that both relevant event classes were inspected.</p>
 <p><code>task/intent/facility.intent.mjs</code> selects the reusable <code>FacilityOrderFinding</code> capability. The circuit queries typed alarm and opening values, evaluates their <code>before</code> relation, and has separate satisfied, violated, and unknown decision rows. For these times, the satisfied row emits <code>ORDER_OK</code> with both event claims as evidence.</p>
 <h2>Why the CNL answer is <code>ORDER_OK</code></h2>
-<p><code>task/results/response.md</code> reports one <code>ORDER_OK:SATISFIED</code> confirmation and quotes both source sentences with exact character ranges. It does not show abstract domains or symbolic paths because those files validate the circuit implementation rather than answer the task's natural-language question.</p>`;
+<p><code>task/results/response.md</code> reports one <code>ORDER_OK:SATISFIED</code> confirmation and reproduces both exact source sentences directly, with relative links back to the source. It does not show character offsets, abstract domains, or symbolic paths because those values support validation and debugging rather than answer the task's natural-language question.</p>`;
 }
 
 pages.set("tutorial-agent-task.html", shell(
@@ -459,32 +467,64 @@ pages.set("results.html", shell("Artifacts and Retained Results", "Inspectable o
 <h2>No semantic JSON</h2><p>Findings, gold expectations, source maps, run declarations, suite declarations, and catalogs use executable modules or human-readable Markdown/CNL. Environment-managed Codex/plugin configuration is outside the project artifact model and is not a build or runtime dependency.</p>`));
 
 const skillIds = ["nll-architect", "nll-orchestrator", "nll-sdk", "nll-runtime", "nll-intent", "nll-ontology", "nll-longtext", "nll-circuit", "nll-test", "nll-evaluate"];
-const skillLinks = skillIds.map((id) => `<li><a href="skill-${id}.html"><code>${id}</code></a></li>`).join("");
+const skillLinks = skillIds.map((id) => `<tr><td><a href="skill-${id}.html"><code>${id}</code></a></td><td>${escapeHtml(skillAcceptance[id])}</td></tr>`).join("");
 pages.set("skills.html", shell("Skill Catalog", "Executable coding workflows", `
-<p class="lead">The repository contains ten project-owned nllAgent authoring skills. Each skill has a dedicated HTML chapter, executable workflow and official DS contract. Environment-managed skills are not copied, published or required by this project.</p>
-<ul class="catalog-list">${skillLinks}</ul>
-<h2>How one requested skill reaches Codex</h2>
-<table><thead><tr><th>Step</th><th>Input</th><th>Framework action</th><th>Result visible to Codex</th></tr></thead><tbody>
-<tr><td>1. Select</td><td>Requested coding phase</td><td>Map the phase to its owning skill.</td><td>One root <code>SKILL.md</code> and <code>workflow.mjs</code>.</td></tr>
-<tr><td>2. Resolve dependencies</td><td>Root workflow dependency declarations</td><td>Close dependencies in deterministic order.</td><td>Only the required run-local skill folders.</td></tr>
-<tr><td>3. Build context</td><td>Declared context requirements</td><td>Read live SDK, ontology, circuit, profile and source catalogs.</td><td>Compact run-local context files with real module paths.</td></tr>
-<tr><td>4. Author</td><td>Instructions, skills and catalogs</td><td>Invoke Codex with canonical edit roots.</td><td>Direct edits to agent/task <code>.mjs</code> programs and tests.</td></tr>
-</tbody></table>
-<p>The adjacent <code>workflow.mjs</code> is machine-resolvable and the <code>SKILL.md</code> is agent-facing. Context is generated from live SDK descriptors and resolved ontologies, semantic circuits and response circuits. Skills do not search hidden folders and do not copy the framework theory into task artifacts.</p>`));
+<p class="lead">The ten project-owned skills are executable authoring contracts between a coding phase and Codex. A skill does more than name a specialty: its Markdown explains the decisions Codex must make, while its adjacent JavaScript manifest tells the framework which contracts, live context, commands, dependencies, owners, and phases make those decisions possible.</p>
+<h2>Why there are two files</h2>
+<p><code>SKILL.md</code> is read by Codex after the run instructions. It explains the semantic boundary, the ordered work, implementation rules, and completion criterion in operational language. <code>workflow.mjs</code> is imported by nllAgent before Codex starts. The immutable <code>CodingSkill</code> value created by that module is the machine-checkable source for dependency closure, context selection, CLI availability, edit ownership, and phase applicability. Keeping both files in the same folder lets framework tests compare executable declarations with the project that must satisfy them.</p>
+<h2>How a request becomes a bounded coding context</h2>
+<p>A command such as <code>code longtext</code> first maps the phase to <code>nll-longtext</code>. The loader recursively imports every declared dependency, rejects a cycle, and orders dependencies before their consumer. Only those folders are copied below the new run's <code>skills/</code> directory. The context builder then takes the union of their declared context artifact names and DS references. It materializes that exact union from the currently selected project, profile, agent, task, and decoded sources; it does not paste a generic repository summary into every run.</p>
+<p>The resulting <code>INSTRUCTIONS.md</code> gives Codex the goal, project root, canonical working directory, CLI entry point, dependency-ordered skill files, exact DS files, and exact context inventory. These compact files are discovery projections. They show real imports and semantic identities so Codex can deliberately open canonical modules for additional implementation detail. They never replace the SDK, ontology, circuit, or source programs from which they were generated.</p>
+<h2>How completion is established</h2>
+<p>The skill workflow names narrow commands that Codex must run while editing. The generated <code>run.mjs</code> also records the standard owner-level fast test. An ordinary direct coding command retains Codex's process evidence and final report; evaluation and adaptive authoring add stronger framework-controlled phase acceptance over imports, ontology diagnostics, source anchors, providers, focused tests, concrete results, auxiliary assurance, and public CNL. The individual pages identify this boundary for each skill instead of calling every layer simply “validation.”</p>
+<h2>The ten contracts</h2>
+<table><thead><tr><th>Skill</th><th>What its acceptance must prove</th></tr></thead><tbody>${skillLinks}</tbody></table>
+<p>Environment-managed maintenance skills remain outside this catalog. They may guide a development session, but they are neither copied into coding runs nor published as nllAgent runtime capability.</p>`));
 
 for (const skillId of skillIds) {
-  const skillRoot = resolve(root, "nll-skills", skillId); const workflow = (await import(`${pathToFileURL(resolve(skillRoot, "workflow.mjs")).href}?docs=${Date.now()}`)).default;
-  const markdown = await readFile(resolve(skillRoot, "SKILL.md"), "utf8"); const purpose = markdown.match(/## Purpose and invocation\n\n([^\n]+)/)?.[1] ?? "See the local skill contract.";
-  const dependencies = workflow.dependencies.length ? workflow.dependencies.map(code).join(" → ") : "none";
-  const tools = workflow.tools.map((entry) => `<li>${code(entry.command)}</li>`).join(""); const roots = workflow.editRoots.map((entry) => `<li>${code(entry.value)}</li>`).join("");
-  const phaseRows = workflow.phases.map((phase, index) => `<tr><td>${index + 1}</td><td>${code(phase)}</td><td>${index === 0 ? "Resolved task, catalogs and dependency skills" : `Files and diagnostics from ${code(workflow.phases[index - 1])}`}</td><td>${index === workflow.phases.length - 1 ? "Validated canonical files and a concise handoff" : `Inputs required by ${code(workflow.phases[index + 1])}`}</td></tr>`).join("");
+  const skillRoot = resolve(root, "nll-skills", skillId);
+  const workflowPath = resolve(skillRoot, "workflow.mjs");
+  const workflow = (await import(`${pathToFileURL(workflowPath).href}?docs=${Date.now()}`)).default;
+  const chain = await resolveSkillChain(root, [skillId]);
+  const markdown = await readFile(resolve(skillRoot, "SKILL.md"), "utf8");
+  const manifestSource = await readFile(workflowPath, "utf8");
+  const purpose = markdownSection(markdown, "Purpose and invocation").split(/\n\n/)[0] || "See the local skill contract.";
+  const completion = markdownSection(markdown, "Completion criterion");
+  const dependencyOrder = chain.map((entry) => entry.id);
+  const contextNames = supportedContextArtifacts.filter((name) => chain.some((entry) => entry.workflow.contextArtifacts.some((artifact) => artifact.name === name)));
+  const contextRows = contextNames.map((name) => `<tr><td>${code(name)}</td><td>${escapeHtml(contextArtifactExplanations[name])}</td></tr>`).join("");
+  const toolRows = workflow.tools.map((entry) => `<tr><td>${code(entry.command)}</td><td>${escapeHtml(commandExplanation(entry.command))}</td></tr>`).join("");
+  const manifestRows = [
+    [".specs(...) — design contracts", workflow.designSpecifications.map(code).join(" ")],
+    [".context(...) — this skill's context", workflow.contextArtifacts.map((entry) => code(entry.name)).join(" ")],
+    [".tools(...) — routed CLI dependencies", `${workflow.tools.length} commands, each explained in the tool section below`],
+    [".dependsOn(...) — installed order", dependencyOrder.map(code).join(" → ")],
+    [".edits(...) — canonical owners", workflow.editRoots.map((entry) => code(entry.value)).join(" ")],
+    [".phase(...) — applicable lifecycle", workflow.phases.map(code).join(" → ")]
+  ].map(([name, value]) => `<tr><td>${name}</td><td>${value || "none"}</td></tr>`).join("");
   pages.set(`skill-${skillId}.html`, shell(`${skillId} Skill`, "Coding workflow contract", `
-<p class="lead">${escapeHtml(purpose)}</p>
-<h2>Executable workflow</h2><p>The workflow references ${workflow.designSpecifications.map(code).join(", ")}. Dependency order: ${dependencies}. Its declared phases are ${workflow.phases.map(code).join(", ")}.</p>
-<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody>${phaseRows}</tbody></table>
-<h2>Required tools</h2><ul>${tools}</ul>
-<h2>Canonical edit roots</h2><ul>${roots}</ul>
-<h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
+<p class="lead">${inlineMarkdown(purpose)}</p>
+<h2>What the executable manifest controls</h2>
+<p>When this skill is a phase root, nllAgent imports its adjacent <code>workflow.mjs</code> through the local SDK's <code>CodingSkill</code> builder. The manifest values below are not copied documentation; they are the live values used to prepare a coding run. Dependency order determines which skill instructions Codex reads first. The dependency-closed context union determines which projections exist. Edit roots communicate ownership, while the tool declarations identify the project commands the workflow depends on.</p>
+<table><thead><tr><th>Manifest field</th><th>Live value and effect</th></tr></thead><tbody>${manifestRows}</tbody></table>
+<h2>How this skill receives enough context</h2>
+<p>The context builder first resolves the selected profile plus framework, agent, and task modules. It then materializes only the following artifacts requested by this skill and its dependencies. Each artifact is generated from live objects or retained source state; Codex follows its identities and paths into canonical code whenever the phase requires more detail.</p>
+<table><thead><tr><th>Generated context</th><th>What it contains and why it is present</th></tr></thead><tbody>${contextRows}</tbody></table>
+<p><code>INSTRUCTIONS.md</code> places these files after the installed skills and exact DS contracts in the mandatory reading order. The adjacent <code>run.mjs</code> records the Codex adapter, canonical working directory, dependency-ordered skill IDs, objective, edit owner, and owner-level fast test. This keeps the prompt short without hiding where deeper knowledge lives.</p>
+<h2>What its declared tools actually do</h2>
+<p>These commands are routed through the same CLI used by a programmer and by retained evaluations. Framework tests reject a declared command that has no real route. The skill uses their observable outputs as discovery or validation evidence, not as prose suggestions.</p>
+<table><thead><tr><th>Declared command</th><th>Purpose and observable evidence</th></tr></thead><tbody>${toolRows}</tbody></table>
+<h2>The authoring workflow Codex follows</h2>
+<p>The following sequence is taken directly from this skill's <code>SKILL.md</code>. Earlier steps establish semantic responsibility and reuse; later steps author canonical modules and obtain deterministic evidence. Codex may open more canonical code as needed, but it may not replace these boundaries with JSON descriptions or ungrounded text.</p>
+${workflowHtml(markdown)}
+<h2>How this skill verifies its result</h2>
+<p>${escapeHtml(skillAcceptance[skillId])}</p>
+<p>There are three separate verification responsibilities. Codex runs the narrow commands declared above while it edits. The generated run manifest records the owner-level fast test. Evaluation or adaptive authoring, when used, independently inspects created and modified canonical files and applies phase-specific acceptance before it claims successful natural-language authoring. An ordinary <code>code</code> invocation retains the agent's report but must not be confused with those stronger evaluation gates.</p>
+<h3>Completion criterion from the skill</h3>
+${markdownParagraphs(completion)}
+<h2>The complete live manifest</h2>
+<p>This is the executable module imported by the loader. It is shown in full so dependencies, context, tools, edit roots, and phases can be reviewed against the prose above.</p>
+<pre><code class="language-javascript">${escapeHtml(manifestSource.trimEnd())}</code></pre>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS${String(22 + skillIds.indexOf(skillId)).padStart(3, "0")}-${skillId}.md">its DS entry</a>, synchronized with <code>nll-skills/${skillId}/SKILL.md</code> and <code>workflow.mjs</code>.</p>`));
 }
 
@@ -511,6 +551,9 @@ pages.set("documentation-generation.html", shell("Documentation generation", "De
 <p>See <a href="specsLoader.html?spec=DS040-html-documentation-generation-and-portability.md">DS040</a>.</p>`));
 
 for (const page of await buildAgenticDocumentationPages({ root, escapeHtml })) {
+  pages.set(page.name, shell(page.title, page.kicker, page.content));
+}
+for (const page of buildUnderstandDocumentationPages()) {
   pages.set(page.name, shell(page.title, page.kicker, page.content));
 }
 

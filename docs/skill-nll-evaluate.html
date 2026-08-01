@@ -17,11 +17,74 @@
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       
 <p class="lead">Use when creating an evaluation suite, isolated evaluation agent, corpus task, metric or comparative report.</p>
-<h2>Executable workflow</h2><p>The workflow references <code>DS-006</code>, <code>DS036</code>, <code>DS041</code>, <code>DS042</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: <code>nll-intent</code> → <code>nll-longtext</code> → <code>nll-circuit</code> → <code>nll-test</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
-<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody><tr><td>1</td><td><code>discover</code></td><td>Resolved task, catalogs and dependency skills</td><td>Inputs required by <code>author</code></td></tr><tr><td>2</td><td><code>author</code></td><td>Files and diagnostics from <code>discover</code></td><td>Inputs required by <code>validate</code></td></tr><tr><td>3</td><td><code>validate</code></td><td>Files and diagnostics from <code>author</code></td><td>Inputs required by <code>handoff</code></td></tr><tr><td>4</td><td><code>handoff</code></td><td>Files and diagnostics from <code>validate</code></td><td>Validated canonical files and a concise handoff</td></tr></tbody></table>
-<h2>Required tools</h2><ul><li><code>nllAgent agent create</code></li><li><code>nllAgent task create</code></li><li><code>nllAgent context build</code></li><li><code>nllAgent code architect</code></li><li><code>nllAgent code intent</code></li><li><code>nllAgent code ontology</code></li><li><code>nllAgent code longtext</code></li><li><code>nllAgent code circuit</code></li><li><code>nllAgent evaluate</code></li><li><code>nllAgent trace compare</code></li></ul>
-<h2>Canonical edit roots</h2><ul><li><code>evaluations</code></li></ul>
-<h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>
+<h2>What the executable manifest controls</h2>
+<p>When this skill is a phase root, nllAgent imports its adjacent <code>workflow.mjs</code> through the local SDK's <code>CodingSkill</code> builder. The manifest values below are not copied documentation; they are the live values used to prepare a coding run. Dependency order determines which skill instructions Codex reads first. The dependency-closed context union determines which projections exist. Edit roots communicate ownership, while the tool declarations identify the project commands the workflow depends on.</p>
+<table><thead><tr><th>Manifest field</th><th>Live value and effect</th></tr></thead><tbody><tr><td>.specs(...) — design contracts</td><td><code>DS-006</code> <code>DS036</code> <code>DS041</code> <code>DS042</code> <code>DS043</code> <code>DS044</code></td></tr><tr><td>.context(...) — this skill's context</td><td><code>PROJECT_MAP.md</code> <code>PROFILE_RESOLUTION.md</code> <code>RESPONSE_CIRCUIT_CATALOG.md</code> <code>DIAGNOSTICS.md</code></td></tr><tr><td>.tools(...) — routed CLI dependencies</td><td>10 commands, each explained in the tool section below</td></tr><tr><td>.dependsOn(...) — installed order</td><td><code>nll-sdk</code> → <code>nll-ontology</code> → <code>nll-intent</code> → <code>nll-longtext</code> → <code>nll-runtime</code> → <code>nll-circuit</code> → <code>nll-test</code> → <code>nll-evaluate</code></td></tr><tr><td>.edits(...) — canonical owners</td><td><code>evaluations</code></td></tr><tr><td>.phase(...) — applicable lifecycle</td><td><code>discover</code> → <code>author</code> → <code>validate</code> → <code>handoff</code></td></tr></tbody></table>
+<h2>How this skill receives enough context</h2>
+<p>The context builder first resolves the selected profile plus framework, agent, and task modules. It then materializes only the following artifacts requested by this skill and its dependencies. Each artifact is generated from live objects or retained source state; Codex follows its identities and paths into canonical code whenever the phase requires more detail.</p>
+<table><thead><tr><th>Generated context</th><th>What it contains and why it is present</th></tr></thead><tbody><tr><td><code>PROJECT_MAP.md</code></td><td>An ownership-aware, repository-relative inventory of framework, agent, task, source, run, and result paths. Codex uses it to find canonical files without guessing where a similarly named artifact belongs.</td></tr><tr><td><code>SDK_CATALOG.md</code></td><td>A projection of the currently exported SDK surfaces, constructor families, descriptors, and import locations. It tells Codex which real local APIs exist before it opens the narrower implementation modules it must change or use.</td></tr><tr><td><code>ONTOLOGY_CATALOG.md</code></td><td>The ontology modules and semantic identities produced by the resolved framework profile, agent, and task precedence. Codex uses it to reuse exact concepts, roles, relations, frames, facts, laws, and capabilities instead of creating spelling-based duplicates.</td></tr><tr><td><code>CIRCUIT_CATALOG.md</code></td><td>The resolved semantic circuit providers, concerns, requirements, provisions, statuses, stages, and declared assurance. It lets Codex see whether a requested behavior already has a compatible provider and which capability gaps are real.</td></tr><tr><td><code>RESPONSE_CIRCUIT_CATALOG.md</code></td><td>The default, agent, and task response circuits after same-identity precedence, including stage reads, writes, applicability, and presentation purpose. It exposes how material findings become grouped Markdown CNL without allowing presentation to invent truth.</td></tr><tr><td><code>PROFILE_RESOLUTION.md</code></td><td>The selected profile, loaded packs, inherited agent modules, task extensions, and planner policy. Codex uses it to distinguish available default knowledge from knowledge that must genuinely be authored locally.</td></tr><tr><td><code>SOURCE_OUTLINE.md</code></td><td>Decoded task sources, stable source units, digests, and absolute bounds without semantic interpretation. It gives IntentJS and LongTextJS authoring a complete evidence inventory while leaving meaning to the coding agent.</td></tr><tr><td><code>DIAGNOSTICS.md</code></td><td>Existing source, import, planning, execution, or acceptance failures retained for the next coding or review phase. An empty file states that no prior diagnostic exists; it never silently hides a failed resolution.</td></tr></tbody></table>
+<p><code>INSTRUCTIONS.md</code> places these files after the installed skills and exact DS contracts in the mandatory reading order. The adjacent <code>run.mjs</code> records the Codex adapter, canonical working directory, dependency-ordered skill IDs, objective, edit owner, and owner-level fast test. This keeps the prompt short without hiding where deeper knowledge lives.</p>
+<h2>What its declared tools actually do</h2>
+<p>These commands are routed through the same CLI used by a programmer and by retained evaluations. Framework tests reject a declared command that has no real route. The skill uses their observable outputs as discovery or validation evidence, not as prose suggestions.</p>
+<table><thead><tr><th>Declared command</th><th>Purpose and observable evidence</th></tr></thead><tbody><tr><td><code>nllAgent agent create</code></td><td>Creates, inspects, validates, or catalogs the reusable agent owner named by the second word. The result is agent-scoped state that may be reused by more than one task.</td></tr><tr><td><code>nllAgent task create</code></td><td>Creates or inspects one task owner and its retained sources/runs. Task commands preserve the boundary between one source interpretation and reusable agent knowledge.</td></tr><tr><td><code>nllAgent context build</code></td><td>Creates a run folder, installs the dependency-closed skill set, selects DS files, and materializes the declared live context artifacts without invoking Codex.</td></tr><tr><td><code>nllAgent code architect</code></td><td>Prepares the named authoring phase and, unless prepare-only is selected, invokes the configured coding-agent adapter with run-local skills, specifications, catalogs, edit ownership, and retained process evidence.</td></tr><tr><td><code>nllAgent code intent</code></td><td>Prepares the named authoring phase and, unless prepare-only is selected, invokes the configured coding-agent adapter with run-local skills, specifications, catalogs, edit ownership, and retained process evidence.</td></tr><tr><td><code>nllAgent code ontology</code></td><td>Prepares the named authoring phase and, unless prepare-only is selected, invokes the configured coding-agent adapter with run-local skills, specifications, catalogs, edit ownership, and retained process evidence.</td></tr><tr><td><code>nllAgent code longtext</code></td><td>Prepares the named authoring phase and, unless prepare-only is selected, invokes the configured coding-agent adapter with run-local skills, specifications, catalogs, edit ownership, and retained process evidence.</td></tr><tr><td><code>nllAgent code circuit</code></td><td>Prepares the named authoring phase and, unless prepare-only is selected, invokes the configured coding-agent adapter with run-local skills, specifications, catalogs, edit ownership, and retained process evidence.</td></tr><tr><td><code>nllAgent evaluate</code></td><td>Runs an isolated evaluation suite, optionally invoking real Codex phases, then retains authored programs, process evidence, semantic metrics, concrete execution, and model-free replay.</td></tr><tr><td><code>nllAgent trace compare</code></td><td>Compares two retained executions by semantic identities, findings, frames, assurance, and response digest rather than process noise.</td></tr></tbody></table>
+<h2>The authoring workflow Codex follows</h2>
+<p>The following sequence is taken directly from this skill's <code>SKILL.md</code>. Earlier steps establish semantic responsibility and reuse; later steps author canonical modules and obtain deterministic evidence. Codex may open more canonical code as needed, but it may not replace these boundaries with JSON descriptions or ungrounded text.</p>
+<p><strong>Step 1.</strong> Declare the evaluation question, permitted packs, coding-agent phases and metrics.</p>
+<p><strong>Step 2.</strong> Create an isolated agent with no unrelated ontology/circuit leakage.</p>
+<p><strong>Step 3.</strong> Create random-ID tasks and preserve all generated semantic artifacts.</p>
+<p><strong>Step 4.</strong> Invoke Codex only in declared authoring phases.</p>
+<p><strong>Step 5.</strong> Run deterministic concrete and required auxiliary analyses.</p>
+<p><strong>Step 6.</strong> Compute semantic metrics from structures and traces, and validate the primary Markdown CNL independently: expected finding markers, exact source quotations, material filtering, grouping and replay equivalence.</p>
+<p><strong>Step 7.</strong> Separate authoring, materialization, intent, circuit, runtime and dataset failures.</p>
+<p><strong>Step 8.</strong> Generate task-level and suite-level Markdown reports that link <code>results/response.md</code> first. Link raw assurance and executable projections only from technical evidence sections.</p>
+<h2>How this skill verifies its result</h2>
+<p>Evaluation acceptance retains real authoring provenance when Codex is claimed, validates phase-created artifacts, computes semantic metrics, executes concrete and required auxiliary methods, checks the public CNL independently, and proves ordinary replay equivalence.</p>
+<p>There are three separate verification responsibilities. Codex runs the narrow commands declared above while it edits. The generated run manifest records the owner-level fast test. Evaluation or adaptive authoring, when used, independently inspects created and modified canonical files and applies phase-specific acceptance before it claims successful natural-language authoring. An ordinary <code>code</code> invocation retains the agent's report but must not be confused with those stronger evaluation gates.</p>
+<h3>Completion criterion from the skill</h3>
+<p>The suite is reproducible, retains artifacts, compares declared profiles or systems, and reports metrics without conflating process failures with semantic findings.</p>
+<p>At completion, run the fast checks named in <code>INSTRUCTIONS.md</code>, summarize changed canonical files and leave any genuinely blocked issue as a typed diagnostic or refinement demand. Do not claim success merely because code imports.</p>
+<h2>The complete live manifest</h2>
+<p>This is the executable module imported by the loader. It is shown in full so dependencies, context, tools, edit roots, and phases can be reviewed against the prose above.</p>
+<pre><code class="language-javascript">import { codingSkill, contextArtifact, cliTool, editRoot } from &quot;../../framework/sdk/agent/skill.mjs&quot;;
+
+export default codingSkill(&quot;nll-evaluate&quot;)
+  .specs(
+    &quot;DS-006&quot;,
+    &quot;DS036&quot;,
+    &quot;DS041&quot;,
+    &quot;DS042&quot;,
+    &quot;DS043&quot;,
+    &quot;DS044&quot;
+  )
+  .context(
+    contextArtifact(&quot;PROJECT_MAP.md&quot;),
+    contextArtifact(&quot;PROFILE_RESOLUTION.md&quot;),
+    contextArtifact(&quot;RESPONSE_CIRCUIT_CATALOG.md&quot;),
+    contextArtifact(&quot;DIAGNOSTICS.md&quot;)
+  )
+  .tools(
+    cliTool(&quot;nllAgent agent create&quot;),
+    cliTool(&quot;nllAgent task create&quot;),
+    cliTool(&quot;nllAgent context build&quot;),
+    cliTool(&quot;nllAgent code architect&quot;),
+    cliTool(&quot;nllAgent code intent&quot;),
+    cliTool(&quot;nllAgent code ontology&quot;),
+    cliTool(&quot;nllAgent code longtext&quot;),
+    cliTool(&quot;nllAgent code circuit&quot;),
+    cliTool(&quot;nllAgent evaluate&quot;),
+    cliTool(&quot;nllAgent trace compare&quot;)
+  )
+  .dependsOn(
+    &quot;nll-intent&quot;,
+    &quot;nll-longtext&quot;,
+    &quot;nll-circuit&quot;,
+    &quot;nll-test&quot;
+  )
+  .edits(
+    editRoot(&quot;evaluations&quot;)
+  )
+  .phase(&quot;discover&quot;, &quot;author&quot;, &quot;validate&quot;, &quot;handoff&quot;)
+  .seal();</code></pre>
 <p>The authoritative skill contract is <a href="specsLoader.html?spec=DS031-nll-evaluate.md">its DS entry</a>, synchronized with <code>nll-skills/nll-evaluate/SKILL.md</code> and <code>workflow.mjs</code>.</p>
     </article>
   </main>

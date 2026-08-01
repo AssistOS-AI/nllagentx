@@ -1,9 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { resolve } from "node:path";
 import { evaluationSuite, taskCase, materialization, ordinaryReplay, defaultSemanticMetrics } from "../sdk/evaluation/index.mjs";
 import { classificationMetrics, aggregateMetrics } from "../sdk/evaluation/metrics.mjs";
 import { CodexAdapter, createCodingAgentAdapter } from "../tools/coding-agent.mjs";
-import { evaluationExpectationFailures, evaluationResponseFailures, scoredActualFindings } from "../evaluation/runner.mjs";
+import { evaluationExpectationFailures, evaluationResponseFailures, retainedEvaluationRecords, scoredActualFindings } from "../evaluation/runner.mjs";
 
 test("evaluation suite is an immutable executable authoring contract", () => {
   const suite = evaluationSuite("unit-suite")
@@ -100,4 +103,29 @@ test("evaluation acceptance treats qualitative Markdown CNL as the primary respo
     }),
     ["primary response includes a non-applicable result"]
   );
+});
+
+test("retained replay finds the newest real authoring cohort after an ordinary run", async (context) => {
+  const root = await mkdtemp(resolve(tmpdir(), "nll-retained-evaluation-"));
+  context.after(() => rm(root, { recursive: true, force: true }));
+  const archived = resolve(root, "iterations", "iteration-2026-08-01T20-00-00-000Z");
+  await mkdir(archived, { recursive: true });
+  await writeFile(
+    resolve(root, "task-results.mjs"),
+    "export default [{ caseId: 'ordinary', authoring: [] }];\n"
+  );
+  await writeFile(resolve(root, "agent-authoring.mjs"), "export default [];\n");
+  await writeFile(
+    resolve(archived, "task-results.mjs"),
+    "export default [{ caseId: 'real', authoring: [{ adapter: 'codex', runPath: 'runs/task', exitCode: 0 }] }];\n"
+  );
+  await writeFile(
+    resolve(archived, "agent-authoring.mjs"),
+    "export default [{ adapter: 'codex', runPath: 'runs/agent', exitCode: 0 }];\n"
+  );
+
+  const retained = await retainedEvaluationRecords(root);
+  assert.equal(retained.root, archived);
+  assert.equal(retained.results[0].caseId, "real");
+  assert.equal(retained.agentAuthoring[0].adapter, "codex");
 });

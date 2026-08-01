@@ -1,6 +1,6 @@
 # Evaluation suite agentic-nl-e2e
 
-Modes: `intent-selection`, `materialization`, `end-to-end-analysis`, `end-to-end-generation`, `ordinary-replay`. Coding agent invoked this iteration: no. Retained real authoring replayed: yes. Agent authoring phases: `architect`, `ontology`, `circuit`, `review`. Task authoring phases: `intent`, `longtext`.
+Modes: `intent-selection`, `materialization`, `end-to-end-analysis`, `end-to-end-generation`, `ordinary-replay`. Coding agent invoked this iteration: no. Retained real authoring replayed: yes. Agent authoring phases: `architect`, `ontology`, `circuit`, `review`. Task authoring phases: `intent`, `longtext`. Retained authoring source: `iterations/iteration-2026-08-01T20-18-52-602Z`.
 
 | Case | Primary Markdown CNL response | Status | Findings | Frames | F1 |
 | --- | --- | --- | ---: | ---: | ---: |
@@ -19,6 +19,6 @@ Modes: `intent-selection`, `materialization`, `end-to-end-analysis`, `end-to-end
 - responseContract: 1.0000
 - responseReplayEquivalent: 1.0000
 - authoringCompletion: 1.0000
-- elapsedMilliseconds: 141.3873
+- elapsedMilliseconds: 75.5502
 
 The linked task artifact is the primary human-facing response. See `authoring.md` for every retained Codex phase, `assurance.md` for auxiliary debug evidence, and `artifacts.md` for all retained files.

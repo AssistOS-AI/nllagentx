@@ -148,13 +148,14 @@ Review focus: retained evaluations make the documentation build intentionally de
 If distribution size later requires omitting full run logs, define a signed or content-addressed evidence bundle
 before weakening this fail-closed rule.
 
-## 20. Relative diagram assets and complete evidence size
+## 20. Relative interactive assets and complete evidence size
 
-Decision: generated HTML loads the repository-local `docs/assets/diagram-renderer.mjs` renderer through a relative
-URL. The renderer has no package or network dependency and preserves every diagram definition in an expandable
-source block. The link verifier now scans `.mjs` assets and static imports as well as HTML, Markdown, CSS, and
-ordinary JavaScript. No generated documentation resource assumes an origin root, localhost, a workspace mount,
-or an external CDN.
+Decision: generated HTML uses only project-owned document-relative assets. Process diagrams were removed from the
+published system explanation because they obscured the text-input/program/CNL story. The remaining interactive
+artifact browser is loaded from `docs/assets/artifact-browser.mjs`, has no package or network dependency, and keeps
+every displayed retained file in an inert local template. The link verifier scans `.mjs` assets and static imports
+as well as HTML, Markdown, CSS, and ordinary JavaScript. No generated documentation resource assumes an origin
+root, localhost, a workspace mount, or an external CDN.
 
 The four strict tutorials and the adaptive tutorial intentionally exceed ordinary source-size thresholds because
 they reproduce complete input, semantic programs, assurance projections, and retained results rather than
@@ -165,8 +166,9 @@ threshold.
 
 Review focus: if more additive DS contracts make the official-spec generator materially larger, move cohesive
 contract families into imported definition modules while preserving deterministic generation and byte-for-byte
-original-spec inclusion. If a richer diagram layout is required later, extend the local renderer or vendor a
-reviewed local asset; do not restore an absolute CDN URL.
+original-spec inclusion. If future documentation needs a new interactive view, implement it as a reviewed local
+asset and preserve the prose-first contract; do not restore an absolute CDN URL or replace the narrative with a
+diagram.
 
 ## 21. Primary Markdown CNL and technical evidence boundary
 
@@ -222,11 +224,91 @@ reporting requirement, add an explicit acceptance-contract identity rather than 
 
 ## 27. Tutorial artifact explorer delivery
 
-Decision: each retained tutorial embeds escaped Input, Intermediate and Output files into inert HTML templates. One
-shared viewer materializes only the selected file, with the first natural-language input open by default. This keeps
-all content exact and allows the generated documentation to work under an arbitrary relative hosting prefix without
-fetching project-parent paths.
+Decision: each retained tutorial embeds escaped Input, Intermediate and Output files into inert HTML templates. A
+two-level tree keeps all three stage branches visible in the left inventory and opens only the selected file in one
+shared viewer, with the first natural-language input open by default. Each branch shows the real authoring,
+validation, or replay command when one exists and explicitly identifies committed input when no generation command
+is applicable. This keeps content and command provenance exact while allowing the generated documentation to work
+under an arbitrary relative hosting prefix without fetching project-parent paths.
 
 Review focus: exact retained code and outputs make tutorial pages intentionally large. If browser size becomes a
 material distribution problem, define a project-owned content-addressed documentation bundle and relative fetch
 contract; do not replace real files with summaries or absolute workspace URLs.
+
+## 28. Public source quotations versus technical offsets
+
+Decision: public Markdown CNL shows the exact verified source substring and a relative source link, but never the
+decoded character interval. Start/end offsets remain available in SourceSpan descriptors, executable findings,
+source maps, traces, and other technical evidence. This keeps replay and anchor validation precise without asking a
+human reader to resolve machine coordinates.
+
+Review focus: if future renderers add line/column or document-page locators, treat them as optional navigation aids
+beside the exact quotation rather than replacing it or reintroducing coordinate-only evidence.
+
+## 29. Manifest-scoped coding context and verification transparency
+
+Decision: the context builder materializes exactly the supported context-artifact union declared by the selected
+skills and their transitive dependencies. Unsupported names fail the run. Generated `INSTRUCTIONS.md` enumerates the
+actual artifacts after the dependency-ordered skills and selected DS files. Skill documentation is generated from
+the live Markdown and executable manifest and distinguishes commands Codex is instructed to run, the fast check
+recorded in `run.mjs`, and stronger acceptance enforced by evaluation or adaptive authoring.
+
+Review focus: ordinary direct `code` commands retain Codex process evidence and its final report but do not by
+themselves claim the phase-specific end-to-end acceptance used by evaluation. If ordinary coding later enforces that
+acceptance automatically, change the CLI contract, implementation, tests, and these explanations together rather
+than quietly strengthening the documentation claim.
+
+## 30. Public requirement statements and controlled CNL templates
+
+Decision: requirement codes remain stable technical identities, but they are not public explanations. A semantic
+circuit that places a code in `failedRequirements`, `uncertainRequirements`, `conflictingRequirements`, or
+`satisfiedRequirements` must also provide a complete domain sentence through `requirementStatements`, unless the
+array value is already a human-readable sentence. Response rendering applies fixed status-specific grammar, stable
+group counts, and controlled next-action templates. It fails closed on an unmapped code-shaped value instead of
+guessing meaning from underscore-separated tokens. Exact source passages are placed under distinct evidence and
+source-quote markers so generated CNL and copied input remain visually and mechanically separable.
+
+Review focus: the current statement map is English because the active response dialect is English. If multilingual
+CNL becomes a requirement, add a typed dialect-aware statement contract rather than turning the map into ad hoc
+translation strings inside the renderer. Review new semantic circuits for full statement coverage and for sentences
+that preserve modality, actor, scope, and time rather than merely expanding the code name.
+
+## 31. Narrative Understand documentation as a distinct generated module
+
+Decision: the six Understand chapters are owned by `tools/docs-understand-pages.mjs`. They develop one connected
+story from instruction and source, through coding-agent context and direct semantic authoring, into the shared SDK,
+SemanticStore, capability plan, composed circuits, findings, and public CNL. The separate coding-agent chapter
+connects the adapter, dependency-closed skills, live catalogs, canonical working directory, phase handoff, retained
+logs, and independent acceptance. Earlier short bootstrap summaries were removed from the other generators so there
+is one project-owned source for these explanations.
+
+Review focus: these chapters are intentionally detailed and reuse the cold-chain and rule-review cases as recurring
+examples. When architecture changes, update the causal explanation in this module rather than adding a detached
+component list. If a chapter becomes substantially larger, split by a real conceptual boundary while preserving the
+cross-links and the shared input-to-CNL thread.
+
+## 32. Progress visibility for long coding-agent phases
+
+Decision: the accepted adaptive run remains valid evidence even though the CLI emitted no phase progress while
+Codex was working. The retained run directories, phase-specific `INSTRUCTIONS.md`, process records, final agent
+reports, deterministic assessments, and accepted replay establish what actually ran. No synthetic progress messages
+were added during this work because the current adapter exposes a completed-phase record, not a trustworthy live
+event stream.
+
+Review focus: `analyze --author-adaptive` can remain silent for several minutes across ontology, circuit, and review
+phases. Add structured phase-start, phase-complete, and verification events to the adapter/CLI in a future reviewed
+change so a user can distinguish model latency from a stalled process without inspecting the operating-system
+process table. Do not print invented percentage completion, and keep the final retained evidence authoritative.
+
+## 33. Retained replay selects provenance, not merely the current report
+
+Decision: `evaluate --replay-retained` examines the canonical report and archived iterations from newest to oldest,
+then selects the newest cohort containing actual coding-agent process evidence. Eligible evidence names an adapter,
+run path, and integer exit code in an agent- or task-authoring record. The generated summary records the selected
+report directory. An ordinary evaluation that creates new tasks without `--invoke-agent` is archived normally but
+cannot replace the provenance source for a real-authoring replay.
+
+Review focus: the selector currently treats any structurally complete adapter process record as real provenance and
+the strict case evaluator separately decides semantic acceptance. If multiple adapter trust classes are introduced,
+add a typed adapter-evidence policy rather than matching model names or folder conventions. Preserve failed ordinary
+iterations because they explain the lifecycle and must not break links from archived reports.

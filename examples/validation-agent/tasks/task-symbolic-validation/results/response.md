@@ -10,19 +10,27 @@
 
 [CNL:FINDING] [CODE:ORDER_OK] [STATUS:SATISFIED] [GROUP:confirmations] [SUPPORTING]
 ### Order ok
-**Status:** SATISFIED
+**Status:** Supported
 The input supports the conclusion “facility order”.
 
 - **Rule evaluated:** Facility order
 - **Circuit:** `example.facility-order`
 - **Decision:** The circuit emitted this result because Facility order evaluated as supported.
 
-**Evidence from the input**
+[CNL:EVIDENCE] [COUNT:2]
+
+**Exact evidence copied from the input**
+
+The passages below are copied exactly from the input. They are evidence for the generated conclusion above.
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > The alarm sounded in Building A at 08:57.
 >
-> — [source-001](../source/incident.txt), characters 0–41
+> — Exact source text copied from [source-001](../source/incident.txt)
+
+[CNL:SOURCE-QUOTE] [SOURCE:source-001]
 
 > Ana opened the north gate at 09:00.
 >
-> — [source-001](../source/incident.txt), characters 42–77
+> — Exact source text copied from [source-001](../source/incident.txt)

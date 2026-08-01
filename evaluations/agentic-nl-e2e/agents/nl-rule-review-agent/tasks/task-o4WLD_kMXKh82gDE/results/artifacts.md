@@ -2,7 +2,7 @@
 
 ## Semantic programs
 
-These executable modules define the task, intent, LongTextJS grounding, task-local ontology, task-local circuits, and generated SDK facade when present.
+These executable modules define the task, intent, LongTextJS grounding, task-local ontology, semantic and response circuits, and generated SDK facade when present.
 
 - [intent/intent.mjs](../intent/intent.mjs)
 - [longtext/root.longtext.mjs](../longtext/root.longtext.mjs)

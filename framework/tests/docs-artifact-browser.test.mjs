@@ -18,14 +18,24 @@ const escapeHtml = (value) => String(value)
 test("artifact explorer shows contextual labels while retaining exact project paths", async () => {
   const responsePath = resolve(resultRoot, "response.md");
   const html = await artifactBrowser({
-    Output: [Object.freeze({
-      path: responsePath,
-      displayRoot: resultRoot,
-      label: "task/results/response.md"
-    })]
+    Output: Object.freeze({
+      provenance: Object.freeze({
+        description: "Replay the task and regenerate the public response.",
+        command: "node nllAgent.mjs run --agent-dir example --task-dir task"
+      }),
+      entries: [Object.freeze({
+        path: responsePath,
+        displayRoot: resultRoot,
+        label: "task/results/response.md"
+      })]
+    })
   }, projectRoot, escapeHtml);
 
   assert.match(html, />task\/results\/response\.md<\/code><\/button>/);
+  assert.match(html, /role="tree"/);
+  assert.match(html, /<summary>Output<\/summary>/);
+  assert.match(html, /node nllAgent\.mjs run/);
+  assert.doesNotMatch(html, /role="tab"|artifact-browser__tabs/);
   assert.match(html, /data-project-path="evaluations\/agentic-nl-e2e\/.*\/results\/response\.md"/);
   assert.doesNotMatch(html, />evaluations\/agentic-nl-e2e\/.*response\.md<\/code><\/button>/);
 });
@@ -44,9 +54,10 @@ test("every concrete tutorial is an explicit text input to Markdown CNL story", 
   assert.equal(tutorialNames.length, 6);
   for (const name of tutorialNames) {
     const html = await readFile(resolve(projectRoot, "docs", name), "utf8");
-    const input = html.match(/id="[^"]+-input" class="artifact-browser__files"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
-    const intermediate = html.match(/id="[^"]+-intermediate" class="artifact-browser__files"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
-    const output = html.match(/id="[^"]+-output" class="artifact-browser__files"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? "";
+    const branch = (name) => html.match(new RegExp(`<summary>${name}<\\/summary>[\\s\\S]*?<div class="artifact-browser__files"[^>]*>([\\s\\S]*?)<\\/div>`))?.[1] ?? "";
+    const input = branch("Input");
+    const intermediate = branch("Intermediate");
+    const output = branch("Output");
     const inputLabels = [...input.matchAll(/<code>([^<]+)<\/code>/g)].map((match) => match[1]);
     const intermediateLabels = [...intermediate.matchAll(/<code>([^<]+)<\/code>/g)].map((match) => match[1]);
     const outputLabels = [...output.matchAll(/<code>([^<]+)<\/code>/g)].map((match) => match[1]);
@@ -63,6 +74,12 @@ test("every concrete tutorial is an explicit text input to Markdown CNL story", 
     assert.match(html, /Why [^<]*(?:answer|CNL)/);
     assert.doesNotMatch(html, /What a programmer should learn|Stage contract|Cases and their programming lesson/);
     assert.doesNotMatch(html, /mermaid|flowchart|stateDiagram|sequenceDiagram|classDiagram/);
+    assert.doesNotMatch(html, /characters\s+\d+[–-]\d+/i);
+    assert.match(html, /role="tree"/);
+    assert.doesNotMatch(html, /role="tab"|artifact-browser__tabs/);
+    assert.match(html, /<summary>Input<\/summary>/);
+    assert.match(html, /<summary>Intermediate<\/summary>/);
+    assert.match(html, /<summary>Output<\/summary>/);
 
     const agentInputs = inputLabels.filter((label) => label.startsWith("agent/"));
     if (/tutorial-(?:contradictory-rules|missing-exception|procedure-generation|unsupported-conclusion)\.html/.test(name)) {
@@ -104,4 +121,39 @@ test("navigation exposes one specification browser and no symbolic tutorial", ()
     ["Specification browser", "specsLoader.html?spec=matrix.md"]
   ]);
   assert.ok(tutorials.items.every(([, href]) => href !== "tutorial-symbolic.html"));
+});
+
+test("Understand pages explain the architecture as prose and use only simple concept tables", async () => {
+  const pages = ["index.html", "architecture.html", "agentic-authoring.html", "coding-agent.html", "project-structure.html", "source-ingestion.html"];
+  for (const name of pages) {
+    const html = await readFile(resolve(projectRoot, "docs", name), "utf8");
+    assert.ok((html.match(/<p(?:\s[^>]*)?>/g) ?? []).length >= 6, `${name} needs a sustained explanatory narrative`);
+    for (const table of html.matchAll(/<table>[\s\S]*?<\/table>/g)) {
+      const columns = (table[0].match(/<th>/g) ?? []).length;
+      assert.ok(columns <= 2, `${name} contains a table with ${columns} columns instead of a simple concept reference`);
+    }
+    assert.doesNotMatch(html, /What happens, step by step|Layer responsibilities|Concrete planning algorithm/);
+  }
+  const codingAgent = await readFile(resolve(projectRoot, "docs", "coding-agent.html"), "utf8");
+  for (const marker of ["CodingAgentAdapter", "dependency closure", "SDK_CATALOG.md", "INSTRUCTIONS.md", "workflow.mjs", "direct-editing", "process completed", "model-free"]) {
+    assert.match(codingAgent, new RegExp(marker.replaceAll(".", "\\."), "i"), `coding-agent.html must explain ${marker}`);
+  }
+});
+
+test("skill documentation exposes live manifests, context provenance, tool behavior, and verification layers", async () => {
+  const workflowPage = await readFile(resolve(projectRoot, "docs", "skills-workflow.html"), "utf8");
+  for (const marker of ["CodingSkill", "context-builder.mjs", "skill-loader.mjs", "INSTRUCTIONS.md", "run.mjs", "coding-agent.mjs", "codex exec", "phase-specific"] ) {
+    assert.match(workflowPage, new RegExp(marker.replaceAll(".", "\\.")), `skills-workflow.html must explain ${marker}`);
+  }
+  for (const id of ["nll-architect", "nll-orchestrator", "nll-sdk", "nll-runtime", "nll-intent", "nll-ontology", "nll-longtext", "nll-circuit", "nll-test", "nll-evaluate"]) {
+    const html = await readFile(resolve(projectRoot, "docs", `skill-${id}.html`), "utf8");
+    assert.match(html, /What the executable manifest controls/);
+    assert.match(html, /How this skill receives enough context/);
+    assert.match(html, /What its declared tools actually do/);
+    assert.match(html, /The authoring workflow Codex follows/);
+    assert.match(html, /How this skill verifies its result/);
+    assert.match(html, /The complete live manifest/);
+    assert.match(html, /INSTRUCTIONS\.md/);
+    assert.match(html, /run\.mjs/);
+  }
 });

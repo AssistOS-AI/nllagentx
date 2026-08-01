@@ -6,24 +6,24 @@ END FRAME
 
 FRAME Finding EXCEPTION_JUSTIFICATION_NOT_APPLICABLE
 EVIDENCE: none
-MESSAGE: EXCEPTION_JUSTIFICATION_NOT_APPLICABLE
+MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
 STATUS: NOT_APPLICABLE
 END FRAME
 
 FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
 EVIDENCE: none
-MESSAGE: PROCEDURE_PLAN_NOT_APPLICABLE
+MESSAGE: No asserted procedure-generation request applies to the available operational rules.
 STATUS: NOT_APPLICABLE
 END FRAME
 
 FRAME Finding RULE_CONTRADICTION
 EVIDENCE: nll.claim:238864e42e255a0f06974e424a620b0f86470dcfb887bfb082ca10c378a2fb26, nll.claim:696db6db44e18cbd0b35106ad717ae4983af1d2e40e6d32c0e486ab16289735b, nll.ground-term:a9e6eeeea9f684cb1a05c6bf0c85b112ef2a29be1ac6f3dfd0908948f73e8a75, nll.ground-term:f5517a806d636ffc9c6236230218ced74b6aabb5ec547c068faae27671e624dd, nll.source-span:3d73050e6c598a20f45560dde697e5c11334afc9e1bcd4e5d7fdb75415d08c1c, nll.source-span:ff2dae58da19da4deb470933f5d9369ba6c50b2408e83a32cb1398ca7f170c2a
-MESSAGE: RULE_CONTRADICTION
+MESSAGE: Two source-grounded rules govern the same action under the same condition, but one requires it while the other forbids it.
 STATUS: CONFLICT
 END FRAME
 
 FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
 EVIDENCE: none
-MESSAGE: SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
+MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
 STATUS: NOT_APPLICABLE
 END FRAME

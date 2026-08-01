@@ -5,25 +5,25 @@ STATUS: SATISFIED
 END FRAME
 
 FRAME Finding MISSING_EXCEPTION_JUSTIFICATION
-EVIDENCE: nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69, nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3, nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e, nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: MISSING_EXCEPTION_JUSTIFICATION
+EVIDENCE: nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69, nll.claim:7f6ca4bbaa2770ffb99e5db76adfcc43416423aa1d86703bd90ed3909aff6f6a, nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3, nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e, nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518, nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
+MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
 STATUS: VIOLATED
 END FRAME
 
 FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
 EVIDENCE: none
-MESSAGE: PROCEDURE_PLAN_NOT_APPLICABLE
+MESSAGE: No asserted procedure-generation request applies to the available operational rules.
 STATUS: NOT_APPLICABLE
 END FRAME
 
 FRAME Finding RULE_CONTRADICTION_NOT_APPLICABLE
 EVIDENCE: none
-MESSAGE: RULE_CONTRADICTION_NOT_APPLICABLE
+MESSAGE: No pair of operational rules governs the same action under the same condition.
 STATUS: NOT_APPLICABLE
 END FRAME
 
 FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
 EVIDENCE: none
-MESSAGE: SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
+MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
 STATUS: NOT_APPLICABLE
 END FRAME

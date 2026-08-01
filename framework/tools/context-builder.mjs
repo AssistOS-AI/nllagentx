@@ -16,6 +16,17 @@ export const phaseSkills = Object.freeze({
 
 const packSpecificationNumber = Object.freeze({ "core-commonsense": 7, "world-basic": 8, "math-basic": 9, "physics-basic": 10, "chemistry-basic": 11, "biology-basic": 12, "psychology-basic": 13, "anthropology-basic": 14, "sociology-basic": 15, "logic-basic": 16, "reasoning-errors": 17, "law-basic": 18, "social-interaction": 19 });
 
+export const supportedContextArtifacts = Object.freeze([
+  "PROJECT_MAP.md",
+  "SDK_CATALOG.md",
+  "ONTOLOGY_CATALOG.md",
+  "CIRCUIT_CATALOG.md",
+  "RESPONSE_CIRCUIT_CATALOG.md",
+  "PROFILE_RESOLUTION.md",
+  "SOURCE_OUTLINE.md",
+  "DIAGNOSTICS.md"
+]);
+
 async function resolvedSpecificationPaths(projectRoot, references, domainNumbers = null) {
   const entries = (await readdir(resolve(projectRoot, "design-specifications"))).filter((name) => name.endsWith(".md")).sort();
   const officialEntries = (await readdir(resolve(projectRoot, "docs", "specs"))).filter((name) => /^DS\d{3}-.+\.md$/.test(name)).sort();
@@ -54,22 +65,36 @@ export async function buildContext({ projectRoot, agentRoot, taskRoot = null, ph
   const skillIds = selectedSkills ?? phaseSkills[phase] ?? ["nll-architect"];
   const skills = await installSkills(projectRoot, runRoot, skillIds);
   const contextRoot = resolve(runRoot, "context");
-  await atomicWrite(resolve(contextRoot, "PROJECT_MAP.md"), await projectMap(projectRoot, [agentRoot, ...(taskRoot ? [taskRoot] : [])]));
-  await atomicWrite(resolve(contextRoot, "SDK_CATALOG.md"), sdkCatalog());
-  await atomicWrite(resolve(contextRoot, "ONTOLOGY_CATALOG.md"), ontologyCatalog(runtime.ontologies));
-  await atomicWrite(resolve(contextRoot, "CIRCUIT_CATALOG.md"), circuitCatalog(runtime.circuits));
-  const resolvedResponseCircuits = [...new Map(
-    [...defaultResponseCircuits, ...runtime.responseCircuits].map((circuit) => [circuit.identity, circuit])
-  ).values()];
-  await atomicWrite(resolve(contextRoot, "RESPONSE_CIRCUIT_CATALOG.md"), responseCircuitCatalog(resolvedResponseCircuits));
-  await atomicWrite(resolve(contextRoot, "PROFILE_RESOLUTION.md"), profileResolutionCatalog(runtime));
-  if (taskRoot) await atomicWrite(resolve(contextRoot, "SOURCE_OUTLINE.md"), sourceOutline(await loadSourceRegistry(taskRoot, { projectRoot })));
-  else await atomicWrite(resolve(contextRoot, "SOURCE_OUTLINE.md"), "# Source Outline\n\nNo task source was selected for this run.\n");
-  const diagnosticPaths = taskRoot ? [resolve(taskRoot, "results", "diagnostics.md"), resolve(taskRoot, "results", "source-diagnostics.md")] : [];
-  const diagnosticTexts = [];
-  if (resolutionFailure) diagnosticTexts.push(`# Runtime resolution failure\n\n\`\`\`text\n${resolutionFailure.stack ?? resolutionFailure}\n\`\`\``);
-  for (const path of diagnosticPaths) if (await exists(path)) diagnosticTexts.push(await readFile(path, "utf8"));
-  await atomicWrite(resolve(contextRoot, "DIAGNOSTICS.md"), diagnosticTexts.length ? diagnosticTexts.join("\n\n") : "# Diagnostics\n\nNo existing diagnostics.\n");
+  const requestedContext = new Set(skills.flatMap((skill) => skill.workflow.contextArtifacts.map((artifact) => artifact.name)));
+  const unsupportedContext = [...requestedContext].filter((name) => !supportedContextArtifacts.includes(name));
+  if (unsupportedContext.length > 0) {
+    throw new Error(`SKILL_CONTEXT_ARTIFACT_UNSUPPORTED: ${unsupportedContext.sort().join(", ")}`);
+  }
+  const contextProducers = new Map([
+    ["PROJECT_MAP.md", async () => projectMap(projectRoot, [agentRoot, ...(taskRoot ? [taskRoot] : [])])],
+    ["SDK_CATALOG.md", async () => sdkCatalog()],
+    ["ONTOLOGY_CATALOG.md", async () => ontologyCatalog(runtime.ontologies)],
+    ["CIRCUIT_CATALOG.md", async () => circuitCatalog(runtime.circuits)],
+    ["RESPONSE_CIRCUIT_CATALOG.md", async () => {
+      const resolvedResponseCircuits = [...new Map(
+        [...defaultResponseCircuits, ...runtime.responseCircuits].map((circuit) => [circuit.identity, circuit])
+      ).values()];
+      return responseCircuitCatalog(resolvedResponseCircuits);
+    }],
+    ["PROFILE_RESOLUTION.md", async () => profileResolutionCatalog(runtime)],
+    ["SOURCE_OUTLINE.md", async () => taskRoot
+      ? sourceOutline(await loadSourceRegistry(taskRoot, { projectRoot }))
+      : "# Source Outline\n\nNo task source was selected for this run.\n"],
+    ["DIAGNOSTICS.md", async () => {
+      const diagnosticPaths = taskRoot ? [resolve(taskRoot, "results", "diagnostics.md"), resolve(taskRoot, "results", "source-diagnostics.md")] : [];
+      const diagnosticTexts = [];
+      if (resolutionFailure) diagnosticTexts.push(`# Runtime resolution failure\n\n\`\`\`text\n${resolutionFailure.stack ?? resolutionFailure}\n\`\`\``);
+      for (const path of diagnosticPaths) if (await exists(path)) diagnosticTexts.push(await readFile(path, "utf8"));
+      return diagnosticTexts.length ? diagnosticTexts.join("\n\n") : "# Diagnostics\n\nNo existing diagnostics.\n";
+    }]
+  ]);
+  const contextNames = supportedContextArtifacts.filter((name) => requestedContext.has(name));
+  for (const name of contextNames) await atomicWrite(resolve(contextRoot, name), await contextProducers.get(name)());
   const workingDirectory = taskRoot ?? agentRoot;
   const skillOrder = skills.map((skill) => {
     const installed = resolve(runRoot, "skills", skill.id);
@@ -79,6 +104,7 @@ export async function buildContext({ projectRoot, agentRoot, taskRoot = null, ph
   const specPaths = await resolvedSpecificationPaths(projectRoot, [...new Set(skills.flatMap((skill) => skill.workflow.designSpecifications))], domainNumbers);
   if (runtime.packs.some((pack) => pack.id === "core-language")) specPaths.push(resolve(projectRoot, "docs", "specs", "DS034-core-language-pack.md"));
   const specOrder = specPaths.map((path) => `- \`${relative(workingDirectory, path).split(sep).join("/")}\``).join("\n") || "- No additional DS file was selected.";
+  const contextOrder = contextNames.map((name) => `- \`${relative(workingDirectory, resolve(contextRoot, name)).split(sep).join("/")}\``).join("\n") || "- No context artifact was declared.";
   const instructions = `# nllAgent Coding Run
 
 Goal: ${goal ?? `Complete the ${phase} phase according to the selected skill contracts.`}
@@ -94,7 +120,8 @@ CLI invocation: \`node ${resolve(projectRoot, "nllAgent.mjs")}\`
 ${skillOrder}
 3. The relevant design specifications:
 ${specOrder}
-4. Context catalogs under \`${relative(workingDirectory, contextRoot).split(sep).join("/")}\`, including the resolved semantic and response-circuit catalogs.
+4. The exact context artifacts declared by the resolved skill dependency closure:
+${contextOrder}
 5. Canonical source files needed for the requested change.
 
 Use actual SDK constructors and resolved ontology identities. Keep semantic artifacts as executable \`.mjs\` modules. Do not create JSON or TypeScript semantic artifacts. Edit canonical agent/task/framework files directly, add tests, run the skill checks, and report typed diagnostics for genuinely unsupported operations.

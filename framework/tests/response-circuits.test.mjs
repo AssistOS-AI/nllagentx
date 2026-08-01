@@ -13,9 +13,26 @@ import {
 } from "../sdk/cnl/response.mjs";
 import { composeResponse } from "../runtime/response/composer.mjs";
 import { executeTask } from "../tools/executor.mjs";
+import { renderTaskResponse } from "../tools/response-renderer.mjs";
 
 function finding(code, status) {
   return new Finding({ code, status });
+}
+
+function responseComposition(selectedFinding) {
+  const entry = Object.freeze({
+    finding: selectedFinding,
+    rule: null,
+    tags: Object.freeze(new Set(["material"]))
+  });
+  return Object.freeze({
+    entries: Object.freeze([entry]),
+    groups: Object.freeze([Object.freeze({ key: "problems", entries: Object.freeze([entry]) })]),
+    generatedFrames: Object.freeze([]),
+    style: "evidence-led",
+    grouping: "status-family",
+    features: Object.freeze(new Set(["stable-tags"]))
+  });
 }
 
 test("response circuits omit internal and non-applicable results and group material findings", () => {
@@ -73,6 +90,49 @@ test("response circuits cannot invent semantic findings", () => {
   }), /RESPONSE_STAGE_INVENTED_FINDING/);
 });
 
+test("public CNL renders mapped requirement statements instead of internal codes", async () => {
+  const selected = new Finding({
+    code: "TRANSFER_UNSUPPORTED",
+    status: "VIOLATED",
+    message: "The transfer is not supported by every required condition.",
+    details: {
+      failedRequirements: ["RECEIVING_PARTY_ACKNOWLEDGED"],
+      uncertainRequirements: ["EXCURSION_QUARANTINE_PATH"],
+      requirementStatements: {
+        RECEIVING_PARTY_ACKNOWLEDGED: "The receiving party acknowledged the custody transfer.",
+        EXCURSION_QUARANTINE_PATH: "Every recorded excursion follows the required quarantine path."
+      }
+    }
+  });
+  const response = await renderTaskResponse({
+    runtime: {},
+    store: {},
+    composition: responseComposition(selected),
+    diagnostics: [],
+    sourceRegistry: {}
+  });
+  assert.match(response, /\[CNL:REQUIREMENT-GROUP\] \[STATUS:VIOLATED\] \[COUNT:1\]/);
+  assert.match(response, /The receiving party acknowledged the custody transfer\./);
+  assert.match(response, /The available input does not determine whether the following required condition holds:/);
+  assert.doesNotMatch(response, /RECEIVING_PARTY_ACKNOWLEDGED|EXCURSION_QUARANTINE_PATH/);
+  assert.match(response, /\*\*Status:\*\* Not satisfied/);
+});
+
+test("public CNL fails closed when a requirement code lacks a semantic statement", async () => {
+  const selected = new Finding({
+    code: "TRANSFER_UNSUPPORTED",
+    status: "VIOLATED",
+    details: { failedRequirements: ["RECEIVING_PARTY_ACKNOWLEDGED"] }
+  });
+  await assert.rejects(renderTaskResponse({
+    runtime: {},
+    store: {},
+    composition: responseComposition(selected),
+    diagnostics: [],
+    sourceRegistry: {}
+  }), /PUBLIC_REQUIREMENT_STATEMENT_REQUIRED: RECEIVING_PARTY_ACKNOWLEDGED/);
+});
+
 test("ordinary execution writes qualitative Markdown CNL and keeps technical evidence separate", async () => {
   const projectRoot = resolve(import.meta.dirname, "../..");
   const agentRoot = resolve(projectRoot, "examples", "validation-agent");
@@ -81,6 +141,10 @@ test("ordinary execution writes qualitative Markdown CNL and keeps technical evi
   assert.match(result.response, /\[CNL:DOCUMENT\]/);
   assert.match(result.response, /\[CNL:FINDING\].*\[CODE:ORDER_OK\]/);
   assert.match(result.response, /> The alarm sounded in Building A at 08:57\./);
+  assert.match(result.response, /\[CNL:EVIDENCE\] \[COUNT:2\]/);
+  assert.match(result.response, /\[CNL:SOURCE-QUOTE\] \[SOURCE:source-001\]/);
+  assert.match(result.response, /> — Exact source text copied from \[source-001\]\(\.\.\/source\/incident\.txt\)/);
+  assert.doesNotMatch(result.response, /characters\s+\d+[–-]\d+/i);
   assert.doesNotMatch(result.response, /nll\.source-span|Object\.freeze|NOT_APPLICABLE/);
   assert.equal(await readFile(resolve(taskRoot, "results", "response.md"), "utf8"), result.response);
   assert.match(await readFile(resolve(taskRoot, "results", "artifacts.md"), "utf8"), /## Technical execution evidence/);

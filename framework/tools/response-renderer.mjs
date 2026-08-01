@@ -37,17 +37,106 @@ function statusExplanation(status, subject) {
   return clauses[status] ?? `The result for “${subject}” is ${String(status).toLocaleLowerCase("en")}.`;
 }
 
-function recommendation(finding, subject) {
-  const status = finding.status();
-  const failedRequirements = finding.descriptor().details?.failedRequirements ?? [];
-  if (status === "VIOLATED" && failedRequirements.length > 0) {
-    return `Address the failed requirement: ${failedRequirements[0]}`;
+function publicStatus(status) {
+  const labels = {
+    SATISFIED: "Supported",
+    VIOLATED: "Not satisfied",
+    CONFLICT: "Conflicting evidence",
+    UNKNOWN: "Not determined",
+    POSSIBLE_PROBLEM: "Possible problem",
+    BLOCKED_ONTOLOGY: "Blocked by missing ontology",
+    BLOCKED_COVERAGE: "Blocked by incomplete source coverage",
+    BLOCKED_RESOURCE: "Blocked by a missing resource",
+    BLOCKED_METHOD: "Blocked by a missing method",
+    ACCEPTED_EXCEPTION: "Accepted exception"
+  };
+  return labels[status] ?? titleFromCode(status);
+}
+
+const INTERNAL_REQUIREMENT_CODE = /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/;
+
+function completeSentence(value) {
+  const text = markdownText(value);
+  if (!text) return "";
+  return /[.!?]$/.test(text) ? text : `${text}.`;
+}
+
+function publicRequirementStatement(value, details) {
+  const embedded = value && typeof value === "object"
+    ? markdownText(value.statement ?? value.publicStatement)
+    : "";
+  const code = value && typeof value === "object"
+    ? markdownText(value.code)
+    : markdownText(value);
+  const mapped = code
+    ? markdownText(details.requirementStatements?.[code])
+    : "";
+  const statement = embedded || mapped || code;
+  if (!statement) {
+    throw new Error("PUBLIC_REQUIREMENT_STATEMENT_REQUIRED: a requirement entry is empty");
   }
-  if (status === "VIOLATED") return `Correct the violation and add explicit source support that addresses “${subject}”.`;
-  if (status === "CONFLICT") return `Resolve the conflicting statements or add an explicit priority, scope, or exception rule for “${subject}”.`;
-  if (status === "UNKNOWN") return `Provide the missing facts or close the relevant source coverage before treating “${subject}” as decided.`;
-  if (status.startsWith("BLOCKED_")) return `Add the missing semantic dependency, then rerun the task.`;
-  if (status === "POSSIBLE_PROBLEM") return `Review the cited passages and confirm whether corrective action is required.`;
+  if (INTERNAL_REQUIREMENT_CODE.test(statement)) {
+    throw new Error(`PUBLIC_REQUIREMENT_STATEMENT_REQUIRED: ${code || statement}`);
+  }
+  return completeSentence(statement);
+}
+
+function requirementGroups(details) {
+  const definitions = [
+    {
+      name: "failedRequirements",
+      status: "VIOLATED",
+      heading: "Required conditions not satisfied",
+      introduction: (count) => `The analysis found that the following required ${count === 1 ? "condition is" : "conditions are"} not satisfied:`
+    },
+    {
+      name: "conflictingRequirements",
+      status: "CONFLICT",
+      heading: "Required conditions with conflicting evidence",
+      introduction: (count) => `The input contains mutually incompatible evidence about the following required ${count === 1 ? "condition" : "conditions"}:`
+    },
+    {
+      name: "uncertainRequirements",
+      status: "UNKNOWN",
+      heading: "Required conditions not determined",
+      introduction: (count) => `The available input does not determine whether the following required ${count === 1 ? "condition holds" : "conditions hold"}:`
+    },
+    {
+      name: "satisfiedRequirements",
+      status: "SATISFIED",
+      heading: "Required conditions supported",
+      introduction: (count) => `The available input supports the following required ${count === 1 ? "condition" : "conditions"}:`
+    }
+  ];
+  return definitions
+    .filter(({ name }) => Array.isArray(details[name]) && details[name].length > 0)
+    .map((definition) => Object.freeze({
+      ...definition,
+      statements: Object.freeze(details[definition.name]
+        .map((value) => publicRequirementStatement(value, details)))
+    }));
+}
+
+function recommendation(finding, subject, groups) {
+  const status = finding.status();
+  const failed = groups.find((group) => group.status === "VIOLATED")?.statements ?? [];
+  if (status === "VIOLATED" && failed.length > 0) {
+    if (failed.length === 1) {
+      return Object.freeze({
+        count: 1,
+        text: `Resolve this failed condition and provide source evidence for the corrected state: “${failed[0]}”`
+      });
+    }
+    return Object.freeze({
+      count: failed.length,
+      text: `Resolve every failed condition and provide source evidence for each corrected state:\n\n${failed.map((statement) => `- “${statement}”`).join("\n")}`
+    });
+  }
+  if (status === "VIOLATED") return Object.freeze({ count: 1, text: `Correct the violation and add explicit source support that addresses “${subject}”.` });
+  if (status === "CONFLICT") return Object.freeze({ count: 1, text: `Resolve the conflicting statements or add an explicit priority, scope, or exception rule for “${subject}”.` });
+  if (status === "UNKNOWN") return Object.freeze({ count: 1, text: `Provide the missing facts or close the relevant source coverage before treating “${subject}” as decided.` });
+  if (status.startsWith("BLOCKED_")) return Object.freeze({ count: 1, text: "Add the missing semantic dependency, then rerun the task." });
+  if (status === "POSSIBLE_PROBLEM") return Object.freeze({ count: 1, text: "Review the cited passages and confirm whether corrective action is required." });
   return null;
 }
 
@@ -104,17 +193,16 @@ function renderQuote(citation) {
     ? `[${citation.sourceId}](../${citation.path})`
     : citation.sourceId;
   const quote = citation.text.split(/\r?\n/).map((line) => `> ${line || " "}`).join("\n");
-  return `${quote}\n>\n> — ${location}, characters ${citation.start}–${citation.end}`;
+  return `[CNL:SOURCE-QUOTE] [SOURCE:${citation.sourceId}]\n\n${quote}\n>\n> — Exact source text copied from ${location}`;
 }
 
-function searchTerms(finding) {
+function searchTerms(finding, groups) {
   const details = finding.descriptor().details ?? {};
   const values = [
     finding.code(),
     finding.message(),
-    ...(details.failedRequirements ?? []),
-    ...(details.uncertainRequirements ?? []),
-    ...(details.conflictingRequirements ?? [])
+    ...groups.flatMap((group) => group.statements),
+    ...Object.values(details.requirementStatements ?? {})
   ];
   return new Set(values
     .filter(Boolean)
@@ -123,9 +211,9 @@ function searchTerms(finding) {
     .map((word) => word.slice(0, 7)));
 }
 
-function rankCitations(citations, finding, limit) {
+function rankCitations(citations, finding, groups, limit) {
   if (citations.length <= limit) return citations;
-  const terms = searchTerms(finding);
+  const terms = searchTerms(finding, groups);
   return citations.map((citation, index) => {
     const text = citation.text.toLocaleLowerCase("en");
     const tokens = new Set(text.split(/[^a-z0-9]+/).filter((word) => word.length >= 5).map((word) => word.slice(0, 7)));
@@ -153,26 +241,21 @@ function simpleDetail(value) {
   return null;
 }
 
-function renderDetails(finding) {
+function renderDetails(finding, groups, { stableTags }) {
   const details = finding.descriptor().details ?? {};
-  const requirementGroups = [
-    ["failedRequirements", "Failed requirement"],
-    ["conflictingRequirements", "Conflicting requirement"],
-    ["uncertainRequirements", "Unresolved requirement"],
-    ["satisfiedRequirements", "Confirmed requirement"]
-  ].filter(([name]) => Array.isArray(details[name]) && details[name].length > 0);
   const rows = Object.entries(details)
-    .filter(([name]) => !name.endsWith("Requirements"))
+    .filter(([name]) => !name.endsWith("Requirements") && name !== "requirementStatements")
     .map(([name, value]) => [titleFromCode(name), simpleDetail(value)])
     .filter(([, value]) => value !== null);
   const sections = [];
-  if (requirementGroups.length > 0) {
-    const requirements = requirementGroups.flatMap(([name, label]) => {
-      const values = details[name];
-      const heading = values.length === 1 ? label : `${label}s`;
-      return [`- **${heading}:**`, ...values.map((value) => `  - ${value}`)];
+  if (groups.length > 0) {
+    const requirements = groups.map((group) => {
+      const marker = stableTags
+        ? `[CNL:REQUIREMENT-GROUP] [STATUS:${group.status}] [COUNT:${group.statements.length}]\n\n`
+        : "";
+      return `${marker}**${group.heading}**\n\n${group.introduction(group.statements.length)}\n\n${group.statements.map((statement) => `- ${statement}`).join("\n")}`;
     });
-    sections.push(`**Why this result**\n\n${requirements.join("\n")}`);
+    sections.push(`**Assessment of required conditions**\n\n${requirements.join("\n\n")}`);
   }
   if (rows.length > 0) {
     sections.push(`**Assessment details**\n\n${rows.map(([name, value]) => `- ${name}: ${value}`).join("\n")}`);
@@ -211,24 +294,31 @@ function renderFinding(entry, store, registry, { group, style, features }) {
   const citations = evidenceSpans(finding, store)
     .map((span) => sourceCitation(span, registry))
     .filter(Boolean);
-  const next = recommendation(finding, subject);
+  const requirements = requirementGroups(finding.descriptor().details ?? {});
+  const next = recommendation(finding, subject, requirements);
   const marker = features.has("stable-tags")
     ? `[CNL:FINDING] [CODE:${finding.code()}] [STATUS:${finding.status()}] [GROUP:${group}] [${tags.has("material") ? "MATERIAL" : "SUPPORTING"}]`
     : "";
-  const shownCitations = rankCitations(citations, finding, style === "analytical" ? 10 : style === "concise" ? 2 : 6);
+  const shownCitations = rankCitations(citations, finding, requirements, style === "analytical" ? 10 : style === "concise" ? 2 : 6);
   return [
     marker,
     `### ${title}`,
     "",
-    `**Status:** ${finding.status()}`,
+    `**Status:** ${publicStatus(finding.status())}`,
     "",
     conclusion,
     features.has("explain-rules") && style !== "concise" ? `\n\n${renderRule(rule)}` : "",
-    style === "analytical" || style === "evidence-led" ? renderDetails(finding) : "",
-    features.has("quote-evidence") && shownCitations.length > 0
-      ? `\n\n**Evidence from the input**\n\n${shownCitations.map(renderQuote).join("\n\n")}`
+    style === "analytical" || style === "evidence-led"
+      ? renderDetails(finding, requirements, { stableTags: features.has("stable-tags") })
       : "",
-    next ? `\n\n**Next action:** ${next}` : ""
+    features.has("quote-evidence") && shownCitations.length > 0
+      ? `\n\n[CNL:EVIDENCE] [COUNT:${shownCitations.length}]\n\n**Exact evidence copied from the input**\n\nThe passages below are copied exactly from the input. They are evidence for the generated conclusion above.\n\n${shownCitations.map(renderQuote).join("\n\n")}`
+      : "",
+    next
+      ? next.count === 1
+        ? `\n\n[CNL:NEXT-ACTION] [COUNT:1]\n\n**Next action:** ${next.text}`
+        : `\n\n[CNL:NEXT-ACTION] [COUNT:${next.count}]\n\n**Next actions**\n\n${next.text}`
+      : ""
   ].filter(Boolean).join("\n").replace(/\n{3,}/g, "\n\n");
 }
 

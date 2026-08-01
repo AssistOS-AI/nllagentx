@@ -174,6 +174,14 @@ test("the concrete source violates release support and cites both decisive defec
   assert.deepEqual(finding.descriptor().details.uncertainRequirements, [
     "EXCURSION_QUARANTINE_PATH"
   ]);
+  assert.equal(
+    finding.descriptor().details.requirementStatements.RECEIVING_PARTY_ACKNOWLEDGED,
+    "The receiving party acknowledged the custody transfer."
+  );
+  assert.equal(
+    finding.descriptor().details.requirementStatements.THERMOMETER_CALIBRATION_VALID,
+    "Every thermometer used for the transfer has a calibration valid at the transfer time."
+  );
 
   const citedText = evidenceText(finding);
   assert.match(citedText, /calibration certificate for TH-9 expired on 13 July 2026/i);
@@ -182,7 +190,8 @@ test("the concrete source violates release support and cites both decisive defec
   const frame = execution.frames[0];
   assert.equal(frame.kind(), "Finding");
   assert.equal(frame.slot("status").value(), "VIOLATED");
-  assert.match(frame.slot("failed-preconditions").value(), /THERMOMETER_CALIBRATION_VALID/);
+  assert.match(frame.slot("failed-preconditions").value(), /calibration valid at the transfer time/i);
+  assert.doesNotMatch(frame.slot("failed-preconditions").value(), /THERMOMETER_CALIBRATION_VALID/);
   const reparsed = parseCanonicalCNL(renderCanonicalCNL(frame));
   assert.equal(compareFrames(frame, reparsed).equivalent, true);
 });

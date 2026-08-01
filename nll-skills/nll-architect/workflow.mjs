@@ -29,9 +29,7 @@ export default codingSkill("nll-architect")
     cliTool("nllAgent source outline"),
     cliTool("nllAgent context show")
   )
-  .dependsOn(
-    
-  )
+  .dependsOn()
   .edits(
     editRoot("agent"),
     editRoot("task"),
