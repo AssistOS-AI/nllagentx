@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Semantic DSLs and SDK</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -26,17 +22,14 @@
 <h2>LongTextJS</h2><p>LongTextJS separates terms from claims, anchors claims to exact <code>SourceSpan</code> values, represents context and alternatives, and commits coverage witnesses explicitly. Source verification checks source identity, digest, unit identity, bounds, and text hashes before an anchor is considered valid. Read the <a href="longtextjs.html">detailed LongTextJS chapter</a>.</p>
 <h2>IntentJS and profiles</h2><p>Intent modules express modes, domains, concerns, evidence policy, assurance, outputs, exclusions, scope, resources, and fallback. Profiles are executable modules that choose packs and selection policy. CLI domains, exclusions, checks, and text signals can refine runtime resolution without replacing the canonical task module. Read the <a href="intentjs.html">detailed IntentJS chapter</a>.</p>
 <h2>CircuitJS and CNL</h2><p>Circuits declare requirements and provisions, then compose queries, decision tables, procedural stages, emissions, and assurance requests. The scheduler infers stage dependencies from semantic references. CNL frames retain typed slots and provenance, render to a canonical textual form, and parse back for semantic comparison. Read the <a href="circuitjs.html">detailed CircuitJS chapter</a>.</p>
-<pre class="mermaid">classDiagram
-  SemanticHandle <|-- SemanticTerm
-  SemanticHandle <|-- Claim
-  SemanticHandle <|-- QueryNode
-  SemanticHandle <|-- Finding
-  SemanticHandle <|-- CNLFrame
-  OntologyModule --> SemanticTerm : constructors
-  LongTextModel --> Claim : contains
-  CircuitModel --> QueryNode : stages
-  CircuitModel --> Finding : emits
-  CircuitModel --> CNLFrame : emits</pre>
+<h2>How the DSL files cooperate</h2>
+<table><thead><tr><th>File family</th><th>Reads</th><th>Defines</th><th>Feeds</th></tr></thead><tbody>
+<tr><td>OntologyJS</td><td>Reusable domain design</td><td>Typed concepts, roles, relations and constructors</td><td>LongTextJS and CircuitJS</td></tr>
+<tr><td>IntentJS</td><td>Task instruction</td><td>Requested operation, evidence and presentation policy</td><td>Planner and response composer</td></tr>
+<tr><td>LongTextJS</td><td>Decoded source text and ontology constructors</td><td>Grounded claims, contexts, alternatives and coverage</td><td>SemanticStore</td></tr>
+<tr><td>CircuitJS</td><td>Intent-selected capabilities and SemanticStore values</td><td>Queries, decisions, findings and generated frames</td><td>Response circuits</td></tr>
+<tr><td>Markdown CNL</td><td>Filtered material findings and exact source evidence</td><td>The human-readable answer</td><td>Application user or a later formatting LLM</td></tr>
+</tbody></table>
 <h2>Minimal executable composition</h2>
 <pre><code>const model = describe("task-model")
   .section(section("body", sequence(

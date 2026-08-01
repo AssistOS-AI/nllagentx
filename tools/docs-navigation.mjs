@@ -46,24 +46,17 @@ const groups = Object.freeze([
       Object.freeze(["Unsupported conclusion", "tutorial-unsupported-conclusion.html"]),
       Object.freeze(["Procedure generation", "tutorial-procedure-generation.html"]),
       Object.freeze(["Adaptive cold-chain", "tutorial-adaptive-cold-chain.html"]),
-      Object.freeze(["Concrete replay", "tutorial-agent-task.html"]),
-      Object.freeze(["Symbolic validation", "tutorial-symbolic.html"])
+      Object.freeze(["Minimal text-to-CNL", "tutorial-agent-task.html"])
     ])
   }),
   Object.freeze({
     id: "reference",
     label: "Reference",
     items: Object.freeze([
-      Object.freeze(["Specification matrix", "specsLoader.html?spec=matrix.md"]),
-      Object.freeze(["Agentic authoring contract", "specsLoader.html?spec=DS041-agentic-natural-language-authoring.md"]),
-      Object.freeze(["Adaptive authoring contract", "specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md"]),
-      Object.freeze(["Markdown CNL response", "specsLoader.html?spec=DS043-primary-markdown-cnl-response.md"]),
-      Object.freeze(["Response circuit contract", "specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md"]),
+      Object.freeze(["Specification browser", "specsLoader.html?spec=matrix.md"]),
       Object.freeze(["Documentation ownership", "documentation-ownership.html"]),
       Object.freeze(["Specification review", "specification-review.html"]),
-      Object.freeze(["Documentation generation", "documentation-generation.html"]),
-      Object.freeze(["Source boundary", "specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md"]),
-      Object.freeze(["Coding style", "specsLoader.html?spec=DS001-coding-style.md"])
+      Object.freeze(["Documentation generation", "documentation-generation.html"])
     ])
   })
 ]);

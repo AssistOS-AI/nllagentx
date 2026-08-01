@@ -52,7 +52,7 @@ async function main() {
   const port = server.address().port;
   const paths = options.paths.length > 0
     ? options.paths
-    : ["/", "/assets/diagram-renderer.mjs", "/specsLoader.html?spec=matrix.md"];
+    : ["/", "/assets/artifact-browser.mjs", "/specsLoader.html?spec=matrix.md"];
   let failed = false;
   try {
     for (const requested of paths) {

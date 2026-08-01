@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — nll-circuit Skill</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -22,9 +18,7 @@
       
 <p class="lead">Use when creating or repairing a reusable rule, analysis, generation, refinement or assurance circuit.</p>
 <h2>Executable workflow</h2><p>The workflow references <code>DS-003</code>, <code>DS-000</code>, <code>DS-007-DS-019</code>, <code>DS005</code>, <code>DS041</code>, <code>DS042</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: <code>nll-runtime</code> → <code>nll-ontology</code>. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
-<pre class="mermaid">flowchart LR
-  P1[discover] --> P2[author] --> P3[validate] --> P4[handoff]
-  Context[Resolved SDK, ontology, semantic circuit, response circuit, profile, source catalogs] --> P1</pre>
+<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody><tr><td>1</td><td><code>discover</code></td><td>Resolved task, catalogs and dependency skills</td><td>Inputs required by <code>author</code></td></tr><tr><td>2</td><td><code>author</code></td><td>Files and diagnostics from <code>discover</code></td><td>Inputs required by <code>validate</code></td></tr><tr><td>3</td><td><code>validate</code></td><td>Files and diagnostics from <code>author</code></td><td>Inputs required by <code>handoff</code></td></tr><tr><td>4</td><td><code>handoff</code></td><td>Files and diagnostics from <code>validate</code></td><td>Validated canonical files and a concise handoff</td></tr></tbody></table>
 <h2>Required tools</h2><ul><li><code>nllAgent catalog circuit</code></li><li><code>nllAgent catalog response</code></li><li><code>nllAgent catalog ontology</code></li><li><code>nllAgent sdk usage</code></li><li><code>nllAgent longtext query</code></li><li><code>nllAgent circuit check</code></li><li><code>nllAgent circuit plan</code></li><li><code>nllAgent circuit run</code></li><li><code>nllAgent circuit abstract</code></li><li><code>nllAgent circuit symbolic</code></li><li><code>nllAgent trace slice</code></li><li><code>nllAgent cnl roundtrip</code></li><li><code>nllAgent test task</code></li></ul>
 <h2>Canonical edit roots</h2><ul><li><code>framework/packs</code></li><li><code>agent/circuits</code></li><li><code>agent/cnl</code></li><li><code>task/circuits</code></li><li><code>task/cnl</code></li></ul>
 <h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>

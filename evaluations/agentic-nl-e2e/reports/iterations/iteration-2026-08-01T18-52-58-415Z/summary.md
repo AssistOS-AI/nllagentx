@@ -19,6 +19,6 @@ Modes: `intent-selection`, `materialization`, `end-to-end-analysis`, `end-to-end
 - responseContract: 1.0000
 - responseReplayEquivalent: 1.0000
 - authoringCompletion: 1.0000
-- elapsedMilliseconds: 141.3873
+- elapsedMilliseconds: 72.6384
 
 The linked task artifact is the primary human-facing response. See `authoring.md` for every retained Codex phase, `assurance.md` for auxiliary debug evidence, and `artifacts.md` for all retained files.

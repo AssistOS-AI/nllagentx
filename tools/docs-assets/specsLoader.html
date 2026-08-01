@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent specification viewer</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
 </head>
 <body>
   <div data-include="partials/header.html"></div>
@@ -18,13 +14,6 @@
         <div><p class="kicker">Specification viewer</p><h1 id="spec-title">Specifications</h1></div>
         <small><a href="index.html">Home</a> · <a href="specsLoader.html?spec=matrix.md">Matrix</a> · <span id="current-spec">Loading</span></small>
       </div>
-      <nav class="section-nav" aria-label="Specification references">
-        <span>Reference</span>
-        <a href="specsLoader.html?spec=matrix.md">Matrix</a>
-        <a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">Agentic authoring</a>
-        <a href="specsLoader.html?spec=DS043-primary-markdown-cnl-response.md">Markdown CNL response</a>
-        <a href="specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md">Response circuits</a>
-      </nav>
       <div id="spec-meta"></div>
       <div id="content" class="content"><p>Loading specification…</p></div>
     </article>

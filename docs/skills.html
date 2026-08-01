@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Skill Catalog</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -22,12 +18,13 @@
       
 <p class="lead">The repository contains ten project-owned nllAgent authoring skills. Each skill has a dedicated HTML chapter, executable workflow and official DS contract. Environment-managed skills are not copied, published or required by this project.</p>
 <ul class="catalog-list"><li><a href="skill-nll-architect.html"><code>nll-architect</code></a></li><li><a href="skill-nll-orchestrator.html"><code>nll-orchestrator</code></a></li><li><a href="skill-nll-sdk.html"><code>nll-sdk</code></a></li><li><a href="skill-nll-runtime.html"><code>nll-runtime</code></a></li><li><a href="skill-nll-intent.html"><code>nll-intent</code></a></li><li><a href="skill-nll-ontology.html"><code>nll-ontology</code></a></li><li><a href="skill-nll-longtext.html"><code>nll-longtext</code></a></li><li><a href="skill-nll-circuit.html"><code>nll-circuit</code></a></li><li><a href="skill-nll-test.html"><code>nll-test</code></a></li><li><a href="skill-nll-evaluate.html"><code>nll-evaluate</code></a></li></ul>
-<h2>Resolution model</h2><pre class="mermaid">flowchart LR
-  Requested[Requested phase skill] --> Loader[Skill loader]
-  Loader --> Dependencies[Transitive workflow dependencies]
-  Dependencies --> Installed[Run-local skill folders]
-  Installed --> Catalogs[Declared context catalogs]
-  Catalogs --> CodingAgent[Coding agent reads and edits canonical files]</pre>
+<h2>How one requested skill reaches Codex</h2>
+<table><thead><tr><th>Step</th><th>Input</th><th>Framework action</th><th>Result visible to Codex</th></tr></thead><tbody>
+<tr><td>1. Select</td><td>Requested coding phase</td><td>Map the phase to its owning skill.</td><td>One root <code>SKILL.md</code> and <code>workflow.mjs</code>.</td></tr>
+<tr><td>2. Resolve dependencies</td><td>Root workflow dependency declarations</td><td>Close dependencies in deterministic order.</td><td>Only the required run-local skill folders.</td></tr>
+<tr><td>3. Build context</td><td>Declared context requirements</td><td>Read live SDK, ontology, circuit, profile and source catalogs.</td><td>Compact run-local context files with real module paths.</td></tr>
+<tr><td>4. Author</td><td>Instructions, skills and catalogs</td><td>Invoke Codex with canonical edit roots.</td><td>Direct edits to agent/task <code>.mjs</code> programs and tests.</td></tr>
+</tbody></table>
 <p>The adjacent <code>workflow.mjs</code> is machine-resolvable and the <code>SKILL.md</code> is agent-facing. Context is generated from live SDK descriptors and resolved ontologies, semantic circuits and response circuits. Skills do not search hidden folders and do not copy the framework theory into task artifacts.</p>
     </article>
   </main>

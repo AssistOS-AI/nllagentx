@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Documentation generation</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -18,11 +14,11 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Documentation generation</nav>
       <p class="kicker">Detailed, portable, evidence-backed HTML</p>
       <h1>Documentation generation</h1>
-      <nav class="section-nav" aria-label="Reference pages"><span>Reference</span><a href="specsLoader.html?spec=matrix.md">Specification matrix</a><a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">Agentic authoring contract</a><a href="specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md">Adaptive authoring contract</a><a href="specsLoader.html?spec=DS043-primary-markdown-cnl-response.md">Markdown CNL response</a><a href="specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md">Response circuit contract</a><a href="documentation-ownership.html">Documentation ownership</a><a href="specification-review.html">Specification review</a><a href="documentation-generation.html">Documentation generation</a><a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">Source boundary</a><a href="specsLoader.html?spec=DS001-coding-style.md">Coding style</a></nav>
+      <nav class="section-nav" aria-label="Reference pages"><span>Reference</span><a href="specsLoader.html?spec=matrix.md">Specification browser</a><a href="documentation-ownership.html">Documentation ownership</a><a href="specification-review.html">Specification review</a><a href="documentation-generation.html">Documentation generation</a></nav>
       
 <p class="lead">The HTML set is rebuilt from implementation and retained accepted evaluations. Tutorials fail closed rather than inventing a source, semantic module, agent run, or result.</p>
-<h2>Portability</h2><p>Every link, asset import, specification query, and partial fetch is document-relative. The generated site is verified under a non-root path, including the matrix query and project-owned diagram renderer.</p>
-<h2>Evidence hierarchy</h2><p>Tutorials show <code>response.md</code> first. Exact input, generated semantic code, Codex runs, tests, replay, and technical assurance remain available in dedicated sections without presenting raw projections as the answer.</p>
+<h2>Portability</h2><p>Every link, asset import, specification query, and partial fetch is document-relative. The generated site is verified under a non-root path, including the matrix query and project-owned artifact explorer.</p>
+<h2>Tutorial boundary</h2><p>Every tutorial presents the same programmer-facing sequence: exact text input, inspectable intermediate semantic files, then one public <code>response.md</code>. Coding-run logs, assurance projections and evaluation metrics remain in the dedicated workflow and result documentation instead of becoming separate tutorial stories.</p>
 <p>See <a href="specsLoader.html?spec=DS040-html-documentation-generation-and-portability.md">DS040</a>.</p>
     </article>
   </main>

@@ -172,7 +172,13 @@ This specification makes the \`${skillId}\` coding workflow part of the official
 
 ## Core Content
 
-The CLI must load the executable workflow through the SDK, resolve its dependencies transitively, copy only the required skill folders into a run directory, and generate the context artifacts declared by that workflow. The coding agent must read the installed skill contract and resolved catalogs before editing canonical files.
+The CLI must load the executable workflow through the SDK, resolve its dependencies transitively, copy only the required skill folders into a run directory, and generate the union of context artifacts declared by the complete dependency closure. The coding agent must read the installed skill contract, dependency-ordered instructions, exact selected specifications, and resolved live catalogs before editing canonical files.
+
+The executable manifest is not a decorative index. Its specification references determine the DS files copied into the reading order; its context declarations select named run-local projections generated from live project modules; its tool declarations must resolve to implemented CLI commands; its dependency declarations determine installation and reading order; its edit roots state the ownership boundary; and its phases state where the workflow is applicable. Every declared context name and tool command must be validated by framework tests so a misspelling or stale declaration fails before a coding run is presented as usable.
+
+The generated coding instructions must explain the goal, canonical working directory, project CLI, installed skill order, selected specifications, and exact context artifact inventory. Context artifacts remain compact projections for discovery: they name real SDK imports, loaded ontology identities, available semantic and response circuits, profile resolution, source units, or diagnostics. Codex must inspect canonical modules when it needs implementation detail and must write executable \`.mjs\` programs through the real SDK rather than translating catalog prose into inert data.
+
+Correctness has two explicit layers. The skill's Markdown workflow tells Codex which narrow CLI checks to run while authoring. The run manifest records the standard deterministic check for the edited owner. Evaluation and adaptive authoring additionally apply phase-specific acceptance to imported modules, ontology diagnostics, source anchors, provider availability, focused tests, concrete findings, requested auxiliary assurance, and the public CNL response. Documentation must identify which layer runs automatically for each command and must not describe a suggested check as if the framework had already executed it.
 
 ### Preserved skill instructions
 
@@ -187,6 +193,14 @@ Response: \`SKILL.md\` provides operational guidance to the coding agent; \`work
 ### Question #2: How does the skill obtain SDK and ontology knowledge?
 
 Response: It consumes run-local \`SDK_CATALOG.md\`, \`ONTOLOGY_CATALOG.md\`, \`CIRCUIT_CATALOG.md\`, \`PROFILE_RESOLUTION.md\`, source outlines, and the exact DS files selected by its workflow. It must use resolved constructors rather than duplicating theory into task code.
+
+### Question #3: How is sufficient context selected without copying the whole project?
+
+Response: The requested phase selects one or more root skills. Dependency-first closure produces the installed skill order, and the union of their manifest declarations produces the exact DS and context inventory. Each catalog is generated from the currently resolved project, profile, agent, task, and decoded source state. Codex follows identities and import paths from those projections into canonical code only when the phase needs more detail.
+
+### Question #4: What proves that a skill declaration is executable?
+
+Response: Framework tests load every manifest, close every dependency graph, reject cycles, validate every context artifact name, and route every declared tool through the real CLI. Authoring evaluations then retain the installed skill, instructions, catalogs, process evidence, edited paths, and phase-specific deterministic acceptance. The Markdown instructions alone are not proof of a successful run.
 
 ## Conclusion
 
@@ -289,7 +303,9 @@ This specification formalizes the user-required notion that agents and tasks are
 
 Every semantic command must resolve an agent from \`--agent <name-or-path>\` or \`--agent-dir <path>\`. Task commands must additionally resolve \`--task <id-or-path>\` or \`--task-dir <path>\`. Name resolution uses \`agents/<name>\` and \`<agent>/tasks/<id>\`; explicit paths may be outside those defaults while still importing the selected project SDK.
 
-Runtime resolution must load framework defaults, the selected profile, agent-local ontologies/circuits, and task-local ontologies/circuits/IntentJS/LongTextJS in documented precedence. The context builder must ingest task sources, resolve the selected skill dependency graph, install run-local skill folders, identify exact DS filenames, and generate compact catalogs from live SDK descriptors and resolved ontology/circuit objects. Catalogs are informational and must not replace canonical modules.
+Runtime resolution must load framework defaults, the selected profile, agent-local ontologies/circuits, and task-local ontologies/circuits/IntentJS/LongTextJS in documented precedence. The context builder must ingest task sources, resolve the selected skill dependency graph, install run-local skill folders, identify exact DS filenames, and generate exactly the supported context-artifact union declared by that dependency graph. Those artifacts are compact projections from live SDK descriptors, resolved ontology/circuit objects, profile selection, decoded sources, project paths, and retained diagnostics. Unsupported manifest names are configuration errors. Catalogs are informational and must not replace canonical modules.
+
+\`INSTRUCTIONS.md\` must enumerate the actual generated context files and place them after the installed skills and selected DS files in the mandatory reading order. It must not claim that an undeclared catalog is present. The adjacent executable run manifest records the adapter, canonical working directory, installed skills, edit root, objective, and deterministic owner-level check. A prepare-only command may stop after creating this auditable context; invoking the coding adapter is a separate, explicit action.
 
 A long-running authoring or evaluation process must observe changes to transitive agent/task modules made by a coding phase in the same process. Fresh import applies to the entire local semantic dependency graph below the resolved agent ownership root, not only to its entry module. Framework SDK/runtime modules retain stable process identities so constructors and \`instanceof\` boundaries are not duplicated. Freshness keys must be derived from local file metadata and covered by a regression that rewrites an entry module and one imported dependency between two resolutions.
 
@@ -320,6 +336,10 @@ Response: The original twenty files must remain intact and use their established
 ### Question #4: Why version transitive local modules but not framework modules?
 
 Response: Coding phases edit the agent/task dependency graph while an evaluator remains alive, so every local dependency must be fresh. Duplicating framework constructors would instead split semantic class identity inside one runtime. The module hook therefore versions only files below the resolved ownership root.
+
+### Question #5: Why does the manifest select context artifacts by name?
+
+Response: A phase needs enough information to choose correct SDK constructors and reuse loaded semantic identities, but an undifferentiated project dump hides ownership and wastes the coding agent's context. A small validated vocabulary of generated artifacts makes the dependency explicit, inspectable, and testable while canonical modules remain available for deliberate follow-up reading.
 
 ## Conclusion
 
@@ -465,17 +485,31 @@ The HTML documentation is a generated product interface. It must explain the exe
 
 ## Core Content
 
-\`tools/generate-html-docs.mjs\` and its project-owned helper modules must generate the complete HTML set, shared navigation, styles, specification loader, and local diagram assets. Generation must not read \`.agents/\`, a home directory, a CDN, localhost, or a fixed deployment prefix. Every internal link, script import, stylesheet, fetch target, and specification query must be document-relative.
+\`tools/generate-html-docs.mjs\` and its project-owned helper modules must generate the complete HTML set, shared navigation, styles, specification loader, and local interactive assets. Generation must not read \`.agents/\`, a home directory, a CDN, localhost, or a fixed deployment prefix. Every internal link, script import, stylesheet, fetch target, and specification query must be document-relative.
 
 Documentation must provide detailed project structure, skill operation, OntologyJS, IntentJS, LongTextJS, CircuitJS, response-circuit, runtime, CLI, testing, evaluation, and tutorial pages. DSL reference pages must include comprehensive tables of the current exported constructors and fluent operations, their parameters, result types, invariants, and concrete usage. Tables must be generated from or checked against live SDK exports so documentation drift is visible.
 
-The pack chapter must enumerate live predefined knowledge for every registered domain: ontology modules, concepts and sorts, roles, relations, stable facts/laws, lexical and semantic signals, capabilities, circuit requirements/provisions, possible statuses, and declared assurance. The circuit chapters must expose capability closure, provider ordering, stage dependency scheduling, concrete truth execution, auxiliary interpretations, response-stage dataflow, local composition, and retained inspection artifacts rather than only a high-level diagram.
+The five Understand pages must explain the system as a connected implementation story derived from the preserved architecture and workspace specifications. They must explain why authoring and deterministic execution are separate, why the semantic programs exist, how folder ownership controls reuse, how decoded source evidence becomes grounded claims, how planning composes compatible circuits, and how result circuits produce the public CNL answer. Headings and coherent prose carry that explanation. Bullet inventories and process tables may support the prose only when they clarify a dense vocabulary; they must not substitute for the narrative. Tables in these chapters are limited to simple two-column concept/explanation references.
 
-Tutorials must be built from retained accepted evaluations and fail closed when evidence is absent. Each natural-language case must show the exact input, instruction, task and agent semantic programs, real coding-agent runs, primary \`response.md\` Markdown CNL, deterministic replay, and links to technical evidence. Raw \`.mjs\` assurance projections may be linked from a technical section but must not be presented as the semantic answer.
+The global skill workflow page and every individual skill page must be generated from the live \`SKILL.md\` and \`workflow.mjs\`. They must explain the manifest fields and show their actual values, dependency-first installation, context selection and provenance, the purpose and observable output of every declared CLI tool, the generated instructions and run manifest, edit ownership, the exact authoring workflow, and the completion criterion. They must distinguish checks Codex is instructed to run, the owner-level check recorded in \`run.mjs\`, and phase-specific acceptance enforced by evaluation or adaptive authoring. Generic statements that a skill “uses context” or “runs checks” are insufficient.
 
-Each retained tutorial must provide an Input / Intermediate / Output artifact explorer. A stage tab lists its exact files, one shared viewer materializes only the selected file, and the first input is open by default. Visible labels must be relative to the nearest owning evaluation, agent, task, source, or results folder instead of repeating a long shared repository prefix; the complete repository-relative identity remains retained as inert metadata. File viewers must wrap long lines and identifiers within the available viewport and must not introduce a horizontal scrollbar. File content is generated from retained artifacts without summaries or fabricated examples, and the explorer must work under the same document-relative static-site boundary.
+The pack chapter must enumerate live predefined knowledge for every registered domain: ontology modules, concepts and sorts, roles, relations, stable facts/laws, lexical and semantic signals, capabilities, circuit requirements/provisions, possible statuses, and declared assurance. The circuit chapters must expose capability closure, provider ordering, stage dependency scheduling, concrete truth execution, auxiliary interpretations, response-stage dataflow, local composition, and retained inspection artifacts through explicit stepwise explanations rather than high-level visual abstractions.
+
+Tutorials must be built from retained accepted evaluations and fail closed when evidence is absent. Each natural-language case must show the exact input, instruction, task and agent semantic programs, and primary \`response.md\` Markdown CNL. Real coding-agent runs, deterministic replay, metrics, raw \`.mjs\` assurance projections, and other technical evidence remain retained and reachable from dedicated workflow, result, and evaluation pages; they must not be presented as the semantic answer or as competing tutorial stages.
+
+Each retained tutorial must provide one two-level artifact tree in its left inventory. The first level is Input, Intermediate, or Output and is always visible; selecting a file at the second level opens only that file in the shared viewer. Input contains only natural-language authoring material: the exact reusable agent brief when that case authors an agent, followed by the exact task instruction and task source text. A case that uses a pre-existing fixed agent must say so directly instead of presenting agent code as task input. Intermediate contains the executable task declaration, IntentJS, LongTextJS, agent- or task-owned OntologyJS, CircuitJS, response policy, generated facade, and tests that materially explain how the input is interpreted. Output contains the single public Markdown CNL response; logs, assurance projections, state exploration, metrics, and raw findings belong to dedicated workflow or result pages rather than separate tutorial stories.
+
+Each tree level must be accompanied by the exact retained or reproducible CLI command responsible for creating, authoring, executing, or validating that level when such a command exists. The command is explanation, not a fabricated transcript: natural-language corpus material may be described as retained suite input; coding phases name the real evaluation or adaptive command that invoked Codex; and Output names the ordinary deterministic run or replay that produced \`response.md\`. Every displayed invocation still carries its explanatory shell comment.
+
+Tutorial prose must explain the concrete case rather than describe documentation pedagogy. It must identify the behavior requested by the agent brief and by the task instruction, explain which reusable agent modules implement the former, trace decisive source clauses into IntentJS selection and LongTextJS claims or coverage, explain why the applicable circuit reaches the observed result, and interpret what the retained Markdown CNL says about that exact source. Generic sections such as “What a programmer should learn” or stage-contract tables that merely restate Input / Intermediate / Output are prohibited. The explanation must name actual constructs, claims, rules, decisions, and output evidence visible in the adjacent files.
+
+Each tree branch lists only files belonging to that semantic stage, one shared viewer materializes only the selected file, and the first input is open by default. Visible labels must start with the short semantic owner \`agent/\` or \`task/\` and continue relative to that owner; they must not repeat evaluation prefixes, random task identifiers, or repository roots. A synthetic natural-language instruction uses \`task/task-instruction.txt\`, and the public answer uses \`task/results/response.md\`. The complete repository-relative identity remains retained as inert metadata. File viewers must wrap long lines and identifiers within the available viewport and must not introduce a horizontal scrollbar. File content is generated from retained artifacts without summaries or fabricated examples, and the explorer must work under the same document-relative static-site boundary.
+
+Every runnable CLI invocation displayed in a documentation code block must be immediately preceded by a shell comment that explains both its observable action and why the reader would run it at that point. The comment is explanatory documentation and is not part of the copied command. Multiple commands in one block each require their own comment; a paragraph after the block is not a substitute.
 
 The documentation shell must use the available viewport rather than imposing a narrow fixed reading column. Outer margins and panel padding must remain compact, prose and callouts may use the full content width, and artifact inventory width must leave most horizontal space to the selected file. Responsive collapse still applies when the inventory and viewer no longer fit side by side.
+
+Technical process pages must explain sequences as explicit steps or Input / Action / Output tables grounded in real files and observable results. Abstract flow, state, class, and sequence diagrams must not replace that narrative. The primary Reference menu must expose one specification-browser entry rather than duplicating individual DS links already available through the matrix.
 
 The documentation verifier must scan HTML, Markdown, CSS, JavaScript, and MJS assets for missing local targets and prohibited root-relative or machine-local URLs. A static-site verification must serve the generated tree under a non-root prefix and request the index, local assets, tutorials, and \`specsLoader.html?spec=matrix.md\`.
 
@@ -489,7 +523,7 @@ validation.
 
 ### Question #1: Why are large tutorial pages permitted?
 
-Response: Exact retained source, semantic code, CNL output, and run evidence can be large, and hiding them would make the tutorial unverifiable. Generator source remains modular; evidence-heavy output is allowed when sections and local navigation keep it usable.
+Response: Exact retained source, semantic code, and CNL output can be large, and hiding them would make the input-to-output explanation unverifiable. Generator source remains modular; technical run evidence stays in dedicated reports instead of inflating the tutorial story.
 
 ### Question #2: Why must the renderer and loader be project-owned?
 
@@ -505,9 +539,29 @@ Response: An example such as \`import ... from "./framework/..."\` describes tas
 documentation page. Real \`<script>\` imports and markup URLs are deployment dependencies and must resolve. Parsing
 those contexts separately avoids both false failures and skipped runtime assets.
 
-### Question #5: Why are artifact labels contextual and the documentation shell wide?
+### Question #5: Why do artifact labels retain \`agent/\` or \`task/\` while omitting repository prefixes?
 
-Response: Retained task identifiers and evaluation prefixes prove provenance but become repeated visual noise when every file in a stage shares them. Keeping the complete path in inert metadata preserves identity, while contextual labels make the inventory scannable. A wide, compact shell exposes more code and tabular information before wrapping; wrapping remains mandatory inside file viewers for content that still exceeds the viewport.
+Response: The owner prefix answers the important question—whether a file teaches reusable agent behavior or interprets one task—without repeating evaluation paths and random identifiers on every row. Keeping the complete path in inert metadata preserves exact provenance. A wide, compact shell exposes more code and tabular information before wrapping; wrapping remains mandatory inside file viewers for content that still exceeds the viewport.
+
+### Question #6: Why do tutorials exclude assurance stories and process diagrams?
+
+Response: A programmer must first be able to trace the public contract from exact text input through inspectable semantic programs to one Markdown CNL output. Abstract/symbolic assurance, coding-process logs, metrics, and internal state remain valuable technical evidence, but presenting them as peer tutorial narratives obscures that contract. Dedicated workflow and result chapters retain those details, while explicit step tables explain technical processes without requiring readers to decode an abstract diagram.
+
+### Question #7: Why are generic learning-objective sections prohibited?
+
+Response: A heading that says what a programmer should learn does not perform the explanation. Case-specific prose must connect visible source clauses to visible DSL constructs, circuit decisions, and the retained answer, so the tutorial remains useful even when read without prior knowledge of the evaluation harness. This also makes documentation drift testable against real artifacts instead of against reusable meta-text.
+
+### Question #8: Why is the tutorial inventory a tree instead of stage tabs?
+
+Response: Input, Intermediate, and Output are ownership levels in one causal story, not mutually exclusive views. A two-level tree keeps all three stages visible while the reader moves among individual files, and the adjacent command provenance explains how each branch was produced without mixing logs or assurance artifacts into the public answer.
+
+### Question #9: Why must skill pages expose actual manifests and verification layers?
+
+Response: The coding agent's behavior depends on executable dependency, context, tool, edit-root, and phase declarations. Showing only a purpose sentence makes it impossible to determine what context Codex actually receives or which result was truly checked. Rendering live values and the distinct verification layers turns the documentation into an auditable account of the implementation.
+
+### Question #10: Why are the Understand chapters primarily narrative?
+
+Response: Architecture is a chain of reasons and boundaries: ambiguity belongs to authoring, deterministic behavior belongs to executable semantic programs, reuse belongs to agents and packs, and source interpretation belongs to tasks. Tables enumerate components but do not explain those causal relationships. Coherent prose makes the model usable before the reader consults the detailed API references.
 
 ## Conclusion
 

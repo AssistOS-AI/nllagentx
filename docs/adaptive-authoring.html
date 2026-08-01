@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Adaptive Analysis Loop</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -20,24 +16,21 @@
       <h1>Adaptive Analysis Loop</h1>
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       <p class="lead">Adaptive analysis is the explicit fallback for a complex source whose requested operation is not covered realistically by inherited framework, profile, and agent knowledge. It uses Codex to add only missing task-local semantic programs, then tests and executes the dynamically composed plan until the bounded review contract passes.</p>
-<pre class="mermaid">flowchart TD
-  Input[Task instruction and exact source] --> Inherit[Resolve framework, profile, and agent knowledge]
-  Inherit --> Intent[Codex: missing IntentJS]
-  Intent --> Ontology[Codex: ontology sufficiency audit]
-  Ontology --> LongText[Codex: source-grounded LongTextJS]
-  LongText --> Circuit[Codex: circuit sufficiency audit]
-  Circuit --> Response[Codex: response-policy sufficiency audit]
-  Response --> Compose[Planner and response circuits compose inherited plus task-local behavior]
-  Compose --> Validate[Tests, anchors, providers, concrete, Markdown CNL, abstract, symbolic]
-  Validate --> Review[Mandatory Codex multi-skill review]
-  Review -->|failures remain and cycles available| Compose
-  Review -->|accepted| Replay[Model-free replay]</pre>
+<h2>Adaptive lifecycle, step by step</h2>
+<table><thead><tr><th>Step</th><th>Input</th><th>Action</th><th>Output or decision</th></tr></thead><tbody>
+<tr><td>1. Audit inherited knowledge</td><td>Task instruction, source, framework/profile/agent catalogs</td><td>Resolve which requested meanings and capabilities already have providers.</td><td>Exact missing IntentJS, ontology, grounding, circuit or response responsibilities.</td></tr>
+<tr><td>2. Author only task-local gaps</td><td>Missing responsibilities and coding-skill context</td><td>Codex writes task-owned semantic modules and tests.</td><td>New files under <code>intent/</code>, <code>ontologies/</code>, <code>longtext/</code>, <code>circuits/</code>, <code>cnl/</code> or <code>tests/</code>.</td></tr>
+<tr><td>3. Compose and execute</td><td>Inherited providers plus task-local additions</td><td>The planner builds one combined executable plan and response policy.</td><td>Concrete result, Markdown CNL and requested auxiliary evidence.</td></tr>
+<tr><td>4. Validate and review</td><td>Programs, tests, anchors, findings and response</td><td>Deterministic gates run, followed by mandatory Codex review.</td><td>Accepted result or exact failures for the next bounded repair cycle.</td></tr>
+<tr><td>5. Replay</td><td>Accepted task programs</td><td>Run without Codex and compare semantic results and response digest.</td><td>Reproducible task or typed failure.</td></tr>
+</tbody></table>
 <h2>CLI contract</h2>
-<pre><code>node nllAgent.mjs analyze \
+<pre><code># Author missing task-local semantics, run strict checks, and iterate Codex review up to three cycles.
+node nllAgent.mjs analyze \
   --agent-dir path/to/agent --task-dir path/to/task \
   --author-adaptive --authoring-cycles 3 --assurance all
 
-# Domain-specific acceptance for the retained DS042 case.
+# Validate the retained cold-chain result against its domain-specific DS042 acceptance rules.
 node evaluations/adaptive-task-e2e/validate.mjs</code></pre>
 <table><thead><tr><th>Parameter</th><th>Contract</th></tr></thead><tbody>
 <tr><td><code>--author-adaptive</code></td><td>Explicitly permits Codex to audit and create missing task-owned semantic code.</td></tr>

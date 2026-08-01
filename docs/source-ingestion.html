@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Source Ingestion and Provenance</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -23,27 +19,26 @@
 <p class="lead">Source ingestion turns retained files into deterministic decoded text before a coding agent can author LongTextJS with exact evidence. It supports UTF-8 formats, ordinary PDF text streams, and task-owned decoder modules without introducing semantic JSON or hidden semantic extraction.</p>
 <div class="callout"><strong>Boundary.</strong> Ingestion stops at text, units, digests, offsets and non-semantic outlines. It does not infer IntentJS, LongTextJS, ontology, circuits, findings or generated answers. Codex performs that semantic authoring in explicit skill phases; deterministic runtime commands reuse the resulting code.</div>
 <h2>Run and inspect ingestion</h2>
-<pre><code>node nllAgent.mjs source ingest   --agent-dir examples/validation-agent   --task task-symbolic-validation
+<pre><code># Decode the retained source and rebuild its stable source map before semantic authoring.
+node nllAgent.mjs source ingest   --agent-dir examples/validation-agent   --task task-symbolic-validation
 
+# Inspect decoded units and absolute offsets so LongTextJS anchors can target the right text.
 node nllAgent.mjs source outline   --agent-dir examples/validation-agent   --task task-symbolic-validation
 
+# Find every exact occurrence of “alarm” and its offsets before choosing a source span.
 node nllAgent.mjs source search   --agent-dir examples/validation-agent   --task task-symbolic-validation   --text "alarm"
 
+# Revalidate every committed LongTextJS anchor after ingestion or source changes.
 node nllAgent.mjs source verify-anchors   --agent-dir examples/validation-agent   --task task-symbolic-validation</code></pre>
-<h2>Extraction dispatch</h2>
-<pre class="mermaid">flowchart TD
-  Bytes[Retained source bytes] --> Custom{Task extractor exists?}
-  Custom -->|yes| Adapter[source/extractors/ext.extractor.mjs]
-  Custom -->|no| Format{Known built-in?}
-  Format -->|UTF-8 text| UTF8[Deterministic UTF-8 decode]
-  Format -->|PDF| PDF[Header, encryption, stream/filter, text-operator decode]
-  Format -->|unsupported| Diagnostic[Typed source diagnostic]
-  Adapter --> Validate[Validate text and metadata]
-  UTF8 --> Validate
-  PDF --> Validate
-  Validate --> Segment[Stable SourceUnits]
-  Segment --> Hash[Decoded-text digest]
-  Hash --> Map[Executable source-map.mjs]</pre>
+<h2>What happens, step by step</h2>
+<table><thead><tr><th>Step</th><th>Input</th><th>What the tool does</th><th>Output</th></tr></thead><tbody>
+<tr><td>1. Read bytes</td><td>The exact retained source file</td><td>Look first for a task-owned extractor matching the extension. Otherwise select the built-in UTF-8 or supported PDF decoder.</td><td>Decoded text, or a typed diagnostic when decoding is unsupported.</td></tr>
+<tr><td>2. Validate decoding</td><td>Decoded text and extractor metadata</td><td>Reject empty, encrypted, scanned or otherwise undecodable content instead of inventing text.</td><td>Validated text plus reproducible decoder metadata.</td></tr>
+<tr><td>3. Create stable units</td><td>Validated decoded text</td><td>Segment the text, retain absolute character offsets and compute SHA-256 digests.</td><td>Executable <code>source/source-map.mjs</code>.</td></tr>
+<tr><td>4. Author meaning later</td><td>Source map and task instruction</td><td>A coding agent, in a separate phase, authors LongTextJS claims with exact anchors.</td><td>Grounded <code>longtext/*.mjs</code>; ingestion itself emits no finding.</td></tr>
+</tbody></table>
+<h2>Concrete validation-agent example</h2>
+<table><thead><tr><th>Input text</th><th>Ingestion output</th><th>Semantic consumer</th><th>Final public output</th></tr></thead><tbody><tr><td><code>source/incident.txt</code></td><td><code>source/source-map.mjs</code> with one stable source unit</td><td><code>longtext/root.longtext.mjs</code> anchors the alarm and opening sentences</td><td><code>results/response.md</code> quotes both sentences in the <code>ORDER_OK</code> finding</td></tr></tbody></table>
 <h2>Task-local extractor contract</h2>
 <p>Create <code>source/extractors/bin.extractor.mjs</code> when a task owns <code>.bin</code> material. The adapter receives the bytes and returns decoded text plus replay metadata:</p>
 <pre><code>export function extractSource({ bytes }) {

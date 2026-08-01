@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — nll-orchestrator Skill</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -22,9 +18,7 @@
       
 <p class="lead">Use when implementing or changing the CLI, workspace layout, source ingestion, run context, coding-agent adapter, skill installation, locks, logs or process lifecycle.</p>
 <h2>Executable workflow</h2><p>The workflow references <code>DS-001</code>, <code>DS035</code>, <code>DS036</code>, <code>DS037</code>, <code>DS041</code>, <code>DS042</code>, <code>DS043</code>, <code>DS044</code>. Dependency order: none. Its declared phases are <code>discover</code>, <code>author</code>, <code>validate</code>, <code>handoff</code>.</p>
-<pre class="mermaid">flowchart LR
-  P1[discover] --> P2[author] --> P3[validate] --> P4[handoff]
-  Context[Resolved SDK, ontology, semantic circuit, response circuit, profile, source catalogs] --> P1</pre>
+<table><thead><tr><th>Order</th><th>Phase</th><th>Input</th><th>Output for the next phase</th></tr></thead><tbody><tr><td>1</td><td><code>discover</code></td><td>Resolved task, catalogs and dependency skills</td><td>Inputs required by <code>author</code></td></tr><tr><td>2</td><td><code>author</code></td><td>Files and diagnostics from <code>discover</code></td><td>Inputs required by <code>validate</code></td></tr><tr><td>3</td><td><code>validate</code></td><td>Files and diagnostics from <code>author</code></td><td>Inputs required by <code>handoff</code></td></tr><tr><td>4</td><td><code>handoff</code></td><td>Files and diagnostics from <code>validate</code></td><td>Validated canonical files and a concise handoff</td></tr></tbody></table>
 <h2>Required tools</h2><ul><li><code>nllAgent files index</code></li><li><code>nllAgent context build</code></li><li><code>nllAgent context show</code></li><li><code>nllAgent source ingest</code></li><li><code>nllAgent source outline</code></li><li><code>nllAgent review bundle</code></li></ul>
 <h2>Canonical edit roots</h2><ul><li><code>framework/cli</code></li><li><code>framework/tools</code></li><li><code>runs</code></li></ul>
 <h2>Context and completion</h2><p>The loader installs this folder and every dependency under the coding run, then writes only the catalogs needed to understand the active SDK, knowledge, source, and plan. The coding agent edits canonical agent, task, or framework files directly, adds focused tests, and runs the commands named by the skill. Natural-language completion is not acceptance; imports, semantic checks, and tests decide completion.</p>

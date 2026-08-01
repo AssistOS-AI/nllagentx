@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — System Guide</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -22,29 +18,13 @@
       
 <p class="lead">nllAgent is a dependency-free Node.js workbench for authoring source-grounded semantic programs, selecting reusable semantic circuits, and retaining evidence-bearing findings and controlled-language artifacts. Its semantic languages are executable <code>.mjs</code> modules rather than serialized data formats.</p>
 <div class="callout"><strong>Specification authority.</strong> The contiguous DS set is authoritative. Start with <a href="specsLoader.html?spec=DS000-vision.md">DS000</a> and the <a href="specsLoader.html?spec=DS001-coding-style.md">coding-style contract</a>; use the <a href="specsLoader.html?spec=matrix.md">specification matrix</a> for the complete set.</div>
-<h2>How the system fits together</h2>
-<pre class="mermaid">flowchart LR
-  Source[Source files] --> SourceMap[Source registry and units]
-  Intent[IntentJS and profile] --> Resolver[Runtime resolver]
-  Packs[Default and local packs] --> Resolver
-  SourceMap --> LongText[LongTextJS]
-  LongText --> Store[SemanticStore]
-  Resolver --> Planner[Capability planner]
-  Store --> Planner
-  Planner --> Runner[Circuit runner]
-  Runner --> SemanticResults[Findings and typed CNL frames]
-  SemanticResults --> ResponseCircuits[Intent-selected response circuits]
-  ResponseCircuits --> Results[Grounded response.md]
-  SemanticResults --> Technical[Trace, assurance, diagnostics]
-  Skills[Coding skills] --> Context[Run-local context]
-  Context --> Codex[Explicit coding-agent adapter]
-  Codex --> Ontology[OntologyJS]
-  Codex --> Circuits[Semantic CircuitJS]
-  Codex --> ResponseCircuits
-  Codex --> Intent
-  Codex --> LongText
-  Ontology --> Store
-  Circuits --> Planner</pre>
+<h2>From text input to CNL output</h2>
+<table><thead><tr><th>Step</th><th>Input</th><th>Work performed</th><th>Observable output</th></tr></thead><tbody>
+<tr><td>1. Retain the request</td><td>Task instruction and source files</td><td>The workspace records the exact text, source units, digests and offsets.</td><td>Task declaration and <code>source-map.mjs</code>.</td></tr>
+<tr><td>2. Author semantics</td><td>Text plus resolved SDK, packs and agent knowledge</td><td>Codex authors or reuses IntentJS, LongTextJS, OntologyJS and CircuitJS modules.</td><td>Inspectable <code>.mjs</code> programs and focused tests.</td></tr>
+<tr><td>3. Execute</td><td>Semantic programs</td><td>The store materializes grounded claims; the planner selects compatible circuits; the runner emits typed findings or generation frames.</td><td>Deterministic semantic results and separate technical evidence.</td></tr>
+<tr><td>4. Present</td><td>Material semantic results plus IntentJS presentation policy</td><td>Response circuits remove internal or irrelevant entries, group results and attach exact source quotations.</td><td>Human-facing <code>results/response.md</code> in Markdown CNL.</td></tr>
+</tbody></table>
 <h2>Repository structure and ownership</h2>
 <p>The SDK defines semantic values and fluent builders. The runtime materializes one logical store, closes circuit dependencies, schedules stages, and executes concrete or declared auxiliary methods. Framework packs provide default ontology and circuit modules. Agent folders own reusable extensions; task folders own source interpretation, intent, task-local code, tests, coding runs, and retained results.</p>
 <div class="tree" role="group" aria-label="Repository layout">

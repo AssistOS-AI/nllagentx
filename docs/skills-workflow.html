@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — How Coding Skills Work</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -20,29 +16,23 @@
       <h1>How Coding Skills Work</h1>
       <nav class="section-nav" aria-label="Workflows pages"><span>Workflows</span><a href="cli-reference.html">CLI reference</a><a href="adaptive-authoring.html">Adaptive analysis</a><a href="skills-workflow.html">How skills work</a><a href="skills.html">Skill catalog</a><a href="packs.html">Packs</a><a href="testing-evaluation.html">Tests and evaluation</a><a href="results.html">Artifacts</a></nav>
       <p class="lead">A skill is not a prose prompt copied into ten places. Each <code>nll-skills/&lt;id&gt;/</code> folder contains <code>SKILL.md</code> for Codex and <code>workflow.mjs</code> for the framework. The executable workflow names specifications, context artifacts, CLI tools, dependent skills, edit roots and phases.</p>
-<pre class="mermaid">sequenceDiagram
-  participant CLI
-  participant Context as Context builder
-  participant Skills as Skill resolver
-  participant Codex
-  participant Canonical as Agent/task files
-  participant Checks as Deterministic checks
-  CLI->>Skills: requested phase
-  Skills->>Skills: transitive dependency order
-  CLI->>Context: project, agent, task, profile, sources
-  Context-->>Codex: SDK/ontology/circuit/profile/source/DS catalogs
-  Skills-->>Codex: run-local SKILL.md and workflow.mjs
-  Codex->>Canonical: direct edits to allowed .mjs and tests
-  Codex-->>CLI: retained stdout, stderr and final response
-  CLI->>Checks: imports, ontology, anchors, circuits and tests
-  Checks-->>CLI: acceptance or typed failure</pre>
+<h2>One coding phase, step by step</h2>
+<table><thead><tr><th>Step</th><th>Framework input</th><th>Action</th><th>Programmer-visible result</th></tr></thead><tbody>
+<tr><td>1. Select workflow</td><td>CLI coding phase</td><td>Resolve the owning skill and transitive dependencies from executable workflows.</td><td>Run-local skill folders in deterministic order.</td></tr>
+<tr><td>2. Build context</td><td>Project, agent, task, profile and sources</td><td>Generate only the SDK, ontology, circuit, response, profile, source and DS catalogs requested by those skills.</td><td>Inspectable context files with real local imports.</td></tr>
+<tr><td>3. Invoke Codex</td><td>Instructions, skills, context and allowed edit roots</td><td>Codex edits canonical agent or task files directly.</td><td>New or modified <code>.mjs</code> programs and tests plus retained process logs.</td></tr>
+<tr><td>4. Accept or reject</td><td>Edited files</td><td>Run imports, ontology checks, anchors, circuits and focused tests.</td><td>Acceptance or a typed failure supplied to review.</td></tr>
+</tbody></table>
 <h2>How dependencies are found</h2><p>The requested phase maps to a root skill. The loader imports its adjacent <code>workflow.mjs</code>, closes declared dependencies, and copies only those skill folders into the run. It never searches a hidden global skill directory. SDK and ontology knowledge comes from live project modules and generated run-local catalogs, so task code imports the real constructors instead of duplicating theory.</p>
 <h2>Agent-level phases</h2><p><code>code architect</code>, <code>code ontology</code> and <code>code circuit</code> can work at agent scope from a retained brief. Their outputs are reusable profiles, ontologies, circuits, CNL and tests. Evaluation invokes the same adapter and context path.</p>
 <h2>Task-level phases</h2><p><code>code intent</code> translates the requested operation into executable selection policy. <code>code longtext</code> translates decoded source text into grounded claims and coverage. Optional ontology or circuit phases are task-local only when the meaning or behavior is not reusable.</p>
-<h2>Inspect before invoking Codex</h2><pre><code>node nllAgent.mjs context build --phase longtext \
+<h2>Inspect before invoking Codex</h2><pre><code># Build LongTextJS authoring context from the resolved agent, task, SDK, and source catalogs.
+node nllAgent.mjs context build --phase longtext \
   --agent-dir path/to/agent --task-dir path/to/task
+# Print the prepared context paths so their exact dependencies can be inspected.
 node nllAgent.mjs context show \
   --agent-dir path/to/agent --task-dir path/to/task
+# Prepare LongTextJS instructions and skills without invoking Codex or editing task programs.
 node nllAgent.mjs code longtext \
   --agent-dir path/to/agent --task-dir path/to/task --prepare-only</code></pre>
 <p><code>--prepare-only</code> creates inspectable instructions, installed skills and catalogs without starting Codex. A real authoring run omits that flag and retains its process evidence.</p>

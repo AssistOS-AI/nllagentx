@@ -129,24 +129,36 @@ The implementation supplies the SDK, SemanticStore, planner, scheduler, analysis
 Run the main checks with:
 
 ```text
+# Run the fast framework regression set during SDK and runtime development.
 node nllAgent.mjs test framework --level fast
+# Validate every registered pack at the standard test level.
 node nllAgent.mjs test packs --level standard
+# Validate the committed task's source, semantic programs, anchors, and integration checks.
 node nllAgent.mjs test task --agent-dir examples/validation-agent --task task-symbolic-validation
+# Decode the incident source and rebuild its stable source map before checking anchors.
 node nllAgent.mjs source ingest --agent-dir examples/validation-agent --task task-symbolic-validation
+# Exercise deterministic evaluation infrastructure without claiming real agent authoring.
 node nllAgent.mjs evaluate --suite school-smoke
+# Ask Codex to author the reusable review agent and four real tasks, then execute and replay them.
 node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent
+# Author missing cold-chain semantics inside the task and iterate strict Codex review until acceptance.
 node nllAgent.mjs analyze --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \
   --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \
   --author-adaptive --authoring-cycles 3 --assurance all
+# Revalidate the retained cold-chain result and deterministic replay without invoking Codex.
 node evaluations/adaptive-task-e2e/validate.mjs
 ```
 
 SDK-aware coding workflows can inspect the exact local API without copied theory:
 
 ```text
+# Check SDK export collisions and public-surface consistency before authoring semantic code.
 node nllAgent.mjs sdk check
+# Print the live LongTextJS constructors and examples instead of relying on copied API theory.
 node nllAgent.mjs sdk usage --surface longtext
+# List the response circuits composed for this exact agent and task.
 node nllAgent.mjs catalog response --agent-dir examples/validation-agent --task task-symbolic-validation
+# Show the resolved circuit plan and provider decisions without executing the task.
 node nllAgent.mjs plan show --agent-dir examples/validation-agent --task task-symbolic-validation
 ```
 

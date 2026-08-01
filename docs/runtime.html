@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Runtime and Analysis Methods</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -32,16 +28,12 @@
 <tr><td>Probabilistic</td><td>finite exact factor enumeration and explicit approximate fallback</td><td>guarantee recorded in result</td></tr>
 </tbody></table>
 <h2>Planner closure</h2>
-<pre class="mermaid">sequenceDiagram
-  participant I as Intent/Profile
-  participant P as Capability planner
-  participant S as SemanticStore
-  participant R as Circuit registry
-  I->>P: requested concerns and outputs
-  P->>S: available concepts and capabilities
-  P->>R: ranked providers
-  P->>P: recursively satisfy requirements
-  P-->>I: selected, rejected, blocked, explanation</pre>
+<table><thead><tr><th>Step</th><th>Planner input</th><th>Decision</th><th>Retained output</th></tr></thead><tbody>
+<tr><td>1. Establish demand</td><td>IntentJS concerns, modes and requested outputs</td><td>Convert the request into required capabilities.</td><td>Root capability demand.</td></tr>
+<tr><td>2. Inspect availability</td><td>SemanticStore concepts plus registered circuit provisions</td><td>Reject providers whose required meanings or explicit constraints are unavailable.</td><td>Compatible and rejected provider sets.</td></tr>
+<tr><td>3. Close dependencies</td><td>Requirements of compatible providers</td><td>Recursively select stable lowest-cost providers; detect missing providers and cycles.</td><td>Closed executable circuit plan or typed failure.</td></tr>
+<tr><td>4. Explain</td><td>Selected, rejected and blocked providers</td><td>Retain the exact reason for each selection result.</td><td>Execution plan and diagnostics.</td></tr>
+</tbody></table>
 <p>The all-compatible pass continues until no newly compatible circuit remains. Provider order is stable by cost and semantic identity. A missing provider produces <code>PLAN_NO_PROVIDER</code>; cycles produce <code>PLAN_CAPABILITY_CYCLE</code>.</p>
     </article>
   </main>

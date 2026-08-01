@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Testing and Evaluation</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -22,37 +18,40 @@
       
 <p class="lead">Testing verifies existing code without a coding agent. Evaluation measures isolated end-to-end behavior and may include explicit Codex authoring.</p>
 <h2>Test commands</h2>
-<pre><code>node nllAgent.mjs test framework --level fast
+<pre><code># Run the fast framework regression set while developing SDK or runtime code.
+node nllAgent.mjs test framework --level fast
+# Run every pack's standard ontology, circuit, intent, and CNL checks.
 node nllAgent.mjs test packs --level standard
+# Run a focused fast check for only the chemistry knowledge pack.
 node nllAgent.mjs test packs --pack chemistry-basic --level fast
+# Validate one reusable agent's imports, ontology, circuits, response policy, and tests.
 node nllAgent.mjs test agent --agent-dir examples/validation-agent
+# Validate one task's sources, IntentJS, LongTextJS, anchors, and integration tests.
 node nllAgent.mjs test task --agent-dir examples/validation-agent --task task-symbolic-validation
+# Run all framework, pack, agent, and task checks at the exhaustive level before release.
 node nllAgent.mjs test all --level exhaustive</code></pre>
 <p>The framework suite covers logic, collections, ontology validation, transactional atomicity, indexed queries, constraint kernels, temporal closure, fixed points, automata, exploration, decision DAGs, rewriting, slicing, factor inference, planning, CNL, source anchors, and a temporary external agent/task CLI workflow. Pack and example tests execute real modules.</p>
 <h2>Evaluation commands</h2>
-<pre><code>node nllAgent.mjs evaluate --suite school-smoke
+<pre><code># Exercise deterministic evaluation plumbing without claiming real natural-language agent authoring.
+node nllAgent.mjs evaluate --suite school-smoke
+# Invoke Codex inside the smoke suite to validate adapter plumbing and retained process evidence.
 node nllAgent.mjs evaluate --suite school-smoke --invoke-agent
+# Build the reusable rule-review agent and four tasks through real Codex authoring, then execute them.
 node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent
+# Re-run the retained real tasks without Codex to detect semantic or response regressions.
 node nllAgent.mjs evaluate --suite agentic-nl-e2e --replay-retained
+# Run a custom suite with real Codex authoring and an explicit model override.
 node nllAgent.mjs evaluate --suite path/to/suite.mjs --invoke-agent --model MODEL</code></pre>
 <p>The infrastructure-only school smoke run creates one isolated random-ID task per declared profile, completes deterministic execution and replay, compares the profile ablation, and writes aggregate anchor validity, replay equivalence, and elapsed-time metrics. It is not evidence that a reusable agent was learned from natural language. The <code>agentic-nl-e2e</code> suite retains a natural-language agent brief, runs real architect/ontology/circuit Codex phases, creates four tasks, runs real intent/longtext phases, checks expected findings or generation frames, and proves model-free replay.</p>
 <p><code>--replay-retained</code> reuses those exact random-ID tasks and their retained real Codex provenance, but invokes no coding agent. It re-executes current semantic and response code, regenerates reports, and fails non-zero if any strict case, exact quotation, response contract, or replay digest fails. It is mutually exclusive with <code>--invoke-agent</code>.</p>
 <p>The DS042 adaptive validation starts with a core-only agent and a cold-chain task that demonstrably lacks task intent, ontology, LongText, circuits, tests, runs, and results. The public <code>analyze --author-adaptive</code> command must generate the missing executable programs through Codex, pass concrete plus abstract and symbolic acceptance, complete mandatory review, and then replay through ordinary <code>run</code>. Its full retained evidence is reproduced in <a href="tutorial-adaptive-cold-chain.html">the adaptive tutorial</a>.</p>
-<pre class="mermaid">sequenceDiagram
-  participant Suite
-  participant Agent as Isolated agent
-  participant Codex
-  participant Runtime
-  Suite->>Agent: retain natural-language agent brief
-  Agent->>Codex: architect, ontology and circuit contexts
-  Codex-->>Agent: reusable executable programs and tests
-  Suite->>Agent: create random-ID task and copy source
-  Agent->>Codex: task intent and longtext contexts
-  Codex-->>Agent: grounded task programs and tests
-  Agent->>Runtime: deterministic execution and assurance
-  Runtime-->>Suite: primary response.md plus technical findings, trace and metrics
-  Suite->>Runtime: ordinary replay without Codex
-  Suite->>Suite: Markdown and executable .mjs reports</pre>
+<h2>What an end-to-end evaluation actually does</h2>
+<table><thead><tr><th>Step</th><th>Input</th><th>Produced files</th><th>Acceptance question</th></tr></thead><tbody>
+<tr><td>1. Author reusable agent knowledge</td><td>Natural-language agent brief</td><td>Agent profile, OntologyJS, CircuitJS, response policy and tests</td><td>Did real Codex runs create importable reusable programs?</td></tr>
+<tr><td>2. Author one task</td><td>Task instruction and source text</td><td>Task declaration, IntentJS, LongTextJS and task tests</td><td>Are all claims grounded at exact source offsets?</td></tr>
+<tr><td>3. Execute</td><td>Agent and task programs</td><td><code>response.md</code> plus separate findings, trace and assurance files</td><td>Does the public CNL contain the expected real result and decisive evidence?</td></tr>
+<tr><td>4. Replay</td><td>The same retained programs, without Codex</td><td>A second deterministic result and response digest</td><td>Are semantic findings and the public response equivalent?</td></tr>
+</tbody></table>
 <h2>Retained reports</h2><p>Evaluation reports distinguish completed and failed cases and keep failure stacks under <code>reports/failures/</code>. Authoring reports link each real subprocess to instructions, installed skills, context, stdout, stderr, final response and created/modified code. Gold expectations may be executable <code>.gold.mjs</code> modules. Precision, recall, F1, anchor validity, replay equivalence, runtime, generated frames and assurance artifacts remain tied to task IDs.</p>
     </article>
   </main>

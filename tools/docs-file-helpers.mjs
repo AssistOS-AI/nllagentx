@@ -60,14 +60,25 @@ function portablePath(path) {
 }
 
 function artifactDescriptor(entry, projectRoot) {
+  if (typeof entry === "object" && Object.hasOwn(entry, "content")) {
+    const label = entry.label;
+    return Object.freeze({
+      path: null,
+      label,
+      projectLabel: entry.projectLabel ?? label,
+      content: String(entry.content),
+      language: entry.language ?? artifactLanguage(label)
+    });
+  }
   const path = typeof entry === "string" ? entry : entry.path;
   const displayRoot = typeof entry === "string" ? projectRoot : entry.displayRoot ?? projectRoot;
   const contextualLabel = portablePath(relative(displayRoot, path));
   const projectLabel = portablePath(relative(projectRoot, path));
-  const label = contextualLabel && contextualLabel !== ".." && !contextualLabel.startsWith("../")
+  const inferredLabel = contextualLabel && contextualLabel !== ".." && !contextualLabel.startsWith("../")
     ? contextualLabel
     : projectLabel;
-  return Object.freeze({ path, label, projectLabel });
+  const label = typeof entry === "object" && entry.label ? entry.label : inferredLabel;
+  return Object.freeze({ path, label, projectLabel, content: null, language: artifactLanguage(path) });
 }
 
 export async function artifactBrowser(groups, projectRoot, escapeHtml) {
@@ -84,15 +95,16 @@ export async function artifactBrowser(groups, projectRoot, escapeHtml) {
     tabs.push(`<button type="button" role="tab" aria-selected="${groupIndex === 0 ? "true" : "false"}" aria-controls="${groupId}" data-artifact-group="${groupId}">${escapeHtml(groupName)}</button>`);
     const fileButtons = [];
     for (const entry of entries) {
-      const { path, label, projectLabel } = artifactDescriptor(entry, projectRoot);
+      const descriptor = artifactDescriptor(entry, projectRoot);
+      const { path, label, projectLabel, language } = descriptor;
       const fileId = `${browserId}-file-${++fileIndex}`;
-      const content = await readFile(path, "utf8");
+      const content = descriptor.content ?? await readFile(path, "utf8");
       if (firstFileId === null) {
         firstFileId = fileId;
-        firstArtifact = { label, content, language: artifactLanguage(path) };
+        firstArtifact = { label, content, language };
       }
       fileButtons.push(`<button type="button" data-artifact-file="${fileId}" aria-current="${fileId === firstFileId ? "true" : "false"}" title="${escapeHtml(projectLabel)}"><code>${escapeHtml(label)}</code></button>`);
-      templates.push(`<template id="${fileId}" data-label="${escapeHtml(label)}" data-project-path="${escapeHtml(projectLabel)}" data-language="${artifactLanguage(path)}">${escapeHtml(content)}</template>`);
+      templates.push(`<template id="${fileId}" data-label="${escapeHtml(label)}" data-project-path="${escapeHtml(projectLabel)}" data-language="${language}">${escapeHtml(content)}</template>`);
     }
     panels.push(`<div id="${groupId}" class="artifact-browser__files" role="tabpanel"${groupIndex === 0 ? "" : " hidden"}>${fileButtons.join("") || "<p>No retained files in this category.</p>"}</div>`);
     groupIndex += 1;

@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Response Circuits and Markdown CNL</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -20,14 +16,12 @@
       <h1>Response Circuits and Markdown CNL</h1>
       <nav class="section-nav" aria-label="Semantic programs pages"><span>Semantic programs</span><a href="semantic-dsls.html">DSL overview</a><a href="ontologyjs.html">OntologyJS</a><a href="intentjs.html">IntentJS</a><a href="longtextjs.html">LongTextJS</a><a href="circuitjs.html">CircuitJS</a><a href="response-circuits.html">Response circuits</a><a href="runtime.html">Runtime</a></nav>
       <p class="lead">Response circuits operate after semantic CircuitJS. They do not decide truth; they select applicable findings and typed frames, suppress internal or non-applicable results, group and count material conclusions, explain the matched rule, rank exact quotations, and render the tagged <code>response.md</code> document.</p>
-<h2>Composition</h2><pre class="mermaid">flowchart LR
-  Findings[Findings and typed frames] --> Material[Material selection circuit]
-  Intent[IntentJS .present directives] --> Style[Intent style circuit]
-  Material --> Group[Grouping and counting circuit]
-  Style --> Group
-  Group --> Evidence[Rule and source evidence enrichment]
-  Evidence --> Markdown[Tagged Markdown CNL response]
-  Findings --> Technical[Separate executable and debug artifacts]</pre>
+<h2>What enters and what leaves the response layer</h2>
+<table><thead><tr><th>Input</th><th>Response-layer responsibility</th><th>Output</th></tr></thead><tbody>
+<tr><td>Typed findings and generated frames</td><td>Select only material entries without changing their semantic status.</td><td>Filtered response entries; raw values remain available separately.</td></tr>
+<tr><td>IntentJS presentation directives</td><td>Choose grouping, style, evidence and satisfied-result visibility.</td><td>Ordered non-empty groups and exact counts.</td></tr>
+<tr><td>Verified source registry and rule metadata</td><td>Attach only exact digest-verified quotations and concise rule explanations.</td><td>Tagged human-readable <code>response.md</code>.</td></tr>
+</tbody></table>
 <h2>Response super-circuit execution</h2><table><thead><tr><th>Ordered phase</th><th>Input</th><th>Output/invariant</th></tr></thead><tbody>
 <tr><td>Applicability</td><td>Resolved IntentJS, selected semantic findings and generated frames</td><td>Only response circuits whose executable predicate applies enter the plan.</td></tr>
 <tr><td>Material selection</td><td>Finding status, tags, circuit identity and IntentJS include/exclude directives</td><td>Internal grounding and <code>NOT_APPLICABLE</code> are suppressed; no semantic status is changed.</td></tr>

@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — CLI Reference</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -22,29 +18,42 @@
       
 <p class="lead">All command families are implemented by <code>framework/cli/main.mjs</code> and use Node.js built-ins. Run <code>node nllAgent.mjs help</code> for the compact grammar.</p>
 <h2>Workspace and coding commands</h2>
-<pre><code>node nllAgent.mjs agent create --agent reviewer --profile general-broad
+<pre><code># Create the reusable agent folder and choose its default pack-selection profile.
+node nllAgent.mjs agent create --agent reviewer --profile general-broad
+# Create one task from a source file and keep its instruction separate from source claims.
 node nllAgent.mjs task create --agent reviewer --source notes.md   --title "Policy review" --instruction "Find grounded contradictions"
+# Ask Codex to turn the retained agent brief into a reusable architecture plan.
 node nllAgent.mjs code architect --agent reviewer   --goal "Read source/agent-brief.md and create the reusable agent plan"
+# Ask Codex to author reusable agent ontology that the planned circuits require.
 node nllAgent.mjs code ontology --agent reviewer
+# Ask Codex to encode this task's requested operation and selection policy as IntentJS.
 node nllAgent.mjs code intent --agent reviewer --task task-ID
+# Ask the selected Codex model to ground this task's source as executable LongTextJS.
 node nllAgent.mjs code longtext --agent reviewer --task task-ID --model MODEL
+# Feed retained diagnostics to Codex so it can review and repair the task's semantic code.
 node nllAgent.mjs code review --agent reviewer --task task-ID --diagnostics failures.md
+# Build the circuit-authoring context for inspection without starting Codex.
 node nllAgent.mjs code circuit --agent-dir path/to/agent --task-dir path/to/task --prepare-only</code></pre>
 <p><code>--prepare-only</code> builds the exact context and skill dependency chain without invoking Codex. Coding runs retain instructions, context catalogs, installed skills, executable run metadata, process logs, and the final coding-agent response.</p>
 <h2>Prompt-like authoring and replay</h2>
 <p>There are two explicit prompt-like workflows. To teach reusable semantics, retain the natural-language brief at <code>agents/reviewer/source/agent-brief.md</code>, then run agent-level <code>code architect</code>, <code>code ontology</code>, <code>code circuit</code>, and <code>code review</code>. To analyze one source, create a task with its separate instruction and use <code>--author-missing</code> once; later <code>run</code> calls replay the generated programs without Codex.</p>
-<pre><code>node nllAgent.mjs code circuit --agent reviewer
+<pre><code># Author the reusable circuits required by the reviewer agent's natural-language brief.
+node nllAgent.mjs code circuit --agent reviewer
+# Validate and refine the complete reusable agent before giving it tasks.
 node nllAgent.mjs code review --agent reviewer
 
+# Create a source-specific task and retain the exact analysis request as task input.
 node nllAgent.mjs task create --agent reviewer   --source inputs/policy.txt   --instruction "Find contradictions and unsupported conclusions"
 
-# Replace task-ID with the random identifier printed by task create.
+# Author any missing task semantics, execute all assurance modes, and use the printed random task ID.
 node nllAgent.mjs analyze --agent reviewer --task task-ID   --author-missing --assurance all
+# Replay the accepted task programs deterministically to prove no further Codex call is needed.
 node nllAgent.mjs run --agent reviewer --task task-ID --assurance all</code></pre>
 <p>The first <code>analyze</code> authors missing IntentJS and LongTextJS through Codex and then executes them. The second command imports the retained <code>.mjs</code> programs directly. The complete evaluation automating both reusable-agent and per-task authoring is <code>node nllAgent.mjs evaluate --suite agentic-nl-e2e --invoke-agent</code>.</p>
 <h2>Adaptive task-local authoring</h2>
 <p>Use the distinct adaptive mode when the inherited agent may lack ontology meanings or a realistic circuit for a complex task. It audits and creates only task-owned semantic modules, executes deterministic acceptance, invokes a mandatory Codex review, and repeats within the explicit cycle bound.</p>
-<pre><code>node nllAgent.mjs analyze \
+<pre><code># Let Codex add only missing task-local meanings and circuits, iterating until strict acceptance.
+node nllAgent.mjs analyze \
   --agent-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent \
   --task-dir evaluations/adaptive-task-e2e/agents/adaptive-core-agent/tasks/task-cold-chain-transfer-core-only \
   --author-adaptive --authoring-cycles 3 --assurance all
@@ -56,11 +65,17 @@ node nllAgent.mjs run \
   --assurance all</code></pre>
 <p><code>--author-adaptive</code> and <code>--author-missing</code> are mutually exclusive. See <a href="adaptive-authoring.html">the adaptive lifecycle</a> and <a href="tutorial-adaptive-cold-chain.html">the retained real run</a>.</p>
 <h2>Execution and selection</h2>
-<pre><code>node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
+<pre><code># Analyze the task with the legal-policy profile to constrain available knowledge and checks.
+node nllAgent.mjs analyze --agent reviewer --task task-ID --profile legal-policy
+# Execute the validation task and print its human-facing Markdown CNL response.
 node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation
+# Execute the same task but print the machine projection for integrations and debugging.
 node nllAgent.mjs run --agent-dir examples/validation-agent --task task-symbolic-validation --format json
+# Inspect why providers were selected, rejected, or blocked before executing the task.
 node nllAgent.mjs plan --agent reviewer --task task-ID --explain-plan
+# Run a generation intent and request the named typed output frame.
 node nllAgent.mjs generate --agent reviewer --task task-ID --output PolicySpecificationPlan
+# Execute a task-owned semantic query against the materialized store.
 node nllAgent.mjs query --agent reviewer --task task-ID --expression queries/open-events.mjs</code></pre>
 <p>Selection controls include repeatable <code>--domain</code> and <code>--check</code>, <code>--exclude-domain</code>, <code>--exclude-check</code>, <code>--only</code>, <code>--all-compatible</code>, <code>--profile</code>, <code>--intent</code>, and <code>--assurance abstract|symbolic|all</code>.</p>
 <h2>Authoring parameters</h2>

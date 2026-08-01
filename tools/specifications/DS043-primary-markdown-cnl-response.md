@@ -8,7 +8,7 @@ Every successful `run`, `analyze`, or `generate` command must write `results/res
 
 The response must contain only applicable, intent-visible semantic results. Internal grounding checks and `NOT_APPLICABLE` findings are excluded. When material violated, conflict, unknown, possible-problem, or blocked findings exist, supporting satisfied findings are suppressed unless IntentJS explicitly requests them. Empty result groups are never rendered.
 
-Each finding must state the conclusion, status, semantic concern or rule, selected circuit, and why the decision row matched. Evidence must be exact text quoted from verified SourceSpan intervals and linked to the task source through a relative path. Evidence selection must rank passages by the failed, uncertain, or conflicting requirements and limit ordinary output verbosity while keeping all raw evidence available technically. Domain details such as failed requirements and uncertainty counts are rendered when they are human-readable; semantic hashes, SDK functions, serialized objects, and assurance path tables are prohibited from the primary response.
+Each finding must state the conclusion, status, semantic concern or rule, selected circuit, and why the decision row matched. Evidence must be exact text quoted from verified SourceSpan intervals and linked to the task source through a relative path. The public citation must identify the quotation as exact source text and must not expose character offsets such as “characters 42–77”; decoded start/end offsets remain available only in technical evidence used to verify the quotation. Evidence selection must rank passages by the failed, uncertain, or conflicting requirements and limit ordinary output verbosity while keeping all raw evidence available technically. Domain details such as failed requirements and uncertainty counts are rendered when they are human-readable; semantic hashes, SDK functions, serialized objects, and assurance path tables are prohibited from the primary response.
 
 A correct verdict with incomplete decisive evidence is not a qualitative answer. When the input explicitly denies a required justification, acknowledgement, calibration, support relation, or other predicate and that denial contributes to the result, the corresponding verified negative passage must be present in the finding evidence and quoted in the public response. The renderer must consume evidence already selected by the semantic circuit; it must not rediscover missing semantic evidence through string search.
 
@@ -35,6 +35,10 @@ Response: It may emit one `[CNL:NO-MATERIAL-RESULT]` statement when no applicabl
 ### Question #4: Is every semantically expected finding required in the public response?
 
 Response: No. Evaluation gold applies to the complete concrete semantic result set. The public response applies the separately validated response-composition boundary and may omit internal grounding or secondary confirmations. It must include every finding selected for public presentation and every exact decisive quotation declared by the response contract.
+
+### Question #5: Why are verified character offsets omitted from the public citation?
+
+Response: Offsets are stable machine evidence for anchor validation but are expensive for a human to resolve mentally. The exact verified substring is already the useful evidence. The public CNL therefore quotes that substring and links its source, while technical artifacts retain the interval for debugging and replay.
 
 ## Conclusion
 

@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Specification review</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -18,15 +14,11 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Specification review</nav>
       <p class="kicker">Project-owned contract synchronization</p>
       <h1>Specification review</h1>
-      <nav class="section-nav" aria-label="Reference pages"><span>Reference</span><a href="specsLoader.html?spec=matrix.md">Specification matrix</a><a href="specsLoader.html?spec=DS041-agentic-natural-language-authoring.md">Agentic authoring contract</a><a href="specsLoader.html?spec=DS042-adaptive-task-local-authoring-and-verification.md">Adaptive authoring contract</a><a href="specsLoader.html?spec=DS043-primary-markdown-cnl-response.md">Markdown CNL response</a><a href="specsLoader.html?spec=DS044-response-circuit-composition-and-intent-presentation.md">Response circuit contract</a><a href="documentation-ownership.html">Documentation ownership</a><a href="specification-review.html">Specification review</a><a href="documentation-generation.html">Documentation generation</a><a href="specsLoader.html?spec=DS037-source-extraction-and-stable-offsets.md">Source boundary</a><a href="specsLoader.html?spec=DS001-coding-style.md">Coding style</a></nav>
+      <nav class="section-nav" aria-label="Reference pages"><span>Reference</span><a href="specsLoader.html?spec=matrix.md">Specification browser</a><a href="documentation-ownership.html">Documentation ownership</a><a href="specification-review.html">Specification review</a><a href="documentation-generation.html">Documentation generation</a></nav>
       
 <p class="lead">A review identifies affected DS files, code, tests, CLI behavior, HTML pages, tutorials, and unresolved decisions before editing.</p>
-<h2>Review sequence</h2><pre class="mermaid">flowchart LR
-  Context[New requirement or failure] --> Compare[Compare DS and implementation]
-  Compare --> Contract[Update Core Content]
-  Contract --> Rationale[Number decisions]
-  Rationale --> Companions[Synchronize code tests docs]
-  Companions --> Evidence[Run fidelity and behavior checks]</pre>
+<h2>Review sequence</h2>
+<ol><li>Identify the new requirement or observed failure and list every affected DS and implementation surface.</li><li>Compare the current contract with actual code and retained evidence.</li><li>Update normative Core Content before recording rationale in the next numbered question.</li><li>Synchronize code, tests, CLI help, tutorials and other companion documentation.</li><li>Regenerate the official DS set and HTML, then run fidelity, behavior and link checks.</li></ol>
 <p>Initial specifications remain byte-for-byte preserved. Additive contracts are regenerated from project-owned sources and verified in numeric order. See <a href="specsLoader.html?spec=DS033-specification-review-contract.md">DS033</a>.</p>
     </article>
   </main>

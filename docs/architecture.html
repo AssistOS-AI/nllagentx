@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Architecture and Execution Model</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -30,19 +26,11 @@
 <tr><td>Coding skills</td><td>agent-facing workflow, dependencies, edit roots, checks</td><td>runtime acceptance decisions</td></tr>
 </tbody></table>
 <h2>Agent and task resolution</h2>
-<pre class="mermaid">flowchart TD
-  CLI[CLI options] --> A{Agent selector}
-  A -->|--agent name| DefaultAgent[agents/name]
-  A -->|path-like or --agent-dir| ExplicitAgent[explicit folder]
-  DefaultAgent --> T{Task selector}
-  ExplicitAgent --> T
-  T -->|--task id| DefaultTask[agent/tasks/id]
-  T -->|path-like or --task-dir| ExplicitTask[explicit folder]
-  DefaultTask --> R[Runtime resolution]
-  ExplicitTask --> R
-  R --> Core[core-language]
-  R --> Profile[profile packs]
-  R --> Local[agent and task modules]</pre>
+<table><thead><tr><th>Step</th><th>Programmer supplies</th><th>Resolver action</th><th>Result</th></tr></thead><tbody>
+<tr><td>1. Resolve agent</td><td><code>--agent name</code> or <code>--agent-dir path</code></td><td>Resolve the reusable agent folder without assuming it is under a fixed workspace root.</td><td>Agent definition, profiles, ontology, circuits and response policies.</td></tr>
+<tr><td>2. Resolve task</td><td><code>--task id</code> or <code>--task-dir path</code></td><td>Resolve the task inside the selected agent or at the explicit path.</td><td>Instruction, source, IntentJS, LongTextJS and task-local extensions.</td></tr>
+<tr><td>3. Compose knowledge</td><td>Agent, task and selected profile</td><td>Load mandatory <code>core-language</code>, profile packs, then agent and task modules with declared override precedence.</td><td>One executable catalog for planning and execution.</td></tr>
+</tbody></table>
 <p>Module specifiers generated for agents and tasks are relative to the target file and the explicit project root. This allows an agent directory to live outside the default <code>agents/</code> directory while using the same framework SDK.</p>
 <h2>Concrete execution and assurance</h2>
 <p><code>executeTask()</code> loads ontologies, commits LongTextJS through a transaction, plans capability closure, and schedules each selected circuit. Findings and frames are derived from actual stage values. If both the intent/profile and circuit declare auxiliary support, abstract preflight and symbolic decision coverage are also retained in <code>results/assurance.mjs</code> and <code>assurance.md</code>.</p>

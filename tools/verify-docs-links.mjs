@@ -83,10 +83,6 @@ async function main() {
       issues.push(`${file}: contains a machine-specific path or URL`);
     }
     for (const target of targetsFor(file, source)) await verifyTarget(file, target, issues);
-    if (extname(file) === ".html" && source.includes("<!doctype html>")
-      && !source.includes("./assets/diagram-renderer.mjs")) {
-      issues.push(`${file}: missing project-owned relative diagram renderer import`);
-    }
     if (file === resolve(docsRoot, "specs", "matrix.md")) {
       for (const match of source.matchAll(/\[DS\d{3}\]\(([^)]+)\)/g)) {
         if (!/^specsLoader\.html\?spec=DS\d{3}-[A-Za-z0-9-]+\.md$/.test(match[1])) {

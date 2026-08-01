@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>nllAgent Documentation — Tutorial: Missing Exception Justification</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module">
-    import diagrams from './assets/diagram-renderer.mjs';
-    diagrams.initialize({ startOnLoad: true });
-  </script>
   <script type="module" src="assets/artifact-browser.mjs"></script>
 </head>
 <body>
@@ -18,183 +14,119 @@
       <nav class="breadcrumb" aria-label="Breadcrumb"><a href="index.html">nllAgent Documentation</a><span>/</span>Tutorial: Missing Exception Justification</nav>
       <p class="kicker">Retained source, generated programs and observed output</p>
       <h1>Tutorial: Missing Exception Justification</h1>
-      <nav class="section-nav" aria-label="Tutorials pages"><span>Tutorials</span><a href="tutorials.html">Tutorial index</a><a href="tutorial-contradictory-rules.html">Contradictory rules</a><a href="tutorial-missing-exception.html">Missing justification</a><a href="tutorial-unsupported-conclusion.html">Unsupported conclusion</a><a href="tutorial-procedure-generation.html">Procedure generation</a><a href="tutorial-adaptive-cold-chain.html">Adaptive cold-chain</a><a href="tutorial-agent-task.html">Concrete replay</a><a href="tutorial-symbolic.html">Symbolic validation</a></nav>
-      
-<p class="lead">This page is generated from the retained successful task, not from a hand-written fixture. It shows the exact natural-language evidence, task declaration, Codex-authored semantic programs, deterministic command, and retained outputs.</p>
-<div class="callout"><strong>Observed acceptance.</strong> Status <code>completed</code>; expected <code>CoreGroundingFinding.grounded:SATISFIED, MISSING_EXCEPTION_JUSTIFICATION:VIOLATED</code>; observed <code>CoreGroundingFinding.grounded:SATISFIED, MISSING_EXCEPTION_JUSTIFICATION:VIOLATED, PROCEDURE_PLAN_NOT_APPLICABLE:NOT_APPLICABLE, RULE_CONTRADICTION_NOT_APPLICABLE:NOT_APPLICABLE, SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE:NOT_APPLICABLE</code>; generated frames <code>0</code>; ordinary replay equivalence <code>1</code>.</div>
-<h2>Artifact explorer: input, intermediate programs, and output</h2>
-<p>Select a stage and then a retained file. Only the selected file is materialized in the viewer; the first natural-language input is open by default.</p>
-<section class="artifact-browser" data-artifact-browser data-initial-file="artifact-browser-2-file-1">
-<div class="artifact-browser__tabs" role="tablist" aria-label="Artifact stages"><button type="button" role="tab" aria-selected="true" aria-controls="artifact-browser-2-input" data-artifact-group="artifact-browser-2-input">Input</button><button type="button" role="tab" aria-selected="false" aria-controls="artifact-browser-2-intermediate" data-artifact-group="artifact-browser-2-intermediate">Intermediate</button><button type="button" role="tab" aria-selected="false" aria-controls="artifact-browser-2-output" data-artifact-group="artifact-browser-2-output">Output</button></div>
-<div class="artifact-browser__body"><nav class="artifact-browser__inventory" aria-label="Files"><div id="artifact-browser-2-input" class="artifact-browser__files" role="tabpanel"><button type="button" data-artifact-file="artifact-browser-2-file-1" aria-current="true"><code>examples/evaluations/agentic-nl-e2e/corpora/missing-exception-justification.txt</code></button><button type="button" data-artifact-file="artifact-browser-2-file-2" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs</code></button></div><div id="artifact-browser-2-intermediate" class="artifact-browser__files" role="tabpanel" hidden><button type="button" data-artifact-file="artifact-browser-2-file-3" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-2-file-4" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs</code></button><button type="button" data-artifact-file="artifact-browser-2-file-5" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs</code></button><button type="button" data-artifact-file="artifact-browser-2-file-6" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs</code></button><button type="button" data-artifact-file="artifact-browser-2-file-7" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs</code></button></div><div id="artifact-browser-2-output" class="artifact-browser__files" role="tabpanel" hidden><button type="button" data-artifact-file="artifact-browser-2-file-8" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md</code></button><button type="button" data-artifact-file="artifact-browser-2-file-9" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/artifacts.md</code></button><button type="button" data-artifact-file="artifact-browser-2-file-10" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/report.md</code></button><button type="button" data-artifact-file="artifact-browser-2-file-11" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/findings.cnl</code></button><button type="button" data-artifact-file="artifact-browser-2-file-12" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/observations.cnl</code></button><button type="button" data-artifact-file="artifact-browser-2-file-13" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/generation-plan.cnl</code></button><button type="button" data-artifact-file="artifact-browser-2-file-14" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/coverage.md</code></button><button type="button" data-artifact-file="artifact-browser-2-file-15" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/diagnostics.md</code></button><button type="button" data-artifact-file="artifact-browser-2-file-16" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/assurance.md</code></button><button type="button" data-artifact-file="artifact-browser-2-file-17" aria-current="false"><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/evaluation-assurance.md</code></button></div></nav>
-<div class="artifact-browser__viewer"><p class="artifact-browser__path" data-artifact-path>examples/evaluations/agentic-nl-e2e/corpora/missing-exception-justification.txt</p><pre><code class="language-text" data-artifact-content>Emergency Access Policy and Log
+      <nav class="section-nav" aria-label="Tutorials pages"><span>Tutorials</span><a href="tutorials.html">Tutorial index</a><a href="tutorial-contradictory-rules.html">Contradictory rules</a><a href="tutorial-missing-exception.html">Missing justification</a><a href="tutorial-unsupported-conclusion.html">Unsupported conclusion</a><a href="tutorial-procedure-generation.html">Procedure generation</a><a href="tutorial-adaptive-cold-chain.html">Adaptive cold-chain</a><a href="tutorial-agent-task.html">Minimal text-to-CNL</a></nav>
+      <p class="lead">Show why an omitted justification is a violation only after the relevant record has explicit closed coverage rather than merely lacking a matching phrase.</p>
+<div class="callout"><strong>Retained result.</strong> The run completed with target result <code>CoreGroundingFinding.grounded:SATISFIED, MISSING_EXCEPTION_JUSTIFICATION:VIOLATED</code>; generated frames <code>0</code>; model-free replay equivalence <code>1</code>. Other circuits that returned <code>NOT_APPLICABLE</code> remain technical evidence and are not rendered as public findings.</div>
+<h2>Input ownership and requested behavior</h2>
+<p><strong>Agent input:</strong> <code>agent/source/agent-brief.md</code> asks Codex to create reusable operational-policy vocabulary and four source-independent circuit capabilities. <strong>Task input:</strong> <code>task/task-instruction.txt</code> selects what this run must do, and <code>task/source/source-001.txt</code> is the exact evidence it must interpret. The agent brief is shared by all four cases; the task instruction and source are case-specific.</p>
+<h2>Retained input, executable interpretation, and public answer</h2>
+<p><strong>Input</strong> contains only natural-language material. <strong>Intermediate</strong> first lists reusable <code>agent/</code> programs authored from the brief, then <code>task/</code> programs authored for this source. <strong>Output</strong> contains only <code>task/results/response.md</code>. The full repository path remains attached as metadata, but the visible labels keep only the ownership boundary needed to understand the example.</p>
+<section class="artifact-browser" data-artifact-browser data-initial-file="artifact-browser-3-file-1">
+<div class="artifact-browser__tabs" role="tablist" aria-label="Artifact stages"><button type="button" role="tab" aria-selected="true" aria-controls="artifact-browser-3-input" data-artifact-group="artifact-browser-3-input">Input</button><button type="button" role="tab" aria-selected="false" aria-controls="artifact-browser-3-intermediate" data-artifact-group="artifact-browser-3-intermediate">Intermediate</button><button type="button" role="tab" aria-selected="false" aria-controls="artifact-browser-3-output" data-artifact-group="artifact-browser-3-output">Output</button></div>
+<div class="artifact-browser__body"><nav class="artifact-browser__inventory" aria-label="Files"><div id="artifact-browser-3-input" class="artifact-browser__files" role="tabpanel"><button type="button" data-artifact-file="artifact-browser-3-file-1" aria-current="true" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/source/agent-brief.md"><code>agent/source/agent-brief.md</code></button><button type="button" data-artifact-file="artifact-browser-3-file-2" aria-current="false" title="task/task-instruction.txt"><code>task/task-instruction.txt</code></button><button type="button" data-artifact-file="artifact-browser-3-file-3" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/source/source-001.txt"><code>task/source/source-001.txt</code></button></div><div id="artifact-browser-3-intermediate" class="artifact-browser__files" role="tabpanel" hidden><button type="button" data-artifact-file="artifact-browser-3-file-4" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/agent.mjs"><code>agent/agent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-5" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/profiles/minimal-core.profile.mjs"><code>agent/profiles/minimal-core.profile.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-6" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs"><code>agent/ontologies/operational-policy.ontology.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-7" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs"><code>agent/circuits/exception-justification.circuit.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-8" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs"><code>task/task.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-9" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs"><code>task/intent/intent.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-10" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs"><code>task/longtext/root.longtext.mjs</code></button><button type="button" data-artifact-file="artifact-browser-3-file-11" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs"><code>task/longtext/units/source-001-emergency-access.longtext.mjs</code></button></div><div id="artifact-browser-3-output" class="artifact-browser__files" role="tabpanel" hidden><button type="button" data-artifact-file="artifact-browser-3-file-12" aria-current="false" title="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md"><code>task/results/response.md</code></button></div></nav>
+<div class="artifact-browser__viewer"><p class="artifact-browser__path" data-artifact-path>agent/source/agent-brief.md</p><pre><code class="language-markdown" data-artifact-content># Natural-language brief for the rule-review agent
 
-Policy rule. Every use of the emergency-access exception must have a recorded reason linked to that invocation.
+Create a reusable semantic agent for reviewing short operational policies and event records. The agent must be authored with the local nllAgent SDK and must remain isolated to the `core-language` framework pack plus agent-local OntologyJS and CircuitJS modules. Do not encode source-specific facts in the reusable agent.
 
-Event log. At 09:02, operator Ana invoked the emergency-access exception and opened the north gate. The log ends after the opening entry. It contains no reason or justification record for the invocation.
+## Required semantic distinctions
+
+The ontology must be expressive enough for task LongTextJS to represent:
+
+- operational rules with an action, triggering condition, modality or effect (`required`, `forbidden`, or `permitted`), and source grounding;
+- two rules that govern the same action under the same condition but impose incompatible effects;
+- an emergency-exception invocation and whether a source-grounded justification record exists;
+- a safety conclusion stated by an author and whether source-grounded supporting evidence exists;
+- a request to generate an ordered operational procedure from stated rules;
+- acknowledgement, authorization, gate action, exception justification, and audit-recording steps.
+
+Reuse core-language identities wherever they are semantically sufficient. Add agent-qualified concepts, roles, values, or frames only where the core vocabulary cannot express the distinction. Ontology laws must not directly emit application findings.
+
+## Required reusable circuit behavior
+
+Create agent-local circuits and focused deterministic tests. The circuits must consume semantic terms and claims from the store rather than search raw source strings.
+
+1. When two source-grounded rules apply to the same action and condition and one requires what the other forbids, emit `RULE_CONTRADICTION` with status `CONFLICT`, citing both rules. If priority or exception information is absent, do not invent it.
+2. When the source records use of an emergency exception but contains no justification record for it, emit `MISSING_EXCEPTION_JUSTIFICATION` with status `VIOLATED`, citing the invocation and the policy requirement.
+3. When a source states a safety conclusion but provides no supporting evidence for that conclusion, emit `UNSUPPORTED_SAFETY_CONCLUSION` with status `VIOLATED`, citing the conclusion. Do not treat the conclusion itself as its evidence.
+4. When the task requests a procedure, emit `PROCEDURE_PLAN_READY` with status `SATISFIED` and at least one typed CNL generation-plan frame. The plan must order acknowledgement before authorization and gate action, require justification for any emergency exception, and finish with an audit record. Generated slots must retain provenance to the input rules.
+
+Expose stable capabilities matching these responsibilities so IntentJS can select them. Findings for absent, irrelevant semantic terms should be `NOT_APPLICABLE` or omitted according to the circuit contract; they must not become false successes.
+
+## Auxiliary assurance contract
+
+Declare abstract preflight and symbolic decision coverage on every reusable circuit. Express review verdict boundaries through CircuitJS decision structures where that preserves the semantics, including explicit `UNKNOWN` and `CONFLICT` paths. The procedure circuit must expose a symbolic readiness boundary and retain a CNL round-trip obligation. Agent tests must run the auxiliary methods and verify that paths are present, not truncated, and connected to the circuit's finding or generation outputs. These auxiliary results complement rather than replace mandatory concrete execution.
+
+## Agent and test contract
+
+Keep reusable ontology code under `ontologies/`, reusable circuit code under `circuits/`, and agent tests under `tests/`. `agent.mjs` must use Codex direct editing and a profile that resolves the isolated core vocabulary. Tests must cover satisfied, violated, conflict, unknown or not-applicable boundaries where relevant, evidence identities, and the generation frame.
 </code></pre></div></div>
-<template id="artifact-browser-2-file-1" data-label="examples/evaluations/agentic-nl-e2e/corpora/missing-exception-justification.txt" data-language="text">Emergency Access Policy and Log
+<template id="artifact-browser-3-file-1" data-label="agent/source/agent-brief.md" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/source/agent-brief.md" data-language="markdown"># Natural-language brief for the rule-review agent
+
+Create a reusable semantic agent for reviewing short operational policies and event records. The agent must be authored with the local nllAgent SDK and must remain isolated to the `core-language` framework pack plus agent-local OntologyJS and CircuitJS modules. Do not encode source-specific facts in the reusable agent.
+
+## Required semantic distinctions
+
+The ontology must be expressive enough for task LongTextJS to represent:
+
+- operational rules with an action, triggering condition, modality or effect (`required`, `forbidden`, or `permitted`), and source grounding;
+- two rules that govern the same action under the same condition but impose incompatible effects;
+- an emergency-exception invocation and whether a source-grounded justification record exists;
+- a safety conclusion stated by an author and whether source-grounded supporting evidence exists;
+- a request to generate an ordered operational procedure from stated rules;
+- acknowledgement, authorization, gate action, exception justification, and audit-recording steps.
+
+Reuse core-language identities wherever they are semantically sufficient. Add agent-qualified concepts, roles, values, or frames only where the core vocabulary cannot express the distinction. Ontology laws must not directly emit application findings.
+
+## Required reusable circuit behavior
+
+Create agent-local circuits and focused deterministic tests. The circuits must consume semantic terms and claims from the store rather than search raw source strings.
+
+1. When two source-grounded rules apply to the same action and condition and one requires what the other forbids, emit `RULE_CONTRADICTION` with status `CONFLICT`, citing both rules. If priority or exception information is absent, do not invent it.
+2. When the source records use of an emergency exception but contains no justification record for it, emit `MISSING_EXCEPTION_JUSTIFICATION` with status `VIOLATED`, citing the invocation and the policy requirement.
+3. When a source states a safety conclusion but provides no supporting evidence for that conclusion, emit `UNSUPPORTED_SAFETY_CONCLUSION` with status `VIOLATED`, citing the conclusion. Do not treat the conclusion itself as its evidence.
+4. When the task requests a procedure, emit `PROCEDURE_PLAN_READY` with status `SATISFIED` and at least one typed CNL generation-plan frame. The plan must order acknowledgement before authorization and gate action, require justification for any emergency exception, and finish with an audit record. Generated slots must retain provenance to the input rules.
+
+Expose stable capabilities matching these responsibilities so IntentJS can select them. Findings for absent, irrelevant semantic terms should be `NOT_APPLICABLE` or omitted according to the circuit contract; they must not become false successes.
+
+## Auxiliary assurance contract
+
+Declare abstract preflight and symbolic decision coverage on every reusable circuit. Express review verdict boundaries through CircuitJS decision structures where that preserves the semantics, including explicit `UNKNOWN` and `CONFLICT` paths. The procedure circuit must expose a symbolic readiness boundary and retain a CNL round-trip obligation. Agent tests must run the auxiliary methods and verify that paths are present, not truncated, and connected to the circuit's finding or generation outputs. These auxiliary results complement rather than replace mandatory concrete execution.
+
+## Agent and test contract
+
+Keep reusable ontology code under `ontologies/`, reusable circuit code under `circuits/`, and agent tests under `tests/`. `agent.mjs` must use Codex direct editing and a profile that resolves the isolated core vocabulary. Tests must cover satisfied, violated, conflict, unknown or not-applicable boundaries where relevant, evidence identities, and the generation frame.
+</template><template id="artifact-browser-3-file-2" data-label="task/task-instruction.txt" data-project-path="task/task-instruction.txt" data-language="text">Determine whether every invoked emergency exception has the justification required by the policy. Report missing evidence without inventing a reason.</template><template id="artifact-browser-3-file-3" data-label="task/source/source-001.txt" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/source/source-001.txt" data-language="text">Emergency Access Policy and Log
 
 Policy rule. Every use of the emergency-access exception must have a recorded reason linked to that invocation.
 
 Event log. At 09:02, operator Ana invoked the emergency-access exception and opened the north gate. The log ends after the opening entry. It contains no reason or justification record for the invocation.
-</template><template id="artifact-browser-2-file-2" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs" data-language="javascript">import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from &quot;../../../../../../framework/sdk/agent/task.mjs&quot;;
+</template><template id="artifact-browser-3-file-4" data-label="agent/agent.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/agent.mjs" data-language="javascript">import { semanticAgent, usePack, useProfile, useSkillPolicy, codingAgent } from &quot;../../../../framework/sdk/agent/agent.mjs&quot;;
 
-export default semanticTask(&quot;task-tUmtraHGU2CZ1cFt&quot;)
-  .title(&quot;Check emergency exception evidence&quot;)
-  .source(sourceFile(&quot;source/source-001.txt&quot;))
-  .instruction(taskInstruction(&quot;Determine whether every invoked emergency exception has the justification required by the policy. Report missing evidence without inventing a reason.&quot;))
-  .profile(taskProfile(&quot;minimal-core&quot;))
-  .output(requestedOutput(&quot;findings&quot;), requestedOutput(&quot;cnl-observations&quot;), requestedOutput(&quot;markdown-cnl&quot;))
+export default semanticAgent(&quot;nl-rule-review-agent&quot;)
+  .use(usePack(&quot;core-language&quot;))
+  .defaultProfile(useProfile(&quot;minimal-core&quot;))
+  .skills(useSkillPolicy(&quot;standard-authoring&quot;))
+  .coding(codingAgent(&quot;codex&quot;).directEditing())
   .seal();
-</template><template id="artifact-browser-2-file-3" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs" data-language="javascript">import {
-  IntentFragment,
-  abstractPreflight,
-  allCompatible,
-  analyze,
-  cnlObservations,
-  concern,
-  concreteExecution,
-  findings,
-  inferDomainsFromSource,
-  intent,
-  interpretationRobust,
-  markdownCnl,
-  sourceGrounded,
-  symbolicDecisionCoverage
-} from &quot;../../../../../../../framework/sdk/intent/index.mjs&quot;;
-import {
-  countResultGroups,
-  emitStableCnlTags,
-  evidenceLed,
-  explainMatchedRules,
-  groupResultsBy,
-  quoteSourceEvidence
-} from &quot;../../../../../../../framework/sdk/cnl/index.mjs&quot;;
-import task from &quot;../task.mjs&quot;;
+</template><template id="artifact-browser-3-file-5" data-label="agent/profiles/minimal-core.profile.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/profiles/minimal-core.profile.mjs" data-language="javascript">import {
+  loadProfile,
+  usePack,
+  concreteFirst,
+  allCompatibleWithinLoadedPacks,
+  runEveryCompatibleCircuit,
+  explainAllSelection,
+  requireEvidenceBearing
+} from &quot;../../../../../framework/sdk/intent/index.mjs&quot;;
 
-export const shortOperationalPolicy = () =&gt; new IntentFragment(
-  &quot;short-operational-policy&quot;,
-  &quot;short-operational-policy&quot;
-);
-
-export default intent(task.id)
-  .mode(analyze())
-  .target(shortOperationalPolicy())
-  .domains(inferDomainsFromSource())
-  .concerns(concern(&quot;ExceptionJustificationReview&quot;))
-  .evidence(sourceGrounded(), interpretationRobust())
-  .assurance(
-    concreteExecution(),
-    abstractPreflight(),
-    symbolicDecisionCoverage()
-  )
-  .outputs(findings(), cnlObservations(), markdownCnl())
-  .present(
-    evidenceLed(),
-    groupResultsBy(&quot;status-family&quot;),
-    explainMatchedRules(),
-    quoteSourceEvidence(),
-    countResultGroups(),
-    emitStableCnlTags()
-  )
-  .whenUnclear(allCompatible())
-  .provenance(...task.instructions)
+export default loadProfile(&quot;minimal-core&quot;)
+  .use(usePack(&quot;core-language&quot;))
+  .prefer(concreteFirst())
+  .require(requireEvidenceBearing())
+  .fallback(allCompatibleWithinLoadedPacks())
+  .selection(runEveryCompatibleCircuit())
+  .explain(explainAllSelection())
   .seal();
-</template><template id="artifact-browser-2-file-4" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs" data-language="javascript">export {
-  default,
-  emergencyAccessInvocation,
-  emergencyAccessInvocationClaim,
-  justificationRequirement,
-  justificationRequirementClaim,
-  linkedJustificationRecord,
-  noLinkedJustificationRecordClaim,
-  openingEntryContext,
-  operatorAna
-} from &quot;./units/source-001-emergency-access.longtext.mjs&quot;;
-</template><template id="artifact-browser-2-file-5" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs" data-language="javascript">import {
-  actual,
-  asserted,
-  claim,
-  confidence,
-  coverage,
-  denied,
-  describe,
-  groundedAt,
-  named,
-  obligatory,
-  section,
-  sequence,
-  taskSource
-} from &quot;../../../../../../../../framework/sdk/longtext/index.mjs&quot;;
-import {
-  Agent,
-  Context,
-  EmergencyExceptionInvocation,
-  ExceptionJustificationRequirement,
-  InformationArtifact,
-  JustificationRecord,
-  actor,
-  context,
-  invocation
-} from &quot;../../sdk/ontology.generated.mjs&quot;;
-import registry from &quot;../../source/source-map.mjs&quot;;
-
-const source = taskSource(&quot;source-001&quot;, registry);
-const policyVoice = InformationArtifact(named(&quot;Emergency Access Policy and Log&quot;));
-
-export const operatorAna = Agent(named(&quot;operator Ana&quot;));
-export const openingEntryContext = Context(
-  named(&quot;event log entry at 09:02 opening the north gate&quot;)
-);
-
-export const justificationRequirement = ExceptionJustificationRequirement();
-export const emergencyAccessInvocation = EmergencyExceptionInvocation(
-  actor(operatorAna),
-  context(openingEntryContext)
-);
-export const linkedJustificationRecord = JustificationRecord(
-  invocation(emergencyAccessInvocation)
-);
-
-export const justificationRequirementClaim = claim(justificationRequirement)
-  .modality(obligatory())
-  .polarity(asserted())
-  .grounding(groundedAt(source.span(46, 144)))
-  .statedBy(policyVoice)
-  .confidence(confidence(1));
-export const emergencyAccessInvocationClaim = claim(emergencyAccessInvocation)
-  .modality(actual())
-  .polarity(asserted())
-  .grounding(groundedAt(source.span(157, 245)))
-  .statedBy(policyVoice)
-  .confidence(confidence(1));
-export const noLinkedJustificationRecordClaim = claim(linkedJustificationRecord)
-  .polarity(denied())
-  .grounding(groundedAt(source.span(284, 349)))
-  .statedBy(policyVoice)
-  .confidence(confidence(1));
-
-export default describe(&quot;source-001-emergency-access-policy-and-log&quot;)
-  .section(section(&quot;policy-rule&quot;, sequence(justificationRequirementClaim)))
-  .section(section(&quot;event-log&quot;, sequence(emergencyAccessInvocationClaim)))
-  .section(section(&quot;justification-status&quot;, sequence(noLinkedJustificationRecordClaim)))
-  .coverage(
-    coverage(ExceptionJustificationRequirement)
-      .forScope(&quot;source-001&quot;)
-      .sources(...source.units)
-      .complete(),
-    coverage(EmergencyExceptionInvocation)
-      .forScope(&quot;source-001&quot;)
-      .sources(...source.units)
-      .complete(),
-    coverage(JustificationRecord)
-      .forScope(&quot;source-001&quot;)
-      .sources(...source.units)
-      .complete()
-  )
-  .commit();
-</template><template id="artifact-browser-2-file-6" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs" data-language="javascript">import {
+</template><template id="artifact-browser-3-file-6" data-label="agent/ontologies/operational-policy.ontology.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs" data-language="javascript">import {
   ontology,
   entityKind,
   eventKind,
@@ -323,7 +255,7 @@ O.lexicon(lexicalize(ProcedureRequest).english(&quot;procedure request&quot;));
 O.lexicon(lexicalize(ProcedureStep).english(&quot;procedure step&quot;));
 
 export default O.seal();
-</template><template id="artifact-browser-2-file-7" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs" data-language="javascript">import {
+</template><template id="artifact-browser-3-file-7" data-label="agent/circuits/exception-justification.circuit.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs" data-language="javascript">import {
   circuit,
   capability,
   concept,
@@ -596,193 +528,7 @@ export default circuit(&quot;nl-rule-review.ExceptionJustificationReview&quot;, 
   .statuses(&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;)
   .assurance(abstractPreflight(), symbolicDecisionCoverage())
   .seal();
-</template><template id="artifact-browser-2-file-8" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md" data-language="markdown"># nllAgent response
-
-[CNL:DOCUMENT] [STYLE:evidence-led] [GROUPING:status-family] [RESULTS:1]
-
-## Answer
-
-[CNL:GROUP] [KEY:violations] [COUNT:1]
-
-## Violations (1)
-
-[CNL:FINDING] [CODE:MISSING_EXCEPTION_JUSTIFICATION] [STATUS:VIOLATED] [GROUP:violations] [MATERIAL]
-### Missing exception justification
-**Status:** VIOLATED
-A recorded emergency exception invocation lacks the justification record required by the applicable policy.
-
-- **Rule evaluated:** Emergency exception justification
-- **Circuit:** `nl-rule-review.ExceptionJustificationReview`
-- **Decision:** The circuit emitted this result because Emergency exception justification evaluated as not supported.
-
-**Why this result**
-
-- **Failed requirement:**
-  - A source-grounded justification record must link to the invocation.
-- **Confirmed requirements:**
-  - An emergency exception invocation must be source-grounded.
-  - An applicable policy requires a justification record for the invocation.
-  - Justification-record coverage must be closed before absence is treated as a violation.
-
-**Assessment details**
-
-- Checked invocations: 1
-
-**Evidence from the input**
-
-&gt; Every use of the emergency-access exception must have a recorded reason linked to that invocation.
-&gt;
-&gt; — [source-001](../source/source-001.txt), characters 46–144
-
-&gt; At 09:02, operator Ana invoked the emergency-access exception and opened the north gate.
-&gt;
-&gt; — [source-001](../source/source-001.txt), characters 157–245
-
-&gt; It contains no reason or justification record for the invocation.
-&gt;
-&gt; — [source-001](../source/source-001.txt), characters 284–349
-
-**Next action:** Address the failed requirement: A source-grounded justification record must link to the invocation.
-</template><template id="artifact-browser-2-file-9" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/artifacts.md" data-language="markdown"># Task artifact manifest
-
-## Semantic programs
-
-These executable modules define the task, intent, LongTextJS grounding, task-local ontology, semantic and response circuits, and generated SDK facade when present.
-
-- [intent/intent.mjs](../intent/intent.mjs)
-- [longtext/root.longtext.mjs](../longtext/root.longtext.mjs)
-- [longtext/units/source-001-emergency-access.longtext.mjs](../longtext/units/source-001-emergency-access.longtext.mjs)
-- [sdk/ontology.generated.mjs](../sdk/ontology.generated.mjs)
-- [task.mjs](../task.mjs)
-
-## Coding-agent authoring evidence
-
-- [runs/run-cww5N-NOzSzZRzhr/INSTRUCTIONS.md](../runs/run-cww5N-NOzSzZRzhr/INSTRUCTIONS.md)
-- [runs/run-cww5N-NOzSzZRzhr/logs/codex.final.md](../runs/run-cww5N-NOzSzZRzhr/logs/codex.final.md)
-- [runs/run-cww5N-NOzSzZRzhr/logs/process.md](../runs/run-cww5N-NOzSzZRzhr/logs/process.md)
-- [runs/run-pgfGwrlTlDEY7rFZ/INSTRUCTIONS.md](../runs/run-pgfGwrlTlDEY7rFZ/INSTRUCTIONS.md)
-- [runs/run-pgfGwrlTlDEY7rFZ/logs/codex.final.md](../runs/run-pgfGwrlTlDEY7rFZ/logs/codex.final.md)
-- [runs/run-pgfGwrlTlDEY7rFZ/logs/process.md](../runs/run-pgfGwrlTlDEY7rFZ/logs/process.md)
-
-## Technical execution evidence
-
-- [Execution plan](execution-plan.md)
-- [Canonical findings](findings.cnl)
-- [Canonical observations](observations.cnl)
-- [Generated CNL frames](generation-plan.cnl)
-- [Executable findings](findings.mjs)
-- [Auxiliary assurance summary](assurance.md)
-- [Executable auxiliary assurance](assurance.mjs)
-- [Diagnostics](diagnostics.md)
-- [Coverage](coverage.md)
-- [Trace summary](trace-summary.md)
-- Binary trace: `trace.bin`
-</template><template id="artifact-browser-2-file-10" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/report.md" data-language="markdown"># Technical execution report
-
-The primary human-facing result is [`response.md`](response.md). This file reports execution mechanics only.
-
-Task: `task-tUmtraHGU2CZ1cFt`. Profile: `minimal-core`.
-
-- Executed semantic circuits: 5
-- Selected response circuits: 3
-- Public CNL findings: 1
-- Raw findings, including internal and non-applicable results: 5
-- Generated CNL frames: 0
-- Auxiliary assurance passes: 8
-- Blocking diagnostics: 0
-
-See [`artifacts.md`](artifacts.md) for semantic programs, coding-agent evidence, canonical CNL, assurance, diagnostics, and trace artifacts.
-</template><template id="artifact-browser-2-file-11" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/findings.cnl" data-language="markdown">FRAME Finding CoreGroundingFinding.grounded
-EVIDENCE: nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: CoreGroundingFinding.grounded
-STATUS: SATISFIED
-END FRAME
-
-FRAME Finding MISSING_EXCEPTION_JUSTIFICATION
-EVIDENCE: nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69, nll.claim:7f6ca4bbaa2770ffb99e5db76adfcc43416423aa1d86703bd90ed3909aff6f6a, nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3, nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e, nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518, nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
-STATUS: VIOLATED
-END FRAME
-
-FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No asserted procedure-generation request applies to the available operational rules.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding RULE_CONTRADICTION_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No pair of operational rules governs the same action under the same condition.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
-STATUS: NOT_APPLICABLE
-END FRAME</template><template id="artifact-browser-2-file-12" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/observations.cnl" data-language="markdown">FRAME Finding CoreGroundingFinding.grounded
-EVIDENCE: nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: CoreGroundingFinding.grounded
-STATUS: SATISFIED
-END FRAME
-
-FRAME Finding MISSING_EXCEPTION_JUSTIFICATION
-EVIDENCE: nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69, nll.claim:7f6ca4bbaa2770ffb99e5db76adfcc43416423aa1d86703bd90ed3909aff6f6a, nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3, nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e, nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518, nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
-STATUS: VIOLATED
-END FRAME
-
-FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No asserted procedure-generation request applies to the available operational rules.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding RULE_CONTRADICTION_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No pair of operational rules governs the same action under the same condition.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
-STATUS: NOT_APPLICABLE
-END FRAME</template><template id="artifact-browser-2-file-13" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/generation-plan.cnl" data-language="markdown"></template><template id="artifact-browser-2-file-14" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/coverage.md" data-language="markdown"># Coverage
-
-Store witnesses: 3. Loaded packs: `core-language`. Executed circuits: 5.
-</template><template id="artifact-browser-2-file-15" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/diagnostics.md" data-language="markdown"># Diagnostics
-
-No blocking diagnostics.
-</template><template id="artifact-browser-2-file-16" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/assurance.md" data-language="markdown"># Auxiliary assurance
-
-- `circuit:nl-rule-review.ExceptionJustificationReview@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.ExceptionJustificationReview@1.0.0`: symbolic-decision-coverage
-- `circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0`: symbolic-decision-coverage
-- `circuit:nl-rule-review.RuleContradictionReview@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.RuleContradictionReview@1.0.0`: symbolic-decision-coverage
-- `circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0`: symbolic-decision-coverage
-</template><template id="artifact-browser-2-file-17" data-label="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/evaluation-assurance.md" data-language="markdown"># Evaluation auxiliary assurance
-
-The executable source of truth is `evaluation-assurance.mjs`. This complete JavaScript projection retains every abstract and symbolic result produced for the case.
-
-```javascript
-[Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.ExceptionJustificationReview&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 3 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;code&quot;: &quot;EXCEPTION_JUSTIFICATION_PRESENT&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;Every reviewed emergency exception invocation has a linked source-grounded justification record.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;code&quot;: &quot;MISSING_EXCEPTION_JUSTIFICATION&quot;, &quot;status&quot;: &quot;VIOLATED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;A recorded emergency exception invocation lacks the justification record required by the applicable policy.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;code&quot;: &quot;EXCEPTION_JUSTIFICATION_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;The available source evidence cannot determine whether every emergency exception invocation has its required justification record.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;code&quot;: &quot;EXCEPTION_JUSTIFICATION_CONFLICT&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;Compatible source claims disagree about the emergency exception, its justification requirement, or its linked record.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) }), Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.OperationalProcedureGeneration&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;: [&quot;SATISFIED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;], &quot;nll.procedural-stage:c58f5940674b00a280eb0279d3ac813f9af95e97156c6ac01999e4922ad266ca&quot;: [&quot;SATISFIED&quot;, &quot;UNKNOWN&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 6 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;code&quot;: &quot;PROCEDURE_PLAN_READY&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;The grounded request and input rules are sufficient to generate the required ordered operational procedure.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;code&quot;: &quot;PROCEDURE_PLAN_NOT_APPLICABLE&quot;, &quot;status&quot;: &quot;NOT_APPLICABLE&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;No asserted procedure-generation request applies to the available operational rules.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;code&quot;: &quot;PROCEDURE_PLAN_READINESS_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;The available source evidence cannot establish that the procedure request and every input rule are grounded.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;code&quot;: &quot;PROCEDURE_REQUEST_CONFLICT&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;Compatible source claims both request and deny generation of the operational procedure.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) }), Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.RuleContradictionReview&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;: [&quot;SATISFIED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 3 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;code&quot;: &quot;RULES_COMPATIBLE&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;The comparable source-grounded rules impose compatible effects on the same action and condition.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;code&quot;: &quot;RULE_CONTRADICTION_NOT_APPLICABLE&quot;, &quot;status&quot;: &quot;NOT_APPLICABLE&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;No pair of operational rules governs the same action under the same condition.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;code&quot;: &quot;RULE_CONTRADICTION_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;The available source evidence cannot establish whether every comparable rule pair is compatible.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;code&quot;: &quot;RULE_CONTRADICTION&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;Two source-grounded rules govern the same action under the same condition, but one requires it while the other forbids it.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) }), Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.SafetyConclusionEvidenceReview&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 3 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;code&quot;: &quot;SAFETY_CONCLUSION_SUPPORTED&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;The stated safety conclusion has distinct source-grounded supporting evidence.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;code&quot;: &quot;UNSUPPORTED_SAFETY_CONCLUSION&quot;, &quot;status&quot;: &quot;VIOLATED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;The source states a safety conclusion but provides no distinct supporting evidence for it.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;code&quot;: &quot;SAFETY_CONCLUSION_EVIDENCE_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;The available source evidence cannot determine whether the safety conclusion has distinct support.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;code&quot;: &quot;SAFETY_CONCLUSION_EVIDENCE_CONFLICT&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;Compatible source claims both assert and deny the safety conclusion or its supporting evidence.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) })]
-```
-</template></section>
-<h2>1. Natural-language source analyzed</h2>
-<p>Retained at <code>examples/evaluations/agentic-nl-e2e/corpora/missing-exception-justification.txt</code>.</p>
-<pre><code class="language-text">Emergency Access Policy and Log
-
-Policy rule. Every use of the emergency-access exception must have a recorded reason linked to that invocation.
-
-Event log. At 09:02, operator Ana invoked the emergency-access exception and opened the north gate. The log ends after the opening entry. It contains no reason or justification record for the invocation.</code></pre>
-<h2>2. Task instruction and generated task declaration</h2>
-<p>The task identifier is <code>task-tUmtraHGU2CZ1cFt</code>. The instruction passed to authoring was:</p>
-<pre><code class="language-text">Determine whether every invoked emergency exception has the justification required by the policy. Report missing evidence without inventing a reason.</code></pre>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs</code> — complete file</summary><pre><code class="language-javascript">import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from &quot;../../../../../../framework/sdk/agent/task.mjs&quot;;
+</template><template id="artifact-browser-3-file-8" data-label="task/task.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/task.mjs" data-language="javascript">import { semanticTask, sourceFile, requestedOutput, taskInstruction, taskProfile } from &quot;../../../../../../framework/sdk/agent/task.mjs&quot;;
 
 export default semanticTask(&quot;task-tUmtraHGU2CZ1cFt&quot;)
   .title(&quot;Check emergency exception evidence&quot;)
@@ -790,10 +536,8 @@ export default semanticTask(&quot;task-tUmtraHGU2CZ1cFt&quot;)
   .instruction(taskInstruction(&quot;Determine whether every invoked emergency exception has the justification required by the policy. Report missing evidence without inventing a reason.&quot;))
   .profile(taskProfile(&quot;minimal-core&quot;))
   .output(requestedOutput(&quot;findings&quot;), requestedOutput(&quot;cnl-observations&quot;), requestedOutput(&quot;markdown-cnl&quot;))
-  .seal();</code></pre></details>
-<h2>3. Codex-generated IntentJS</h2>
-<p>IntentJS selects the requested agent capability and output contract. The following is the complete task-owned code.</p>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs</code> — complete file</summary><pre><code class="language-javascript">import {
+  .seal();
+</template><template id="artifact-browser-3-file-9" data-label="task/intent/intent.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/intent/intent.mjs" data-language="javascript">import {
   IntentFragment,
   abstractPreflight,
   allCompatible,
@@ -846,10 +590,8 @@ export default intent(task.id)
   )
   .whenUnclear(allCompatible())
   .provenance(...task.instructions)
-  .seal();</code></pre></details>
-<h2>4. Codex-generated LongTextJS</h2>
-<p>LongTextJS materializes only source-grounded meanings, exact anchors, contexts and coverage. All generated modules are included without shortening.</p>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs</code> — complete file</summary><pre><code class="language-javascript">export {
+  .seal();
+</template><template id="artifact-browser-3-file-10" data-label="task/longtext/root.longtext.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/root.longtext.mjs" data-language="javascript">export {
   default,
   emergencyAccessInvocation,
   emergencyAccessInvocationClaim,
@@ -859,8 +601,8 @@ export default intent(task.id)
   noLinkedJustificationRecordClaim,
   openingEntryContext,
   operatorAna
-} from &quot;./units/source-001-emergency-access.longtext.mjs&quot;;</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs</code> — complete file</summary><pre><code class="language-javascript">import {
+} from &quot;./units/source-001-emergency-access.longtext.mjs&quot;;
+</template><template id="artifact-browser-3-file-11" data-label="task/longtext/units/source-001-emergency-access.longtext.mjs" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/longtext/units/source-001-emergency-access.longtext.mjs" data-language="javascript">import {
   actual,
   asserted,
   claim,
@@ -941,421 +683,8 @@ export default describe(&quot;source-001-emergency-access-policy-and-log&quot;)
       .sources(...source.units)
       .complete()
   )
-  .commit();</code></pre></details>
-<h2>5. Reusable ontology and applicable rule circuit</h2>
-<p>The ontology and circuit were generated at agent scope from <code>examples/evaluations/agentic-nl-e2e/agent-brief.md</code>, before this task was authored.</p>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/ontologies/operational-policy.ontology.mjs</code> — complete file</summary><pre><code class="language-javascript">import {
-  ontology,
-  entityKind,
-  eventKind,
-  propositionKind,
-  documentArtifactKind,
-  valueKind,
-  role,
-  requires,
-  allows,
-  exactlyOne,
-  atMostOne,
-  atLeastOne,
-  lexicalize,
-  capability
-} from &quot;../../../../../framework/sdk/ontology/index.mjs&quot;;
-import {
-  SemanticEntity,
-  Event,
-  Proposition,
-  InformationArtifact,
-  actor,
-  source,
-  context,
-  evidence,
-  value
-} from &quot;../../../../../framework/packs/core-language/ontologies/core.ontology.mjs&quot;;
-
-const O = ontology(&quot;nl-rule-review.operational-policy&quot;, &quot;1.0.0&quot;);
-
-export const RuleEffect = O.value(
-  valueKind(&quot;RuleEffect&quot;)
-    .role(requires(value, exactlyOne()))
-);
-
-export const action = O.role(role(&quot;action&quot;).range(Event));
-export const condition = O.role(role(&quot;condition&quot;).range(Proposition));
-export const effect = O.role(role(&quot;effect&quot;).range(RuleEffect));
-
-export const OperationalRule = O.entity(
-  entityKind(&quot;OperationalRule&quot;)
-    .subtypeOf(SemanticEntity)
-    .role(requires(action, exactlyOne()))
-    .role(requires(condition, exactlyOne()))
-    .role(requires(effect, exactlyOne()))
-    .provide(capability(&quot;RuleContradictionReview&quot;))
-);
-
-export const EmergencyExceptionInvocation = O.event(
-  eventKind(&quot;EmergencyExceptionInvocation&quot;)
-    .subtypeOf(Event)
-    .role(allows(actor, atMostOne()))
-    .role(allows(context, atMostOne()))
-);
-
-export const invocation = O.role(
-  role(&quot;invocation&quot;).range(EmergencyExceptionInvocation)
-);
-
-export const JustificationRecord = O.documentArtifact(
-  documentArtifactKind(&quot;JustificationRecord&quot;)
-    .subtypeOf(InformationArtifact)
-    .role(requires(invocation, exactlyOne()))
-    .role(allows(actor, atMostOne()))
-);
-
-export const ExceptionJustificationRequirement = O.entity(
-  entityKind(&quot;ExceptionJustificationRequirement&quot;)
-    .subtypeOf(SemanticEntity)
-    .role(allows(action, atMostOne()))
-    .provide(capability(&quot;ExceptionJustificationReview&quot;))
-);
-
-export const SafetyConclusion = O.proposition(
-  propositionKind(&quot;SafetyConclusion&quot;)
-    .subtypeOf(Proposition)
-    .role(requires(actor, exactlyOne()))
-    .provide(capability(&quot;SafetyConclusionEvidenceReview&quot;))
-);
-
-export const conclusion = O.role(role(&quot;conclusion&quot;).range(SafetyConclusion));
-
-export const SupportsSafetyConclusion = O.event(
-  eventKind(&quot;SupportsSafetyConclusion&quot;)
-    .subtypeOf(Event)
-    .role(requires(evidence, exactlyOne()))
-    .role(requires(conclusion, exactlyOne()))
-);
-
-export const ProcedureRequest = O.entity(
-  entityKind(&quot;ProcedureRequest&quot;)
-    .subtypeOf(SemanticEntity)
-    .role(requires(source, atLeastOne()))
-    .provide(capability(&quot;OperationalProcedureGeneration&quot;))
-);
-
-export const ProcedureStep = O.entity(
-  entityKind(&quot;ProcedureStep&quot;)
-    .subtypeOf(SemanticEntity)
-    .role(requires(value, exactlyOne()))
-    .role(requires(source, atLeastOne()))
-);
-
-export const requiredEffect = RuleEffect(value(&quot;required&quot;));
-export const forbiddenEffect = RuleEffect(value(&quot;forbidden&quot;));
-export const permittedEffect = RuleEffect(value(&quot;permitted&quot;));
-
-const procedureStep = (kind) =&gt; (...rules) =&gt; ProcedureStep(
-  value(kind),
-  ...rules.map((ruleValue) =&gt; source(ruleValue))
-);
-
-export const acknowledgementStep = procedureStep(&quot;acknowledgement&quot;);
-export const authorizationStep = procedureStep(&quot;authorization&quot;);
-export const gateActionStep = procedureStep(&quot;gate-action&quot;);
-export const exceptionJustificationStep = procedureStep(&quot;exception-justification&quot;);
-export const auditRecordingStep = procedureStep(&quot;audit-recording&quot;);
-
-O.lexicon(lexicalize(OperationalRule).english(&quot;operational rule&quot;));
-O.lexicon(lexicalize(RuleEffect).english(&quot;rule effect&quot;));
-O.lexicon(lexicalize(EmergencyExceptionInvocation).english(&quot;invoke emergency exception&quot;));
-O.lexicon(lexicalize(ExceptionJustificationRequirement).english(&quot;exception justification requirement&quot;));
-O.lexicon(lexicalize(JustificationRecord).english(&quot;justification record&quot;));
-O.lexicon(lexicalize(SafetyConclusion).english(&quot;safety conclusion&quot;));
-O.lexicon(lexicalize(SupportsSafetyConclusion).english(&quot;supports safety conclusion&quot;));
-O.lexicon(lexicalize(ProcedureRequest).english(&quot;procedure request&quot;));
-O.lexicon(lexicalize(ProcedureStep).english(&quot;procedure step&quot;));
-
-export default O.seal();</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/circuits/exception-justification.circuit.mjs</code> — complete file</summary><pre><code class="language-javascript">import {
-  circuit,
-  capability,
-  concept,
-  guarantee,
-  proceduralStage,
-  emitFinding,
-  abstractPreflight,
-  symbolicDecisionCoverage
-} from &quot;../../../../../framework/sdk/circuit/index.mjs&quot;;
-import {
-  EmergencyExceptionInvocation,
-  ExceptionJustificationRequirement,
-  JustificationRecord,
-  action,
-  invocation
-} from &quot;../ontologies/operational-policy.ontology.mjs&quot;;
-import {
-  REVIEW_OUTCOMES,
-  assessment,
-  commonInterpretation,
-  evidenceFor,
-  groundedClaims,
-  hasClosedCoverage,
-  identityOf,
-  interpretationsCompatible,
-  requirementDetails,
-  reviewDecisionTable,
-  roleValues,
-  termsOf
-} from &quot;./review-support.mjs&quot;;
-
-const REQUIREMENTS = Object.freeze({
-  invocation: &quot;An emergency exception invocation must be source-grounded.&quot;,
-  policy: &quot;An applicable policy requires a justification record for the invocation.&quot;,
-  record: &quot;A source-grounded justification record must link to the invocation.&quot;,
-  consistent: &quot;The invocation, requirement, and linked record must not be both asserted and denied.&quot;,
-  coverage: &quot;Justification-record coverage must be closed before absence is treated as a violation.&quot;
-});
-
-function requirementApplies(store, requirement, exceptionUse) {
-  const governedActions = roleValues(store, requirement, action);
-  return governedActions.length === 0
-    || governedActions.some((candidate) =&gt; identityOf(candidate) === identityOf(exceptionUse));
-}
-
-function linkedRecords(store, exceptionUse) {
-  return termsOf(store, JustificationRecord)
-    .filter((record) =&gt; roleValues(store, record, invocation)
-      .some((candidate) =&gt; identityOf(candidate) === identityOf(exceptionUse)));
-}
-
-function evaluateExceptionJustification({ store }) {
-  const invocations = termsOf(store, EmergencyExceptionInvocation);
-  const requirements = termsOf(store, ExceptionJustificationRequirement);
-  const structuralPairs = invocations.flatMap((exceptionUse) =&gt; requirements
-    .filter((requirement) =&gt; requirementApplies(store, requirement, exceptionUse))
-    .map((requirement) =&gt; ({ exceptionUse, requirement })));
-  if (structuralPairs.length === 0) {
-    return assessment(
-      REVIEW_OUTCOMES.FALSE,
-      evidenceFor(store, [...invocations, ...requirements]),
-      requirementDetails({
-        invocations: invocations.map(identityOf),
-        requirements: requirements.map(identityOf)
-      }),
-      null,
-      {
-        code: &quot;EXCEPTION_JUSTIFICATION_NOT_APPLICABLE&quot;,
-        status: &quot;NOT_APPLICABLE&quot;
-      }
-    );
-  }
-
-  const results = [];
-  for (const pair of structuralPairs) {
-    const invocationClaims = groundedClaims(store, pair.exceptionUse);
-    const requirementClaims = groundedClaims(store, pair.requirement);
-    const claimPairs = invocationClaims.flatMap((invocationClaim) =&gt; requirementClaims
-      .filter((requirementClaim) =&gt; interpretationsCompatible(invocationClaim, requirementClaim))
-      .map((requirementClaim) =&gt; [invocationClaim, requirementClaim]));
-    if (claimPairs.length === 0) {
-      results.push({ ...pair, outcome: REVIEW_OUTCOMES.UNKNOWN, claims: [] });
-      continue;
-    }
-
-    const pairClaims = claimPairs.flat();
-    const deniedInvocationClaims = groundedClaims(store, pair.exceptionUse, &quot;denied&quot;);
-    const deniedRequirementClaims = groundedClaims(store, pair.requirement, &quot;denied&quot;);
-    const subjectConflicts = [
-      ...invocationClaims.flatMap((assertedClaim) =&gt; deniedInvocationClaims
-        .filter((deniedClaim) =&gt; interpretationsCompatible(assertedClaim, deniedClaim))),
-      ...requirementClaims.flatMap((assertedClaim) =&gt; deniedRequirementClaims
-        .filter((deniedClaim) =&gt; interpretationsCompatible(assertedClaim, deniedClaim)))
-    ];
-    if (subjectConflicts.length &gt; 0) {
-      results.push({
-        ...pair,
-        outcome: REVIEW_OUTCOMES.CONFLICT,
-        records: [],
-        claims: [...pairClaims, ...subjectConflicts]
-      });
-      continue;
-    }
-    if (deniedInvocationClaims.length &gt; 0 || deniedRequirementClaims.length &gt; 0) {
-      results.push({
-        ...pair,
-        outcome: REVIEW_OUTCOMES.UNKNOWN,
-        records: [],
-        claims: [
-          ...pairClaims,
-          ...deniedInvocationClaims,
-          ...deniedRequirementClaims
-        ]
-      });
-      continue;
-    }
-
-    const records = linkedRecords(store, pair.exceptionUse);
-    const assertedRecords = records.flatMap((record) =&gt; groundedClaims(store, record)
-      .filter((recordClaim) =&gt; pairClaims.some((claim) =&gt; interpretationsCompatible(claim, recordClaim)))
-      .map((recordClaim) =&gt; ({ record, claim: recordClaim })));
-    const deniedRecords = records.flatMap((record) =&gt; groundedClaims(store, record, &quot;denied&quot;)
-      .filter((recordClaim) =&gt; pairClaims.some((claim) =&gt; interpretationsCompatible(claim, recordClaim)))
-      .map((recordClaim) =&gt; ({ record, claim: recordClaim })));
-    const conflictingRecords = assertedRecords.flatMap((assertedRecord) =&gt; deniedRecords
-      .filter((deniedRecord) =&gt; identityOf(assertedRecord.record) === identityOf(deniedRecord.record)
-        &amp;&amp; interpretationsCompatible(assertedRecord.claim, deniedRecord.claim)));
-    const stableAssertedRecords = assertedRecords.filter((assertedRecord) =&gt; !deniedRecords
-      .some((deniedRecord) =&gt; identityOf(assertedRecord.record) === identityOf(deniedRecord.record)));
-    if (conflictingRecords.length &gt; 0) {
-      results.push({
-        ...pair,
-        outcome: REVIEW_OUTCOMES.CONFLICT,
-        records,
-        claims: [
-          ...pairClaims,
-          ...assertedRecords.map(({ claim }) =&gt; claim),
-          ...deniedRecords.map(({ claim }) =&gt; claim)
-        ]
-      });
-    } else if (stableAssertedRecords.length &gt; 0) {
-      results.push({
-        ...pair,
-        outcome: REVIEW_OUTCOMES.TRUE,
-        records: stableAssertedRecords.map(({ record }) =&gt; record),
-        claims: [...pairClaims, ...stableAssertedRecords.map(({ claim }) =&gt; claim)]
-      });
-    } else if (assertedRecords.length &gt; 0 &amp;&amp; deniedRecords.length &gt; 0) {
-      results.push({
-        ...pair,
-        outcome: REVIEW_OUTCOMES.UNKNOWN,
-        records,
-        claims: [
-          ...pairClaims,
-          ...assertedRecords.map(({ claim }) =&gt; claim),
-          ...deniedRecords.map(({ claim }) =&gt; claim)
-        ]
-      });
-    } else if (hasClosedCoverage(store, JustificationRecord, pairClaims)) {
-      results.push({
-        ...pair,
-        outcome: REVIEW_OUTCOMES.FALSE,
-        records: [],
-        claims: [...pairClaims, ...deniedRecords.map(({ claim }) =&gt; claim)]
-      });
-    } else {
-      results.push({ ...pair, outcome: REVIEW_OUTCOMES.UNKNOWN, records: [], claims: pairClaims });
-    }
-  }
-
-  const outcome = results.some((result) =&gt; result.outcome === REVIEW_OUTCOMES.CONFLICT)
-    ? REVIEW_OUTCOMES.CONFLICT
-    : results.some((result) =&gt; result.outcome === REVIEW_OUTCOMES.FALSE)
-      ? REVIEW_OUTCOMES.FALSE
-      : results.some((result) =&gt; result.outcome === REVIEW_OUTCOMES.UNKNOWN)
-        ? REVIEW_OUTCOMES.UNKNOWN
-        : REVIEW_OUTCOMES.TRUE;
-  const decisive = results.filter((result) =&gt; result.outcome === outcome);
-  const terms = decisive.flatMap(({ exceptionUse, requirement, records = [] }) =&gt; [
-    exceptionUse,
-    requirement,
-    ...records
-  ]);
-  const claims = decisive.flatMap(({ claims: resultClaims }) =&gt; resultClaims);
-  const detailGroups = outcome === REVIEW_OUTCOMES.TRUE
-    ? {
-      satisfiedRequirements: [
-        REQUIREMENTS.invocation,
-        REQUIREMENTS.policy,
-        REQUIREMENTS.record,
-        REQUIREMENTS.consistent
-      ]
-    }
-    : outcome === REVIEW_OUTCOMES.FALSE
-      ? {
-        failedRequirements: [REQUIREMENTS.record],
-        satisfiedRequirements: [REQUIREMENTS.invocation, REQUIREMENTS.policy, REQUIREMENTS.coverage]
-      }
-      : outcome === REVIEW_OUTCOMES.CONFLICT
-        ? { conflictingRequirements: [REQUIREMENTS.consistent] }
-        : {
-          uncertainRequirements: claims.length &gt; 0
-            ? [REQUIREMENTS.record, REQUIREMENTS.coverage]
-            : [REQUIREMENTS.invocation, REQUIREMENTS.policy, REQUIREMENTS.record],
-          satisfiedRequirements: claims.length &gt; 0
-            ? [REQUIREMENTS.invocation, REQUIREMENTS.policy]
-            : []
-        };
-  return assessment(
-    outcome,
-    evidenceFor(store, terms, claims),
-    requirementDetails({
-      checkedInvocations: structuralPairs.length,
-      decisiveInvocations: decisive.map(({ exceptionUse }) =&gt; identityOf(exceptionUse)),
-      justificationRecords: decisive.flatMap(({ records = [] }) =&gt; records.map(identityOf))
-    }, detailGroups),
-    commonInterpretation(claims)
-  );
-}
-
-const assess = proceduralStage(&quot;nl-rule-review.exception-justification.assess&quot;)
-  .reads(EmergencyExceptionInvocation, ExceptionJustificationRequirement, JustificationRecord)
-  .writes(&quot;ExceptionJustificationAssessment&quot;)
-  .abstract(() =&gt; new Set([&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;]))
-  .run(evaluateExceptionJustification);
-
-const decide = reviewDecisionTable(&quot;nl-rule-review.exception-justification.decide&quot;, assess, {
-  true: {
-    code: &quot;EXCEPTION_JUSTIFICATION_PRESENT&quot;,
-    status: &quot;SATISFIED&quot;,
-    message: &quot;Every reviewed emergency exception invocation has a linked source-grounded justification record.&quot;
-  },
-  false: {
-    code: &quot;MISSING_EXCEPTION_JUSTIFICATION&quot;,
-    status: &quot;VIOLATED&quot;,
-    message: &quot;A recorded emergency exception invocation lacks the justification record &quot; +
-      &quot;required by the applicable policy.&quot;
-  },
-  unknown: {
-    code: &quot;EXCEPTION_JUSTIFICATION_UNKNOWN&quot;,
-    status: &quot;UNKNOWN&quot;,
-    message: &quot;The available source evidence cannot determine whether every emergency exception &quot; +
-      &quot;invocation has its required justification record.&quot;
-  },
-  conflict: {
-    code: &quot;EXCEPTION_JUSTIFICATION_CONFLICT&quot;,
-    status: &quot;CONFLICT&quot;,
-    message: &quot;Compatible source claims disagree about the emergency exception, &quot; +
-      &quot;its justification requirement, or its linked record.&quot;
-  }
-});
-
-export default circuit(&quot;nl-rule-review.ExceptionJustificationReview&quot;, &quot;1.0.0&quot;)
-  .concern(&quot;emergency-exception-justification&quot;)
-  .targets(&quot;short-operational-policy&quot;, &quot;event-record&quot;)
-  .requires(
-    concept(EmergencyExceptionInvocation),
-    concept(ExceptionJustificationRequirement),
-    concept(JustificationRecord)
-  )
-  .provides(
-    capability(&quot;ExceptionJustificationReview&quot;),
-    guarantee(&quot;evidence-bearing&quot;),
-    guarantee(&quot;coverage-aware&quot;),
-    guarantee(&quot;interpretation-aware&quot;)
-  )
-  .use(assess)
-  .use(decide)
-  .emit(emitFinding(decide))
-  .statuses(&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;)
-  .assurance(abstractPreflight(), symbolicDecisionCoverage())
-  .seal();</code></pre></details>
-<h2>6. Real coding-agent evidence</h2>
-<table><thead><tr><th>Phase</th><th>Adapter</th><th>Exit</th><th>Created</th><th>Modified</th><th colspan="3">Retained evidence</th></tr></thead><tbody><tr><td>intent</td><td>codex</td><td>0</td><td>2</td><td>0</td><td><a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/runs/run-cww5N-NOzSzZRzhr/INSTRUCTIONS.md">instructions</a></td><td><a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/runs/run-cww5N-NOzSzZRzhr/logs/codex.final.md">agent final</a></td><td><a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/runs/run-cww5N-NOzSzZRzhr/logs/codex.stderr.log">full process log</a></td></tr><tr><td>longtext</td><td>codex</td><td>0</td><td>5</td><td>0</td><td><a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/runs/run-pgfGwrlTlDEY7rFZ/INSTRUCTIONS.md">instructions</a></td><td><a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/runs/run-pgfGwrlTlDEY7rFZ/logs/codex.final.md">agent final</a></td><td><a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/runs/run-pgfGwrlTlDEY7rFZ/logs/codex.stderr.log">full process log</a></td></tr></tbody></table>
-<p>The suite-level agent phases and their retained logs are indexed by <a href="../evaluations/agentic-nl-e2e/reports/authoring.md">the authoring report</a>.</p>
-<h2>7. Deterministic execution command</h2>
-<pre><code class="language-shell">node nllAgent.mjs run \
-  --agent-dir evaluations/agentic-nl-e2e/agents/nl-rule-review-agent \
-  --task-dir evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt</code></pre>
-<p>This command does not invoke Codex. It imports the programs shown above, materializes the SemanticStore, plans compatible circuits, and writes task results.</p>
-<h2>8. Primary human-facing Markdown CNL response</h2>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md</code> — complete file</summary><pre><code class="language-text"># nllAgent response
+  .commit();
+</template><template id="artifact-browser-3-file-12" data-label="task/results/response.md" data-project-path="evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/response.md" data-language="markdown"># nllAgent response
 
 [CNL:DOCUMENT] [STYLE:evidence-led] [GROUPING:status-family] [RESULTS:1]
 
@@ -1401,149 +730,15 @@ A recorded emergency exception invocation lacks the justification record require
 &gt;
 &gt; — [source-001](../source/source-001.txt), characters 284–349
 
-**Next action:** Address the failed requirement: A source-grounded justification record must link to the invocation.</code></pre></details>
-<p>The response circuit removed internal grounding and non-applicable results, grouped the material outcome, explained the matched semantic rule, and quoted only verified source spans. This is the result intended for a human or a later formatting/summarization LLM.</p>
-<h2>9. Evaluation and model-free replay acceptance</h2>
-<table><thead><tr><th>Check</th><th>Observed</th></tr></thead><tbody>
-<tr><td>Response contract</td><td>1</td></tr>
-<tr><td>Finding replay equivalence</td><td>1</td></tr>
-<tr><td>Response replay equivalence</td><td>1</td></tr>
-<tr><td>Abstract/symbolic auxiliary circuits</td><td>4</td></tr>
-</tbody></table>
-<p>The complete executable assurance projections remain in the task artifact manifest as technical evidence; they are not embedded in the answer.</p>
-<h2>10. Complete retained supporting textual outputs</h2>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/artifacts.md</code> — complete file</summary><pre><code class="language-text"># Task artifact manifest
-
-## Semantic programs
-
-These executable modules define the task, intent, LongTextJS grounding, task-local ontology, semantic and response circuits, and generated SDK facade when present.
-
-- [intent/intent.mjs](../intent/intent.mjs)
-- [longtext/root.longtext.mjs](../longtext/root.longtext.mjs)
-- [longtext/units/source-001-emergency-access.longtext.mjs](../longtext/units/source-001-emergency-access.longtext.mjs)
-- [sdk/ontology.generated.mjs](../sdk/ontology.generated.mjs)
-- [task.mjs](../task.mjs)
-
-## Coding-agent authoring evidence
-
-- [runs/run-cww5N-NOzSzZRzhr/INSTRUCTIONS.md](../runs/run-cww5N-NOzSzZRzhr/INSTRUCTIONS.md)
-- [runs/run-cww5N-NOzSzZRzhr/logs/codex.final.md](../runs/run-cww5N-NOzSzZRzhr/logs/codex.final.md)
-- [runs/run-cww5N-NOzSzZRzhr/logs/process.md](../runs/run-cww5N-NOzSzZRzhr/logs/process.md)
-- [runs/run-pgfGwrlTlDEY7rFZ/INSTRUCTIONS.md](../runs/run-pgfGwrlTlDEY7rFZ/INSTRUCTIONS.md)
-- [runs/run-pgfGwrlTlDEY7rFZ/logs/codex.final.md](../runs/run-pgfGwrlTlDEY7rFZ/logs/codex.final.md)
-- [runs/run-pgfGwrlTlDEY7rFZ/logs/process.md](../runs/run-pgfGwrlTlDEY7rFZ/logs/process.md)
-
-## Technical execution evidence
-
-- [Execution plan](execution-plan.md)
-- [Canonical findings](findings.cnl)
-- [Canonical observations](observations.cnl)
-- [Generated CNL frames](generation-plan.cnl)
-- [Executable findings](findings.mjs)
-- [Auxiliary assurance summary](assurance.md)
-- [Executable auxiliary assurance](assurance.mjs)
-- [Diagnostics](diagnostics.md)
-- [Coverage](coverage.md)
-- [Trace summary](trace-summary.md)
-- Binary trace: `trace.bin`</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/report.md</code> — complete file</summary><pre><code class="language-text"># Technical execution report
-
-The primary human-facing result is [`response.md`](response.md). This file reports execution mechanics only.
-
-Task: `task-tUmtraHGU2CZ1cFt`. Profile: `minimal-core`.
-
-- Executed semantic circuits: 5
-- Selected response circuits: 3
-- Public CNL findings: 1
-- Raw findings, including internal and non-applicable results: 5
-- Generated CNL frames: 0
-- Auxiliary assurance passes: 8
-- Blocking diagnostics: 0
-
-See [`artifacts.md`](artifacts.md) for semantic programs, coding-agent evidence, canonical CNL, assurance, diagnostics, and trace artifacts.</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/findings.cnl</code> — complete file</summary><pre><code class="language-text">FRAME Finding CoreGroundingFinding.grounded
-EVIDENCE: nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: CoreGroundingFinding.grounded
-STATUS: SATISFIED
-END FRAME
-
-FRAME Finding MISSING_EXCEPTION_JUSTIFICATION
-EVIDENCE: nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69, nll.claim:7f6ca4bbaa2770ffb99e5db76adfcc43416423aa1d86703bd90ed3909aff6f6a, nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3, nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e, nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518, nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
-STATUS: VIOLATED
-END FRAME
-
-FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No asserted procedure-generation request applies to the available operational rules.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding RULE_CONTRADICTION_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No pair of operational rules governs the same action under the same condition.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
-STATUS: NOT_APPLICABLE
-END FRAME</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/observations.cnl</code> — complete file</summary><pre><code class="language-text">FRAME Finding CoreGroundingFinding.grounded
-EVIDENCE: nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: CoreGroundingFinding.grounded
-STATUS: SATISFIED
-END FRAME
-
-FRAME Finding MISSING_EXCEPTION_JUSTIFICATION
-EVIDENCE: nll.claim:7e3cf737db1f33ef54441224230820ce703c8e2b89fe1c8577ba1c53b490de69, nll.claim:7f6ca4bbaa2770ffb99e5db76adfcc43416423aa1d86703bd90ed3909aff6f6a, nll.claim:d1bafa475521cf9e98260d427f010f63814edbb0137cf3744b48843977c70cd3, nll.ground-term:3ec76bde7541ed5dfc7ae52867963372fce982f9af69ea13f84472aec80f988e, nll.ground-term:e5bf7533ac6658947e2bb9ce5c083dac7ed357d693c8c9e3a70c632ecf69a518, nll.source-span:3e9d6a80c3c6a88c08f63106fc371deaba9cb0b797bcfbbd778bf0d77258a25f, nll.source-span:9ac09356b33c8f824398ecf75d756340ae7b36c4aa9d756f7ea41db35dfe8a97, nll.source-span:fd128b0b0ad6aa6266ef3fb405f2c47b3b942c14991c132529bcc519aefdb39e
-MESSAGE: A recorded emergency exception invocation lacks the justification record required by the applicable policy.
-STATUS: VIOLATED
-END FRAME
-
-FRAME Finding PROCEDURE_PLAN_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No asserted procedure-generation request applies to the available operational rules.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding RULE_CONTRADICTION_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: No pair of operational rules governs the same action under the same condition.
-STATUS: NOT_APPLICABLE
-END FRAME
-
-FRAME Finding SAFETY_CONCLUSION_EVIDENCE_NOT_APPLICABLE
-EVIDENCE: none
-MESSAGE: The source states a safety conclusion but provides no distinct supporting evidence for it.
-STATUS: NOT_APPLICABLE
-END FRAME</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/generation-plan.cnl</code> — complete file</summary><pre><code class="language-text"></code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/coverage.md</code> — complete file</summary><pre><code class="language-text"># Coverage
-
-Store witnesses: 3. Loaded packs: `core-language`. Executed circuits: 5.</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/diagnostics.md</code> — complete file</summary><pre><code class="language-text"># Diagnostics
-
-No blocking diagnostics.</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/assurance.md</code> — complete file</summary><pre><code class="language-text"># Auxiliary assurance
-
-- `circuit:nl-rule-review.ExceptionJustificationReview@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.ExceptionJustificationReview@1.0.0`: symbolic-decision-coverage
-- `circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.OperationalProcedureGeneration@1.0.0`: symbolic-decision-coverage
-- `circuit:nl-rule-review.RuleContradictionReview@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.RuleContradictionReview@1.0.0`: symbolic-decision-coverage
-- `circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0`: abstract-preflight
-- `circuit:nl-rule-review.SafetyConclusionEvidenceReview@1.0.0`: symbolic-decision-coverage</code></pre></details>
-<details class="source-file" open><summary><code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/evaluation-assurance.md</code> — complete file</summary><pre><code class="language-text"># Evaluation auxiliary assurance
-
-The executable source of truth is `evaluation-assurance.mjs`. This complete JavaScript projection retains every abstract and symbolic result produced for the case.
-
-```javascript
-[Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.ExceptionJustificationReview&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 3 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;code&quot;: &quot;EXCEPTION_JUSTIFICATION_PRESENT&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;Every reviewed emergency exception invocation has a linked source-grounded justification record.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;code&quot;: &quot;MISSING_EXCEPTION_JUSTIFICATION&quot;, &quot;status&quot;: &quot;VIOLATED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;A recorded emergency exception invocation lacks the justification record required by the applicable policy.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;code&quot;: &quot;EXCEPTION_JUSTIFICATION_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;The available source evidence cannot determine whether every emergency exception invocation has its required justification record.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:e26a2ea46a01a1888729ee13e47d17d4cb737249b8d3742be2a2b395cb5e5d52&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:c95ae0f84a916f27b74c9df4df9a0672ff438b137970717a6db504c54097d010&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:ffed2b78f738f475e468e8a82e1874414d4515d44e7f71d99ad421f6f7dd3e7f&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:588ff032c42d9d60e1f3cc3fe952a8ffd42e5cc73ef37def6d8d3e187d16f86e&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ceedc43f3397b0a5a85b1d48bdc5fb7f7393019211300ff4e1f96ebf1a53aea0&quot;, &quot;code&quot;: &quot;EXCEPTION_JUSTIFICATION_CONFLICT&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:0c0446f0b689d786465433dc8940fdcea16c57116b05f6df96f2688df45e267d&quot;], &quot;message&quot;: &quot;Compatible source claims disagree about the emergency exception, its justification requirement, or its linked record.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) }), Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.OperationalProcedureGeneration&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;: [&quot;SATISFIED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;], &quot;nll.procedural-stage:c58f5940674b00a280eb0279d3ac813f9af95e97156c6ac01999e4922ad266ca&quot;: [&quot;SATISFIED&quot;, &quot;UNKNOWN&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 6 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;code&quot;: &quot;PROCEDURE_PLAN_READY&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;The grounded request and input rules are sufficient to generate the required ordered operational procedure.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;code&quot;: &quot;PROCEDURE_PLAN_NOT_APPLICABLE&quot;, &quot;status&quot;: &quot;NOT_APPLICABLE&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;No asserted procedure-generation request applies to the available operational rules.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;code&quot;: &quot;PROCEDURE_PLAN_READINESS_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;The available source evidence cannot establish that the procedure request and every input rule are grounded.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:ed0427a8629a02bc688305fce4f61c44350cd6ebc0013541aa7c0271eed8d816&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:5ff756d6f47ba73170c78001b0d6c169835094cefd0b5ef59f4a8734e2bb09e3&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:b332b3a10c06d1989255d64d8ce484b9217f100155bdaf7d7f47fb1ce0110b7a&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:e076acdc68cd00714e5370e91ee884c8c91ed4a4758b6f6b46e48ebde1261a3c&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:d2e880b6709597cb3f7a74f3da78c0b5a3d3245f84fda19d57a4f8bd581d5cc8&quot;, &quot;code&quot;: &quot;PROCEDURE_REQUEST_CONFLICT&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:71195cd9924c5147c5bb9fb083a7abc0f45e60542f61dc85e752917c2d6fe52e&quot;], &quot;message&quot;: &quot;Compatible source claims both request and deny generation of the operational procedure.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) }), Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.RuleContradictionReview&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;: [&quot;SATISFIED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 3 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;code&quot;: &quot;RULES_COMPATIBLE&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;The comparable source-grounded rules impose compatible effects on the same action and condition.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;code&quot;: &quot;RULE_CONTRADICTION_NOT_APPLICABLE&quot;, &quot;status&quot;: &quot;NOT_APPLICABLE&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;No pair of operational rules governs the same action under the same condition.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;code&quot;: &quot;RULE_CONTRADICTION_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;The available source evidence cannot establish whether every comparable rule pair is compatible.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:713cf87e1fa4a89fb7136ef261b9f011863a2c86d5414ddc18a9f2886137b847&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:80f3abbd561e16b5174892f029ba62b90128e536b462762ab250673d64902844&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:5e51c0ff055e8a0294ae150116b082404490463a226be2f8ea1caf94761a521e&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:8f434367ad8fff632f163758f32b01292ca62e48f865cb0f20c4dc3cbe4a19ce&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:04a44aba39d9f62b02dc4864bc6159ce391febf2711e3de85104efeb5ed83636&quot;, &quot;code&quot;: &quot;RULE_CONTRADICTION&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:b2d5ca0e672880ee08e2cefed2b1953e4ce19fc9288140854dab491274f74439&quot;], &quot;message&quot;: &quot;Two source-grounded rules govern the same action under the same condition, but one requires it while the other forbids it.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) }), Object.freeze({ &quot;circuit&quot;: &quot;nl-rule-review.SafetyConclusionEvidenceReview&quot;, &quot;abstract&quot;: Object.freeze({ &quot;converged&quot;: true, &quot;values&quot;: Object.freeze({ &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;], &quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;: [&quot;SATISFIED&quot;, &quot;VIOLATED&quot;, &quot;UNKNOWN&quot;, &quot;CONFLICT&quot;, &quot;NOT_APPLICABLE&quot;] }), &quot;precisionLoss&quot;: [], &quot;steps&quot;: 3 }), &quot;symbolic&quot;: Object.freeze({ &quot;paths&quot;: [Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 0, &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;code&quot;: &quot;SAFETY_CONCLUSION_SUPPORTED&quot;, &quot;status&quot;: &quot;SATISFIED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;The stated safety conclusion has distinct source-grounded supporting evidence.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 1, &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;code&quot;: &quot;UNSUPPORTED_SAFETY_CONCLUSION&quot;, &quot;status&quot;: &quot;VIOLATED&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;The source states a safety conclusion but provides no distinct supporting evidence for it.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: true }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: false })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 2, &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;code&quot;: &quot;SAFETY_CONCLUSION_EVIDENCE_UNKNOWN&quot;, &quot;status&quot;: &quot;UNKNOWN&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;The available source evidence cannot determine whether the safety conclusion has distinct support.&quot; })] }), Object.freeze({ &quot;stage&quot;: 4, &quot;bindings&quot;: Object.freeze({  }), &quot;path&quot;: [Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsTrue:05ac6d14b7775f24dd5bf87e379e4b3c1331d64c78ea0d872ec583e40f20f210&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsFalse:51c22a8b1668b770afa00b7b49f6f7c765724a72ab4a03bb8398d2b4349f3c22&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsUnknown:46c60bc4fe981a1051ba777a8ff7ea5a8c094f9316eaeeb7df1f556b61d3f339&quot;, &quot;truth&quot;: false }), Object.freeze({ &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;truth&quot;: true })], &quot;outputs&quot;: [Object.freeze({ &quot;kind&quot;: &quot;decision-row&quot;, &quot;decision&quot;: &quot;nll.CircuitNode.DecisionTable:302334bae113b938cc524604c61eecc6e3a8e5b1eac0d0f2b5d0eaf9332edd77&quot;, &quot;row&quot;: 3, &quot;condition&quot;: &quot;nll.PredicateCondition.IsConflict:ca5b15666d90260fe3920adfea83fe77f2b28fd8fdc7fd505f069a8e9fbc9f4b&quot;, &quot;code&quot;: &quot;SAFETY_CONCLUSION_EVIDENCE_CONFLICT&quot;, &quot;status&quot;: &quot;CONFLICT&quot;, &quot;evidence&quot;: [&quot;nll.procedural-stage:8d94aacf9327f6a605a5d428af4dcb37848b63e40b1d1b3b9f27bdee46bc38ca&quot;], &quot;message&quot;: &quot;Compatible source claims both assert and deny the safety conclusion or its supporting evidence.&quot; })] })], &quot;pruned&quot;: 7, &quot;truncated&quot;: false, &quot;guarantee&quot;: &quot;path-complete&quot; }) })]
-```</code></pre></details>
-<p>Executable findings, assurance modules, response-circuit trace, and the binary trace remain under <code>evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/</code>. See the <a href="../evaluations/agentic-nl-e2e/agents/nl-rule-review-agent/tasks/task-tUmtraHGU2CZ1cFt/results/artifacts.md">artifact manifest</a> and <a href="../evaluations/agentic-nl-e2e/reports/summary.md">suite summary</a>.</p>
+**Next action:** Address the failed requirement: A source-grounded justification record must link to the invocation.
+</template></section>
+<h2>From the agent brief to reusable behavior</h2>
+<p><code>agent/ontologies/operational-policy.ontology.mjs</code> supplies stable identities for operational rules, exception invocations, justification records, safety conclusions, support relations, and procedure requests. <code>agent/circuits/exception-justification.circuit.mjs</code> implements the selected capability over semantic store values; it does not search the raw source. <code>agent/agent.mjs</code> and the minimal profile load only core language plus this agent-owned knowledge, which keeps source-specific facts inside the task.</p>
+<h2>From this task's text to executable meaning</h2>
+<p>IntentJS requests ExceptionJustificationReview. LongTextJS creates three distinct grounded values: the policy requirement, Ana's 09:02 emergency invocation, and a denied justification record linked to that invocation. Complete JustificationRecord coverage turns the explicit “no reason or justification record” clause into safe negative evidence instead of treating a failed text search as proof.</p>
+<p>The visible <code>task/intent/intent.mjs</code> contains that operation and presentation policy. The files below <code>task/longtext/</code> contain the actual terms, claims, polarities, modalities, exact source spans, and coverage witnesses used by the circuit.</p>
+<h2>Why this CNL answer follows</h2>
+<p>The exception circuit joins the invocation to the applicable requirement and cannot find an asserted linked record while closed coverage and the explicit denial are present. The response reports one VIOLATED finding, quotes the rule, invocation, and denial, and does not invent a missing reason.</p>
     </article>
   </main>
   <div data-include="partials/footer.html"></div>
